@@ -2,12 +2,17 @@
 
 
 
-from m0_c00_config import *
+# from m0_c00_config import *
 from m1_basic_control import *
-from m2_plate_6well import *
-from m3_mctd_8fov import *
-from m4_center_fovs import *
+# from m2_plate_6well import *
+# from m3_mctd_8fov import *
+# from m4_center_fovs import *
 
+# from xxx import xxx
+from Cc00_config import Cc00_config
+from Cfov8 import Cfov8
+from Cmculture import Cmculture
+from Cplate_6well import Cplate_6well
 
 
 c00 = Cc00_config()
