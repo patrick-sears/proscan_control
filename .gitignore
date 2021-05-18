@@ -1,0 +1,14 @@
+# Comment ok.
+
+*.swp
+*.bak
+*~
+
+*.o
+
+.*~
+.*.bak
+.*.swp
+
+!.gitignore
+
