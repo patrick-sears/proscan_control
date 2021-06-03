@@ -1,5 +1,7 @@
 # Comment ok.
 
+__pycache__/
+
 *.swp
 *.bak
 *~
