@@ -38,13 +38,25 @@ class c_locup:
     self.load_config()
     self.load_pattern_data()
     #
-    self.get_y0()
+    if self.get_y0():  return  # quit on 'q'
     self.go_N_to_W_edge_rough()
-    self.get_x0()
-    print("Culture coordinates are set.")
+    if self.get_x0():  return  # quit on 'q'
     #
-    # HHHHHHHHHHHHHHHHHHHHHH here
-    # Next implement running through pattern.
+    print("Culture coordinates are set.")
+    print("Running patterns...")
+    #
+    while 1:
+      if run_pattern():  return  # quit on 'q'
+    #
+  #
+  def run_pattern(self):
+    pline = "In run_pattern()."
+    pline += "  Nothing implemented here yet."
+    pline += "  Hit q to quit."
+    print(pline)
+    uline = input("in<< ")
+    if uline == 'q':  return 1
+    return 0
   #
   def get_y0(self):
     pline = "Go to culture "+str(self.cnum)
@@ -53,7 +65,7 @@ class c_locup:
     while True:
       print(pline)
       uline = input("in<< ")
-      if uline == 'q':  return
+      if uline == 'q':  return 1
       if uline == 'e':  break
     #####
     cbuf()
@@ -63,6 +75,7 @@ class c_locup:
     ll = serda.decode("Ascii").split(',')
     self.y0 = culture_diam - int(ll[1])  # 0 x, 1 y
     #####
+    return 0
   #
   def get_x0(self):
     pline = "Go to culture "+str(self.cnum)
@@ -71,7 +84,7 @@ class c_locup:
     while True:
       print(pline)
       uline = input("in<< ")
-      if uline == 'q':  return
+      if uline == 'q':  return 1
       if uline == 'e':  break
     #####
     cbuf()
@@ -81,6 +94,7 @@ class c_locup:
     ll = serda.decode("Ascii").split(',')
     self.x0 = culture_diam - int(ll[0])  # 0 x, 1 y
     #####
+    return 0
   #
   def go_N_to_W_edge_rough():
     dx =   int(self.culture_r)
@@ -94,12 +108,13 @@ class c_locup:
     send = bytes( ouline.encode() )
     spo.write( send )
   #
-  def read_pattern_data(self):
+  def load_pattern_data(self):
     print("Loading pattern data...")
     self.pam = []  # pattern message
     self.pax = []  # pattern x
     self.pay = []  # pattern y
-    self.pai = []  # pattern index for sub pattern
+    self.paname = []  # a short name for that item in the pattern list
+    # several items can have the same name.
     f = open("config/locup_pattern.data")
     for l in f:
       l = l.strip()
@@ -109,10 +124,11 @@ class c_locup:
       if len(lla>1):  self.pam.append( lla[1].strip() )
       else:           self.pam.append( "" )
       llb = lla[0].strip().split(' ')
-      self.pai.append( llb[0] )
+      self.paname.append( llb[0] )
       self.pax.append( int(llb[1]) )
       self.pay.append( int(llb[2]) )
     f.close()
+    self.n_pattern = len(self.paname)
     print("  Done.")
   #
   #
