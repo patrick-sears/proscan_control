@@ -37,25 +37,45 @@ class c_locup:
   def run(self):
     self.load_config()
     self.load_pattern_data()
-    #
-    if self.get_y0():  return  # quit on 'q'
-    self.go_N_to_W_edge_rough()
-    if self.get_x0():  return  # quit on 'q'
-    #
-    print("Culture coordinates are set.")
-    print("Running patterns...")
-    #
-    while 1:
-      if run_pattern():  return  # quit on 'q'
-    #
+    ##############
+    while( 1 ):
+      #
+      if self.get_y0() == -1:  return  # quit on 'q'
+      self.go_N_to_W_edge_rough()
+      if self.get_x0() == -1:  return  # quit on 'q'
+      #
+      print("Culture "+str(self.cnum)+" coordinates are set.")
+      print("Running pattern...")
+      #
+      if self.run_pattern() == -1:  return  # quit on 'q'
+      print("Culture "+str(self.cnum)+" done."
+      print()
+      #
+      self.cnum += 1
+    ##############
   #
   def run_pattern(self):
-    pline = "In run_pattern()."
-    pline += "  Nothing implemented here yet."
-    pline += "  Hit q to quit."
-    print(pline)
-    uline = input("in<< ")
-    if uline == 'q':  return 1
+    ######################
+    for i in range(self.n_pattern):
+      #########
+      if self.pam[i] != "":
+        pline += "\n"+pam[i]+"\n"
+      pline = "c"+str(self.cnum)
+      pline += " : "+paname[i]+'\n'
+      print(pline)
+      #########
+      x = self.x0 + self.pax[i]
+      y = self.y0 + self.pay[i]
+      ouline = "g"
+      ouline += " {0:d}".format( x )
+      ouline += " {0:d}".format( y )
+      ouline += "\r\n"
+      send = bytes( ouline.encode() )
+      spo.write( send )
+      #########
+      uline = input("  Hit [enter] when done (q=quit):  \n")
+      if uline == 'q':  return -1
+    ######################
     return 0
   #
   def get_y0(self):
@@ -65,7 +85,7 @@ class c_locup:
     while True:
       print(pline)
       uline = input("in<< ")
-      if uline == 'q':  return 1
+      if uline == 'q':  return -1
       if uline == 'e':  break
     #####
     cbuf()
@@ -84,7 +104,7 @@ class c_locup:
     while True:
       print(pline)
       uline = input("in<< ")
-      if uline == 'q':  return 1
+      if uline == 'q':  return -1
       if uline == 'e':  break
     #####
     cbuf()
@@ -100,10 +120,9 @@ class c_locup:
     dx =   int(self.culture_r)
     dy = - int(self.culture_r)
     ##
-    ouline = "g"
+    ouline = "gr"  # the "r" is to go relative to current position
     ouline += " {0:d}".format( dx )
     ouline += " {0:d}".format( dy )
-    # print(self.fovname[i]+":   ["+ouline+"]")
     ouline += "\r\n"
     send = bytes( ouline.encode() )
     spo.write( send )
