@@ -17,7 +17,19 @@ class c_locup:
   #
   def load_config(self):
     print("Loading config...")
-    f = open("config/locup.config")
+    #
+    fname_base =  "locup.config"
+    fname_default = "config/"+fname_base
+    fname_user = "user/"+fname_base
+    if os.path.isfile( fname_user ):
+      fname = fname_user
+      print("Found user file.")
+    else:
+      fname = fname_default
+      print("Using default file.")
+    #
+    print("  Loading: ", fname )
+    f = open(fname)
     for l in f:
       if not l.startswith('!'):  continue
       l = l.strip()
@@ -129,6 +141,19 @@ class c_locup:
   #
   def load_pattern_data(self):
     print("Loading pattern data...")
+    #
+    fname_base =  "locup_pattern.data"
+    fname_default = "config/"+fname_base
+    fname_user = "user/"+fname_base
+    if os.path.isfile( fname_user ):
+      fname = fname_user
+      print("Found user file.")
+    else:
+      fname = fname_default
+      print("Using default file.")
+    #
+    print("  Loading: ", fname )
+    #
     self.pam = []  # pattern message
     self.pax = []  # pattern x
     self.pay = []  # pattern y

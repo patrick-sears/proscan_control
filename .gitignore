@@ -2,6 +2,9 @@
 
 __pycache__/
 
+/user/*
+!/user/README.txt
+
 *.swp
 *.bak
 *~
