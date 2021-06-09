@@ -39,7 +39,7 @@ class c_locup:
       ###
       if key == '!culture_diam':
         self.culture_diam = int(ll[1])
-        self.culture_r = self.culture_diam / 2
+        self.culture_r = int(self.culture_diam / 2)
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
@@ -275,11 +275,11 @@ class c_locup:
     ######################################
     #
     # Figure out x0 y0 ----------------------->
-    # Reset culture diam.
-    self.culture_diam = int(edvalx[2] - edvalx[0])
-    alt_diam = int(edvaly[1] - edvaly[3])
-    if alt_diam < self.culture_diam:  self.culture_daim = alt_diam
-    self.culture_r = int(self.culture_diam / 2)
+    ### # Reset culture diam.
+    ### self.culture_diam = int(edvalx[2] - edvalx[0])
+    ### alt_diam = int(edvaly[1] - edvaly[3])
+    ### if alt_diam < self.culture_diam:  self.culture_daim = alt_diam
+    ### self.culture_r = int(self.culture_diam / 2)
     #
     # Set the center.
     self.cx = int((edvalx[0] + edvalx[2]) / 2)
