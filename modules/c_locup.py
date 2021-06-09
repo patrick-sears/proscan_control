@@ -1,5 +1,6 @@
 
 import sys
+import os
 
 from m1_basic_control import *
 from m99_sim_serial import spo
@@ -38,7 +39,7 @@ class c_locup:
       ###
       if key == '!culture_diam':
         self.culture_diam = int(ll[1])
-        self.culture_r = culture_diam / 2
+        self.culture_r = self.culture_diam / 2
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
@@ -70,10 +71,11 @@ class c_locup:
     ######################
     for i in range(self.n_pattern):
       #########
+      pline = ""
       if self.pam[i] != "":
-        pline += "\n"+pam[i]+"\n"
-      pline = "c"+str(self.cnum)
-      pline += " : "+paname[i]+'\n'
+        pline += "\n"+self.pam[i]+"\n"
+      pline += "c"+str(self.cnum)
+      pline += " : "+self.paname[i]+'\n'
       print(pline)
       #########
       x = self.x0 + self.pax[i]
@@ -105,7 +107,7 @@ class c_locup:
     spo.write( send )
     serda = spo.readline()
     ll = serda.decode("Ascii").split(',')
-    self.y0 = culture_diam - int(ll[1])  # 0 x, 1 y
+    self.y0 = self.culture_diam - int(ll[1])  # 0 x, 1 y
     #####
     return 0
   #
@@ -124,11 +126,11 @@ class c_locup:
     spo.write( send )
     serda = spo.readline()
     ll = serda.decode("Ascii").split(',')
-    self.x0 = culture_diam - int(ll[0])  # 0 x, 1 y
+    self.x0 = self.culture_diam - int(ll[0])  # 0 x, 1 y
     #####
     return 0
   #
-  def go_N_to_W_edge_rough():
+  def go_N_to_W_edge_rough(self):
     dx =   int(self.culture_r)
     dy = - int(self.culture_r)
     ##
@@ -165,7 +167,7 @@ class c_locup:
       if len(l) == 0:  continue
       if l[0] == '#':  continue
       lla = l.split(':')
-      if len(lla>1):  self.pam.append( lla[1].strip() )
+      if len(lla) > 1:  self.pam.append( lla[1].strip() )
       else:           self.pam.append( "" )
       llb = lla[0].strip().split(' ')
       self.paname.append( llb[0] )
