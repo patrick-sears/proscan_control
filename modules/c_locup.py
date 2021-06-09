@@ -57,15 +57,38 @@ class c_locup:
       self.go_N_to_W_edge_rough()
       if self.get_x0() == -1:  return  # quit on 'q'
       #
-      print("Culture "+str(self.cnum)+" coordinates are set.")
-      print("Running pattern...")
-      #
-      if self.run_pattern() == -1:  return  # quit on 'q'
-      print("Culture "+str(self.cnum)+" done.")
-      print()
+      debug_run = 0
+      if debug_run == 1:
+        if self.debug_run() == -1:  return # quit of 'q'
+      else:
+        print("Culture "+str(self.cnum)+" coordinates are set.")
+        print("Running pattern...")
+        if self.run_pattern() == -1:  return  # quit on 'q'
+        print("Culture "+str(self.cnum)+" done.")
+        print()
       #
       self.cnum += 1
     ##############
+  #
+  def debug_run(self):
+    pline = '\n'
+    pline += "Debug run...\n"
+    #####
+    while True:
+      print(pline)
+      uline = input("in<< ")
+      if uline == 'q':  return -1
+      if uline == 'p':
+        p()
+      elif uline == 'xy':
+        print("n_pattern = ", self.n_pattern)
+        print("x0,y0 = ", int(self.x0), int(self.y0))
+        for i in range(self.n_pattern):
+          x = self.x0 + self.pax[i]
+          y = self.y0 + self.pay[i]
+          print("  i,x,y: ", i+1, int(x), int(y))
+    #####
+    return 0
   #
   def run_pattern(self):
     ######################
@@ -107,7 +130,7 @@ class c_locup:
     spo.write( send )
     serda = spo.readline()
     ll = serda.decode("Ascii").split(',')
-    self.y0 = self.culture_diam - int(ll[1])  # 0 x, 1 y
+    self.y0 = int(ll[1]) - self.culture_diam  # 0 x, 1 y
     #####
     return 0
   #
@@ -126,7 +149,7 @@ class c_locup:
     spo.write( send )
     serda = spo.readline()
     ll = serda.decode("Ascii").split(',')
-    self.x0 = self.culture_diam - int(ll[0])  # 0 x, 1 y
+    self.x0 = int(ll[0]) - self.culture_diam  # 0 x, 1 y
     #####
     return 0
   #
