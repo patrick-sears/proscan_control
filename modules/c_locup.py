@@ -2,7 +2,7 @@
 import sys
 
 from m1_basic_control import *
-from m99+sim_serial import spo
+from m99_sim_serial import spo
 
 
 
@@ -60,7 +60,7 @@ class c_locup:
       print("Running pattern...")
       #
       if self.run_pattern() == -1:  return  # quit on 'q'
-      print("Culture "+str(self.cnum)+" done."
+      print("Culture "+str(self.cnum)+" done.")
       print()
       #
       self.cnum += 1
