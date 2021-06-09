@@ -53,9 +53,14 @@ class c_locup:
     ##############
     while( 1 ):
       #
-      if self.get_y0() == -1:  return  # quit on 'q'
-      self.go_N_to_W_edge_rough()
-      if self.get_x0() == -1:  return  # quit on 'q'
+      if self.get_edges() == -1:  return  # quit on 'q'
+      #
+      ##########################
+      # Old system...............
+      # if self.get_y0() == -1:  return  # quit on 'q'
+      # self.go_N_to_W_edge_rough()
+      # if self.get_x0() == -1:  return  # quit on 'q'
+      ##########################
       #
       debug_run = 0
       if debug_run == 1:
@@ -153,9 +158,182 @@ class c_locup:
     #####
     return 0
   #
+  def get_edges(self):
+    #
+    # 0 E, 1 N, 2 W, 3 S
+    edvalx = [0,0,0,0]
+    edvaly = [0,0,0,0]
+    edi = None
+    #
+    # Get the first edge ----------------------->
+    pline =  "Go to and edge in culture "+str(self.cnum)+'\n'
+    pline += "  Then hit N or S or E or W, and [enter]\n"
+    pline += "  n s e w also ok.\n"
+    pline += "  Or q to quit.\n"
+    while True:
+      print(pline)
+      uline = input("in<< ")
+      if uline == 'q':  return -1
+      elif uline == 'E' or uline == 'e':
+        edi = 0
+        break
+      elif uline == 'N' or uline == 'n':
+        edi = 1
+        break
+      elif uline == 'W' or uline == 'w':
+        edi = 2
+        break
+      elif uline == 'S' or uline == 's':
+        edi = 3
+        break
+      else:
+        print("Unrecognized input.")
+    ######################################
+    # Get the edge values.
+    cbuf()
+    send = bytes( "p\r\n".encode() )
+    spo.write( send )
+    serda = spo.readline()
+    ll = serda.decode("Ascii").split(',')
+    edvalx[edi] = int(ll[0])  # 0 x, 1 y
+    edvaly[edi] = int(ll[1])  # 0 x, 1 y
+    ######################################
+    #
+    # Get the second edge ----------------------->
+    self.go_ccw_edge_rough(edi)
+    #
+    edi = edi+1 if edi<3 else 0
+    if   edi == 0:  ped = 'E'
+    elif edi == 1:  ped = 'N'
+    elif edi == 2:  ped = 'W'
+    elif edi == 3:  ped = 'S'
+    pline = "Go to "+ped+" and hit m[enter].\n"
+    while True:
+      print(pline)
+      uline = input("in<< ")
+      if uline == 'q':  return -1
+      elif uline == 'm':  break
+    ######################################
+    # Get the edge values.
+    cbuf()
+    send = bytes( "p\r\n".encode() )
+    spo.write( send )
+    serda = spo.readline()
+    ll = serda.decode("Ascii").split(',')
+    edvalx[edi] = int(ll[0])  # 0 x, 1 y
+    edvaly[edi] = int(ll[1])  # 0 x, 1 y
+    ######################################
+    #
+    # Get the third edge ----------------------->
+    self.go_ccw_edge_rough(edi)
+    #
+    edi = edi+1 if edi<3 else 0
+    if   edi == 0:  ped = 'E'
+    elif edi == 1:  ped = 'N'
+    elif edi == 2:  ped = 'W'
+    elif edi == 3:  ped = 'S'
+    pline = "Go to "+ped+" and hit m[enter].\n"
+    while True:
+      print(pline)
+      uline = input("in<< ")
+      if uline == 'q':  return -1
+      elif uline == 'm':  break
+    ######################################
+    # Get the edge values.
+    cbuf()
+    send = bytes( "p\r\n".encode() )
+    spo.write( send )
+    serda = spo.readline()
+    ll = serda.decode("Ascii").split(',')
+    edvalx[edi] = int(ll[0])  # 0 x, 1 y
+    edvaly[edi] = int(ll[1])  # 0 x, 1 y
+    ######################################
+    #
+    # Get the fourth edge ----------------------->
+    self.go_ccw_edge_rough(edi)
+    #
+    edi = edi+1 if edi<3 else 0
+    if   edi == 0:  ped = 'E'
+    elif edi == 1:  ped = 'N'
+    elif edi == 2:  ped = 'W'
+    elif edi == 3:  ped = 'S'
+    pline = "Go to "+ped+" and hit m[enter].\n"
+    while True:
+      print(pline)
+      uline = input("in<< ")
+      if uline == 'q':  return -1
+      elif uline == 'm':  break
+    ######################################
+    # Get the edge values.
+    cbuf()
+    send = bytes( "p\r\n".encode() )
+    spo.write( send )
+    serda = spo.readline()
+    ll = serda.decode("Ascii").split(',')
+    edvalx[edi] = int(ll[0])  # 0 x, 1 y
+    edvaly[edi] = int(ll[1])  # 0 x, 1 y
+    ######################################
+    #
+    # Figure out x0 y0 ----------------------->
+    # Reset culture diam.
+    self.culture_diam = int(edvalx[2] - edvalx[0])
+    alt_diam = int(edvaly[1] - edvaly[3])
+    if alt_diam < self.culture_diam:  self.culture_daim = alt_diam
+    self.culture_r = int(self.culture_diam / 2)
+    #
+    # Set the center.
+    self.cx = int((edvalx[0] + edvalx[2]) / 2)
+    self.cy = int((edvaly[1] + edvaly[3]) / 2)
+    #
+    # Set x0 and y0
+    self.x0 = self.cx - self.culture_r
+    self.y0 = self.cy - self.culture_r
+    #
+    return 0
+    #
+  #
+  def go_ccw_edge_rough(self, in_edi):
+    if   in_edi == 0:  self.go_E_to_N_edge_rough()
+    elif in_edi == 1:  self.go_N_to_W_edge_rough()
+    elif in_edi == 2:  self.go_W_to_S_edge_rough()
+    elif in_edi == 3:  self.go_S_to_E_edge_rough()
+  #
+  def go_E_to_N_edge_rough(self):
+    dx =   int(self.culture_r)
+    dy =   int(self.culture_r)
+    ##
+    ouline = "gr"  # the "r" is to go relative to current position
+    ouline += " {0:d}".format( dx )
+    ouline += " {0:d}".format( dy )
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
+    spo.write( send )
+  #
   def go_N_to_W_edge_rough(self):
     dx =   int(self.culture_r)
     dy = - int(self.culture_r)
+    ##
+    ouline = "gr"  # the "r" is to go relative to current position
+    ouline += " {0:d}".format( dx )
+    ouline += " {0:d}".format( dy )
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
+    spo.write( send )
+  #
+  def go_W_to_S_edge_rough(self):
+    dx = - int(self.culture_r)
+    dy = - int(self.culture_r)
+    ##
+    ouline = "gr"  # the "r" is to go relative to current position
+    ouline += " {0:d}".format( dx )
+    ouline += " {0:d}".format( dy )
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
+    spo.write( send )
+  #
+  def go_S_to_E_edge_rough(self):
+    dx = - int(self.culture_r)
+    dy =   int(self.culture_r)
     ##
     ouline = "gr"  # the "r" is to go relative to current position
     ouline += " {0:d}".format( dx )
