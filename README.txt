@@ -15,5 +15,21 @@ On the Chapel Hill UNC network, see the mtorpedi server:
 
 
 
+__________________________________________________________________
+For locup system:
+
+from m_locup import locup
+locup.run()
+
+          N
+        -----
+      /       \
+   W |         |  E
+      \       /
+        -----
+          S
+
+
+
 
 
