@@ -34,9 +34,13 @@ if hostname == 'shiva2':
   #
   # Starts serial port when module is loaded.
   # spo:  serial port
+  ### spo = serial.Serial(
+  ###   port='COM5', baudrate=9600, bytesize=8,
+  ###   timeout=2, stopbits=serial.STOPBITS_ONE
+  ###   )
   spo = serial.Serial(
     port='COM5', baudrate=9600, bytesize=8,
-    timeout=2, stopbits=serial.STOPBITS_ONE
+    timeout=1, stopbits=serial.STOPBITS_ONE
     )
   #
 else:
