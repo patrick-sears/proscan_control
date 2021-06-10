@@ -1,7 +1,6 @@
 
 
-!m : 10 FOVs horizontally across.
-1 4124 0
+1 4124 0 : 10 FOVs horizontally across.
 2 3208 0
 3 2291 0
 4 1375 0
@@ -13,8 +12,7 @@
 10 -4124 0
 
 
-!m : North and South FOVs.
-N 0 4124
+N 0 4124 : North and South FOVs.
 S 0 -4124
 
 

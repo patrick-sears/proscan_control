@@ -1,7 +1,6 @@
 
 
-!m : 10 FOVs horizontally across.
-1 3817 0
+1 3817 0  : 10 FOVs horizontally across.
 2 2969 0
 3 2121 0
 4 1272 0
@@ -13,8 +12,7 @@
 10 -3817 0
 
 
-!m : North and South FOVs.
-N 0 3817
+N 0 3817   : North and South FOVs.
 S 0 -3817
 
 
