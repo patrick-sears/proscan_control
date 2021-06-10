@@ -1,6 +1,8 @@
 
 import sys
 import os
+import winsound
+import time
 
 from m1_basic_control import *
 from m99_sim_serial import spo
@@ -62,6 +64,19 @@ class c_locup:
       # if self.get_x0() == -1:  return  # quit on 'q'
       ##########################
       #
+      ######################################
+      # This section is here to make sure the human doesn't
+      # keep moving to edges and hitting enter when they
+      # should be taking videos using the pattern.
+      self.beep(1)
+      pline = "Ready to start pattern run (y for yes / q to quit):"
+      while True:
+        print(pline)
+        uline = input("in<< ")
+        if uline == 'q':  return
+        if uline == 'y':  break
+      ######################################
+      #
       debug_run = 0
       if debug_run == 1:
         if self.debug_run() == -1:  return # quit of 'q'
@@ -106,8 +121,10 @@ class c_locup:
       pline += " : "+self.paname[i]+'\n'
       print(pline)
       #########
-      x = self.x0 + self.pax[i]
-      y = self.y0 + self.pay[i]
+      # x = self.x0 + self.pax[i]
+      # y = self.y0 + self.pay[i]
+      x = self.cx + self.pax[i]
+      y = self.cy + self.pay[i]
       ouline = "g"
       ouline += " {0:d}".format( x )
       ouline += " {0:d}".format( y )
@@ -158,7 +175,21 @@ class c_locup:
     #####
     return 0
   #
+  def beep(self, u):
+    if u == 1:
+      winsound.Beep(1600,200)  # (freq in Hz, duration in ms)
+      time.sleep(0.1)
+      winsound.Beep(1600,200)  # (freq in Hz, duration in ms)
+      # os.system('\a')
+      # sys.stdout.write('\a')
+      # sys.stdout.flush()
+    elif u == 2:
+      winsound.Beep(1600,200)  # (freq in Hz, duration in ms)
+  #
   def get_edges(self):
+    #####
+    self.beep(2)
+    #####
     #
     # 0 E, 1 N, 2 W, 3 S
     edvalx = [0,0,0,0]
@@ -207,12 +238,12 @@ class c_locup:
     elif edi == 1:  ped = 'N'
     elif edi == 2:  ped = 'W'
     elif edi == 3:  ped = 'S'
-    pline = "Go to "+ped+" and hit m[enter].\n"
+    pline = "Go to "+ped+" and hit [enter], q to quit.\n"
     while True:
       print(pline)
       uline = input("in<< ")
       if uline == 'q':  return -1
-      elif uline == 'm':  break
+      break
     ######################################
     # Get the edge values.
     cbuf()
@@ -237,7 +268,7 @@ class c_locup:
       print(pline)
       uline = input("in<< ")
       if uline == 'q':  return -1
-      elif uline == 'm':  break
+      break
     ######################################
     # Get the edge values.
     cbuf()
@@ -262,7 +293,7 @@ class c_locup:
       print(pline)
       uline = input("in<< ")
       if uline == 'q':  return -1
-      elif uline == 'm':  break
+      break
     ######################################
     # Get the edge values.
     cbuf()
@@ -362,7 +393,7 @@ class c_locup:
     self.pay = []  # pattern y
     self.paname = []  # a short name for that item in the pattern list
     # several items can have the same name.
-    f = open("config/locup_pattern.data")
+    f = open(fname)
     for l in f:
       l = l.strip()
       if len(l) == 0:  continue

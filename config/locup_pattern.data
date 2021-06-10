@@ -1,25 +1,18 @@
 
 
-
-# Evenly spaced 10 horizontal fovs, 2 fovs from the edge
-# That's a motion of the center by 1.5 fovs = 468 um from edge.
-# Each FOV is 915 um over.  One fov width is 312 um.
-# Also putting N and S 468 um from edge at center.
-
-1 8702 4585    : Starting horizontal set of 10 FOVs.
-2 7787 4585
-3 6872 4585
-4 5957 4585
-5 5042 4585
-6 4128 4585
-7 3213 4585
-8 2298 4585
-9 1383 4585
-10 468 4585
-
-N 4585 8702    :  Starting set of two FOVs, N and S.
-S 4585 468
+1 3817 0     : 10 FOVs horizontally across.
+2 2969 0
+3 2121 0
+4 1272 0
+5 424 0
+6 -424 0
+7 -1272 0
+8 -2121 0
+9 -2969 0
+10 -3817 0
 
 
+N 0 3817      : North and South FOVs.
+S 0 -3817
 
 
