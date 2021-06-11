@@ -65,3 +65,65 @@ gc = Cmculture()
 gf = Cgofov();
 
 
+#######################################################
+def tour_fovN():
+  print("Starting tour of N FOVs.")
+  ##########
+  c1.goN()
+  pline = "At c1 N.  [enter] when done, q to quit."
+  while True:
+    print(pline)
+    uline = input("in<< ")
+    if uline == 'q':  return
+    if uline == '':  break
+  ##########
+  c2.goN()
+  pline = "At c2 N.  [enter] when done, q to quit."
+  while True:
+    print(pline)
+    uline = input("in<< ")
+    if uline == 'q':  return
+    if uline == '':  break
+  ##########
+  c3.goN()
+  pline = "At c3 N.  [enter] when done, q to quit."
+  while True:
+    print(pline)
+    uline = input("in<< ")
+    if uline == 'q':  return
+    if uline == '':  break
+  ##########
+  c4.goN()
+  pline = "At c4 N.  [enter] when done, q to quit."
+  while True:
+    print(pline)
+    uline = input("in<< ")
+    if uline == 'q':  return
+    if uline == '':  break
+  ##########
+  c5.goN()
+  pline = "At c5 N.  [enter] when done, q to quit."
+  while True:
+    print(pline)
+    uline = input("in<< ")
+    if uline == 'q':  return
+    if uline == '':  break
+  ##########
+  c6.goN()
+  pline = "At c6 N."
+  # pline = "At c6 N.  [enter] when done, q to quit."
+  # while True:
+  #   print(pline)
+  #   uline = input("in<< ")
+  #   if uline == 'q':  return
+  #   if uline == '':  break
+  ##########
+  print("Done with tour of N FOVs.")
+  return
+#######################################################
+
+
+
+
+
+
