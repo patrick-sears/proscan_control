@@ -18,8 +18,9 @@ On the Chapel Hill UNC network, see the mtorpedi server:
 __________________________________________________________________
 For locup system:
 
-from m_locup import locup
-locup.run()
+Do this to start:
+>>> from modules/c_locup import locup
+>>> locup.run()
 
           N
         -----
