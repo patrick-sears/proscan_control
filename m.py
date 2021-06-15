@@ -2,12 +2,17 @@
 
 
 
-from m0_c00_config import *
+# from m0_c00_config import *
 from m1_basic_control import *
-from m2_plate_6well import *
-from m3_mctd_8fov import *
-from m4_center_fovs import *
+# from m2_plate_6well import *
+# from m3_mctd_8fov import *
+# from m4_center_fovs import *
 
+# from xxx import xxx
+from Cc00_config import Cc00_config
+from Cfov8 import Cfov8
+from Cmculture import Cmculture
+from Cplate_6well import Cplate_6well
 
 
 c00 = Cc00_config()
@@ -58,5 +63,67 @@ gc = Cmculture()
 
 
 gf = Cgofov();
+
+
+#######################################################
+def tour_fovN():
+  print("Starting tour of N FOVs.")
+  ##########
+  c1.goN()
+  pline = "At c1 N.  [enter] when done, q to quit."
+  while True:
+    print(pline)
+    uline = input("in<< ")
+    if uline == 'q':  return
+    if uline == '':  break
+  ##########
+  c2.goN()
+  pline = "At c2 N.  [enter] when done, q to quit."
+  while True:
+    print(pline)
+    uline = input("in<< ")
+    if uline == 'q':  return
+    if uline == '':  break
+  ##########
+  c3.goN()
+  pline = "At c3 N.  [enter] when done, q to quit."
+  while True:
+    print(pline)
+    uline = input("in<< ")
+    if uline == 'q':  return
+    if uline == '':  break
+  ##########
+  c4.goN()
+  pline = "At c4 N.  [enter] when done, q to quit."
+  while True:
+    print(pline)
+    uline = input("in<< ")
+    if uline == 'q':  return
+    if uline == '':  break
+  ##########
+  c5.goN()
+  pline = "At c5 N.  [enter] when done, q to quit."
+  while True:
+    print(pline)
+    uline = input("in<< ")
+    if uline == 'q':  return
+    if uline == '':  break
+  ##########
+  c6.goN()
+  pline = "At c6 N."
+  # pline = "At c6 N.  [enter] when done, q to quit."
+  # while True:
+  #   print(pline)
+  #   uline = input("in<< ")
+  #   if uline == 'q':  return
+  #   if uline == '':  break
+  ##########
+  print("Done with tour of N FOVs.")
+  return
+#######################################################
+
+
+
+
 
 

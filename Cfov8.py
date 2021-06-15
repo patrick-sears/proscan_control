@@ -30,12 +30,19 @@ class Cfov8:
     # side = r / sqrt(2) = 11500 / sqrt(2) = 8132.
   ###
   def show_zero(self):
-    if self.x0 == None:   print("x0:  Not set.")
-    else:
-      print("x0:  ", self.x0)
-    if self.y0 == None:   print("y0:  Not set.")
-    else:
-      print("y0:  ", self.y0)
+    ux0 = "not_set" if self.x0==None else str(self.x0)
+    uy0 = "not_set" if self.y0==None else str(self.y0)
+    # ux0 = "not_set"
+    # uy0 = "not_set"
+    # if self.x0 != None:  ux0 = self.x0
+    # if self.y0 != None:  uy0 = self.y0
+    # print("x0, y0:  "+str(ux0)+", "+str(uy0) )
+    print("x0, y0:  "+ux0+", "+uy0 )
+  ###
+  def adjust_zero(self, dx, dy):
+    self.x0 += dx
+    self.y0 += dy
+    self.init_fovs()
   ###
   def rel_top2lef(self):
     # Used after doing selef() to go roughly from the top of the

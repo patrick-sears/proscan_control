@@ -9,9 +9,25 @@ Source.
 __________________________________________________________________
 Documentation.
 
-See the mtorpedi server:
-  http://152.19.58.31/prior_proscan_iii_pycontrol/main.html
+On the Chapel Hill UNC network, see the mtorpedi server:
+  http://152.19.58.31/prs-proscan_control/main.html
 
+
+
+
+__________________________________________________________________
+For locup system:
+
+from m_locup import locup
+locup.run()
+
+          N
+        -----
+      /       \
+   W |         |  E
+      \       /
+        -----
+          S
 
 
 
