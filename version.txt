@@ -1,3 +1,8 @@
-0.0.5-b1
-2021-05-18 1400
+
+
+
+2021-06-15 Tue:
+- Branch bat merged into master and tagged:  v0.5b
+
+
 
