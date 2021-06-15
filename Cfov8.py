@@ -12,7 +12,8 @@ from m99_sim_serial import spo
 class Cfov8:
   def __init__(self,cid):  # cid = culture id
     self.cid = str(cid)
-    self.fname_zero = 'z01_c'+self.cid+'.data'
+    self.fname_zero_c = 'config/fov8_'+self.cid+'.data'
+    self.fname_zero_u = 'user/fov8_'+self.cid+'.data'
     self.n_pos = 8
     self.fovname = 'N;NW;W;SW;S;SE;E;NE'.split(';')
     # self.init_fovs()  # Can only be done after x0 and y0 are set.
@@ -197,12 +198,16 @@ class Cfov8:
     print("Done.  At NE FOV.")
   ###
   def load_zero(self):
-    if not os.path.isfile( self.fname_zero ):
-      # print("  File doesn't exist:  ", self.fname_zero)
+    #########
+    fname_zero = self.fname_zero_u
+    if not os.path.isfile( fname_zero ):
+      fname_zero = self.fname_zero_c
+    if not os.path.isfile( fname_zero ):
       print("The culture "+self.cid+" has no saved zero file.")
       return
+    #########
     print("Loading culture "+self.cid+" zero file.")
-    f = open( self.fname_zero )
+    f = open( fname_zero )
     ll = f.readline().strip().split(' ')
     self.x0 = int(ll[1])
     ll = f.readline().strip().split(' ')
@@ -216,7 +221,8 @@ class Cfov8:
       print("The culture "+self.cid+" is not zeroed.")
       return
     print("Saving culture "+self.cid+" zero file.")
-    fz = open(self.fname_zero, 'w')
+    # Only allow saving to the user dir, not the config dir.
+    fz = open(self.fname_zero_u, 'w')
     line = ""
     line += "x0: " + str(self.x0) + '\n'
     line += "y0: " + str(self.y0) + '\n'
