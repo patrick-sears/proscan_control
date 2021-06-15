@@ -1,4 +1,5 @@
 
+import os
 import sys
 
 ##################################################################
@@ -13,7 +14,11 @@ class Cc00_config:
     self.fname_plate_6well_inspos_lis = None
   ###
   def load(self):
-    f = open('c00.config')
+    fname = 'config/c00.config'
+    fname1 = 'user/c00.config'
+    if os.path.isfile(fname1):  fname = fname1
+    ##########
+    f = open(fname)
     for l in f:
       if not l.startswith('!'):  continue
       l = l.strip()
@@ -35,6 +40,7 @@ class Cc00_config:
         print("Error.  Unrecognized key in c00.config.")
         print("  key: ", key)
         sys.exit(1)
+    ##########
     f.close()
     self.well6_holder_fiducial_n = len( self.well6_holder_fiducial_name )
   ###
