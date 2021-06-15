@@ -54,7 +54,8 @@ def wp_sefidu(fidu_name):
   wp.sefidu(x,y)
 #################################
 def wp_load_inspos():
-  wp.load_inspos( c00.fname_plate_6well_inspos_lis )
+  wp.fname_inspos = c00.fname_plate_6well_inspos_lis
+  wp.load_inspos()
 #################################
 
 # general culture

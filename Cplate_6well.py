@@ -1,6 +1,7 @@
 
 
 from m99_sim_serial import spo
+import os
 
 
 ##################################################################
@@ -45,7 +46,7 @@ class Cplate_6well:
         self.insposl[i].append(None)
     #######
     #
-    self.fname_inspos = "z02_plate_6well_inspos.data"
+    self.fname_inspos = "plate_6well_inspos.data"
   ###
   def seinsposN(self, well):
     self.seinspos(well,0)
@@ -78,7 +79,7 @@ class Cplate_6well:
       self.inspos[i][cp] = int(ll[0])
   ###
   def save_inspos(self):
-    fz = open(self.fname_inspos, 'w')
+    fz = open('user/'+self.fname_inspos, 'w')
     fz.write('--------------------------\n')
     for i in range(self.n_euwell):
       ii = i + 1
@@ -125,8 +126,17 @@ class Cplate_6well:
         self.inscenx[i] = int((val1 + val3) / 2)
       ######
   ###
-  def load_inspos(self, fname):
-    # f = open(self.fname_inspos)
+  def load_inspos(self):
+    ########################################
+    fname = 'user/'+self.fname_inspos
+    if not os.path.isfile(fname):
+      fname = 'config/'+self.fname_inspos
+    if not os.path.isfile(fname):
+      print("Could not find inspos file.")
+      print("  Looked in user/ and config/.")
+      print("  File:  ", self.fname_inspos)
+      return
+    ########################################
     f = open(fname)
     f.readline()  # skip first line.
     for i in range(self.n_euwell):
