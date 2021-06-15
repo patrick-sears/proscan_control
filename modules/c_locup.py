@@ -4,8 +4,8 @@ import os
 import winsound
 import time
 
-from m1_basic_control import *
-from m99_sim_serial import spo
+from modules.m1_basic_control import *
+from modules.m99_sim_serial import spo
 
 
 
