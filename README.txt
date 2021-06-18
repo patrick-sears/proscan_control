@@ -25,7 +25,7 @@ __________________________________________________________________
 locup system.
 
 Do this to start:
->>> from modules/c_locup import locup
+>>> from modules.c_locup import locup
 >>> locup.run()
 
           N
@@ -37,6 +37,11 @@ Do this to start:
           S
 
 
+__________________________________________________________________
+arec system.
 
+
+Do this to start:
+>>> from modules.c_arec import arec
 
 
