@@ -21,11 +21,15 @@ class c_arec:
     self.px = []    # x pos
     self.py = []    # y pos
     self.notes = [] 
+    self.name_prefix = 'a'
     #
     self.n_area = 0
     #
     print("DANGER:  Backup system not implemented yet.")
     print("  If you set areas and then load, you will loose your data.")
+  #
+  def prefix(self,p):
+    self.name_prefix = p
   #
   def clear_areas(self):
     self.name = []  # area name
@@ -44,12 +48,32 @@ class c_arec:
       print(line)
     print("n_area: ", self.n_area)
   #
+  def next_name(self):
+    auto_n = len(self.name_prefix)+3
+    next_i = 0   # The first possible will actually be 1
+    n0 = len(self.name_prefix)
+    for i in range(self.n_area):
+      if len(self.name[i]) != auto_n:  continue
+      if not self.name[i].startswith( self.name_prefix ):  continue
+      # print("::> ", self.name[i])
+      oor = 0  #  index out of range
+      for j in range(3):  # 3 digits
+        acode = ord(self.name[i][n0+j])
+        if acode < 48:  oor = 1    # ascii 0
+        if acode > 57:  oor = 1    # ascii 9
+      if oor == 1:  continue
+      cunum = int(self.name[i][n0:])
+      if cunum > next_i:  next_i = cunum
+    next_i += 1
+    return self.name_prefix+'{0:03d}'.format( next_i )
+  #
   def set(self, name=None):
     #
     i = self.n_area
+    self.name.append( self.next_name() )
     self.n_area += 1
     #
-    self.name.append( "a"+str(i) )
+    # self.name.append( self.name_prefix+str(i) )
     self.px.append( 0 )
     self.py.append( 0 )
     self.notes.append( "" )
