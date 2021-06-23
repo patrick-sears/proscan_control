@@ -46,6 +46,15 @@ def save_all_zeros():
   c5.save_zero()
   c6.save_zero()
 
+def print_zeros():
+  print("c1:  ", c1.x0, c1.y0)
+  print("c2:  ", c2.x0, c2.y0)
+  print("c3:  ", c3.x0, c3.y0)
+  print("c4:  ", c4.x0, c4.y0)
+  print("c5:  ", c5.x0, c5.y0)
+  print("c6:  ", c6.x0, c6.y0)
+
+
 wp = Cplate_6well()   # wp:  well plate
 #################################
 def wp_sefidu(fidu_name):
@@ -126,5 +135,47 @@ def tour_fovN():
 
 
 
+#######################################################
+def fov8_adjust():
+  print("Starting tour of edges to adjust culture positions.")
+  print("  Just hit [enter] if ok.")
+  print("  Hit a[enter] if adjustment has been made.")
+  print("  Any time, q[enter] quits.")
+  ##########
+  c1.goedW()
+  while True:
+    print("At c1 W edge.")
+    uline = input("u>> ")
+    if uline == 'q':  return
+    if uline == '':   break
+    if uline == 'a':  c1.selef()
+  ##########
+  c1.goedN()
+  while True:
+    print("At c1 N edge.")
+    uline = input("u>> ")
+    if uline == 'q':  return
+    if uline == '':   break
+    if uline == 'a':  c1.setop()
+  ##########
+  c2.goedW()
+  while True:
+    print("At c2 W edge.")
+    uline = input("u>> ")
+    if uline == 'q':  return
+    if uline == '':   break
+    if uline == 'a':  c1.selef()
+  ##########
+  c2.goedN()
+  while True:
+    print("At c2 N edge.")
+    uline = input("u>> ")
+    if uline == 'q':  return
+    if uline == '':   break
+    if uline == 'a':  c1.setop()
+  ##########
+  print("Done with adjustments.")
+  return
+#######################################################
 
 
