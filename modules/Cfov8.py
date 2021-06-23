@@ -18,16 +18,18 @@ class Cfov8:
     self.fovname = 'N;NW;W;SW;S;SE;E;NE'.split(';')
     # self.init_fovs()  # Can only be done after x0 and y0 are set.
     #
+    # x0 and y0 are the center of each cultures.
+    # Inserts are 23000 um wide.  So edges are at
+    # So edges (not fovs) are here:
+    # W and E edges:  x0 +/- 11500
+    # N and S edges:  y0 +/- 11500
     self.x0 = None
     self.y0 = None
     self.zeroed = False
     #
-    # fovs are at x1 y1.
-    # edges are at x2 y2
+    # fovs are at self.x1 self.y1.
+    # edges are at self.x2 self.y2
     #
-    # Edges (not fovs):
-    # W and E edges:  x0 +/- 11500
-    # N and S edges:  y0 +/- 11500
     # side = r / sqrt(2) = 11500 / sqrt(2) = 8132.
   ###
   def show_zero(self):
@@ -58,6 +60,8 @@ class Cfov8:
     spo.write( send )
   ###
   def selef(self):
+    # Set center x0 using the left edge.
+    # Then set fovs if possilbe.
     # Set the left edge of the track.  Ie, set x0.
     cbuf() # Make sure the buffer is clear.
     send = bytes( "p\r\n".encode() )
@@ -67,14 +71,37 @@ class Cfov8:
     self.x0 = int(ll[0]) - 11500
     self.init_fovs()
   ###
+  def serit(self):
+    # Set center x0 using the right edge.
+    # Then set fovs if possilbe.
+    cbuf() # Make sure the buffer is clear.
+    send = bytes( "p\r\n".encode() )
+    spo.write( send )
+    serda = spo.readline()
+    ll = serda.decode("Ascii").split(',')
+    self.x0 = int(ll[0]) + 11500
+    self.init_fovs()
+  ###
   def setop(self):
-    # Set the top edge of the track.  Ie, set y0.
+    # Set center y0 using the top edge.
+    # Then set fovs if possilbe.
     cbuf() # Make sure the buffer is clear.
     send = bytes( "p\r\n".encode() )
     spo.write( send )
     serda = spo.readline()
     ll = serda.decode("Ascii").split(',')
     self.y0 = int(ll[1]) - 11500
+    self.init_fovs()
+  ###
+  def sebot(self):
+    # Set center y0 using the bottom edge.
+    # Then set fovs if possilbe.
+    cbuf() # Make sure the buffer is clear.
+    send = bytes( "p\r\n".encode() )
+    spo.write( send )
+    serda = spo.readline()
+    ll = serda.decode("Ascii").split(',')
+    self.y0 = int(ll[1]) + 11500
     self.init_fovs()
   ###
   def init_fovs(self):  # and edges
