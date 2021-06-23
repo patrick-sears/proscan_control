@@ -181,7 +181,7 @@ class Cfov8:
     print("  x to exit.")
     # print("uline: ["+uline+"]")
     for i in range(1, self.n_pos):
-      uline = input("in<< ")
+      uline = input("u>> ")
       if uline == 'x':
         print("Early exit.")
         break

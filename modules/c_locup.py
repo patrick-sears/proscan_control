@@ -72,7 +72,7 @@ class c_locup:
       pline = "Ready to start pattern run (y for yes / q to quit):"
       while True:
         print(pline)
-        uline = input("in<< ")
+        uline = input("u>> ")
         if uline == 'q':  return
         if uline == 'y':  break
       ######################################
@@ -96,7 +96,7 @@ class c_locup:
     #####
     while True:
       print(pline)
-      uline = input("in<< ")
+      uline = input("u>> ")
       if uline == 'q':  return -1
       if uline == 'p':
         p()
@@ -143,7 +143,7 @@ class c_locup:
     #####
     while True:
       print(pline)
-      uline = input("in<< ")
+      uline = input("u>> ")
       if uline == 'q':  return -1
       if uline == 'e':  break
     #####
@@ -162,7 +162,7 @@ class c_locup:
     #####
     while True:
       print(pline)
-      uline = input("in<< ")
+      uline = input("u>> ")
       if uline == 'q':  return -1
       if uline == 'e':  break
     #####
@@ -203,7 +203,7 @@ class c_locup:
     pline += "  Or q to quit.\n"
     while True:
       print(pline)
-      uline = input("in<< ")
+      uline = input("u>> ")
       if uline == 'q':  return -1
       elif uline == 'E' or uline == 'e':
         edi = 0
@@ -241,7 +241,7 @@ class c_locup:
     pline = "Go to "+ped+" and hit [enter], q to quit.\n"
     while True:
       print(pline)
-      uline = input("in<< ")
+      uline = input("u>> ")
       if uline == 'q':  return -1
       break
     ######################################
@@ -266,7 +266,7 @@ class c_locup:
     pline = "Go to "+ped+" and hit m[enter].\n"
     while True:
       print(pline)
-      uline = input("in<< ")
+      uline = input("u>> ")
       if uline == 'q':  return -1
       break
     ######################################
@@ -291,7 +291,7 @@ class c_locup:
     pline = "Go to "+ped+" and hit m[enter].\n"
     while True:
       print(pline)
-      uline = input("in<< ")
+      uline = input("u>> ")
       if uline == 'q':  return -1
       break
     ######################################

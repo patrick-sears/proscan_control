@@ -74,7 +74,7 @@ def tour_fovN():
   pline = "At c1 N.  [enter] when done, q to quit."
   while True:
     print(pline)
-    uline = input("in<< ")
+    uline = input("u>> ")
     if uline == 'q':  return
     if uline == '':  break
   ##########
@@ -82,7 +82,7 @@ def tour_fovN():
   pline = "At c2 N.  [enter] when done, q to quit."
   while True:
     print(pline)
-    uline = input("in<< ")
+    uline = input("u>> ")
     if uline == 'q':  return
     if uline == '':  break
   ##########
@@ -90,7 +90,7 @@ def tour_fovN():
   pline = "At c3 N.  [enter] when done, q to quit."
   while True:
     print(pline)
-    uline = input("in<< ")
+    uline = input("u>> ")
     if uline == 'q':  return
     if uline == '':  break
   ##########
@@ -98,7 +98,7 @@ def tour_fovN():
   pline = "At c4 N.  [enter] when done, q to quit."
   while True:
     print(pline)
-    uline = input("in<< ")
+    uline = input("u>> ")
     if uline == 'q':  return
     if uline == '':  break
   ##########
@@ -106,7 +106,7 @@ def tour_fovN():
   pline = "At c5 N.  [enter] when done, q to quit."
   while True:
     print(pline)
-    uline = input("in<< ")
+    uline = input("u>> ")
     if uline == 'q':  return
     if uline == '':  break
   ##########
@@ -115,7 +115,7 @@ def tour_fovN():
   # pline = "At c6 N.  [enter] when done, q to quit."
   # while True:
   #   print(pline)
-  #   uline = input("in<< ")
+  #   uline = input("u>> ")
   #   if uline == 'q':  return
   #   if uline == '':  break
   ##########

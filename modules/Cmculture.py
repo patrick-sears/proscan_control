@@ -122,7 +122,7 @@ class Cmculture:
     print("Max number of FOVs: ", n_fov_max)
     print("n_fov to use: ", u_n_fov)
     print("Enter to run, x to exit:")
-    uline = input("  in<< ")
+    uline = input("  u>> ")
     if uline == 'x':
       return
     dx = ifd + w_fov
@@ -144,7 +144,7 @@ class Cmculture:
       spo.write( send )
       line = "At fov "+str(i+1)+" / "+str(u_n_fov)+'.'
       if i+1 < u_n_fov:
-        uline = input(line + "  in<< ")
+        uline = input(line + "  u>> ")
         if uline == 'x':
           print("Early exit.")
           break
