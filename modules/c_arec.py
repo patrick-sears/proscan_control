@@ -182,6 +182,14 @@ class c_arec:
         elif uline == 'ls':  self.ls()
         elif uline == 'load':  self.load()
         elif uline == 'save':  self.save()
+        elif uline.startswith('go '):
+          if len(uline) <= len('go '):
+            print("No entered entered.")
+          else:
+            # go abc
+            # 01234567
+            aname = uline[3:]
+            self.go( aname )
         elif uline.startswith('prefix'):
           if uline == 'prefix':
             self.prefix()  # Just show the current prefix.
