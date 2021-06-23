@@ -164,7 +164,7 @@ def fov8_adjust():
     uline = input("u>> ")
     if uline == 'q':  return
     if uline == '':   break
-    if uline == 'a':  c1.selef()
+    if uline == 'a':  c2.selef()
   ##########
   c2.goedN()
   while True:
@@ -172,7 +172,73 @@ def fov8_adjust():
     uline = input("u>> ")
     if uline == 'q':  return
     if uline == '':   break
-    if uline == 'a':  c1.setop()
+    if uline == 'a':  c2.setop()
+  ##########
+  c3.goedW()
+  while True:
+    print("At c3 W edge.")
+    uline = input("u>> ")
+    if uline == 'q':  return
+    if uline == '':   break
+    if uline == 'a':  c3.selef()
+  ##########
+  c3.goedN()
+  while True:
+    print("At c3 N edge.")
+    uline = input("u>> ")
+    if uline == 'q':  return
+    if uline == '':   break
+    if uline == 'a':  c3.setop()
+  ##########
+  ################################### new order
+  ##########
+  c6.goedN()
+  while True:
+    print("At c6 N edge.")
+    uline = input("u>> ")
+    if uline == 'q':  return
+    if uline == '':   break
+    if uline == 'a':  c6.setop()
+  ##########
+  c6.goedW()
+  while True:
+    print("At c6 W edge.")
+    uline = input("u>> ")
+    if uline == 'q':  return
+    if uline == '':   break
+    if uline == 'a':  c6.selef()
+  ##########
+  c5.goedN()
+  while True:
+    print("At c5 N edge.")
+    uline = input("u>> ")
+    if uline == 'q':  return
+    if uline == '':   break
+    if uline == 'a':  c5.setop()
+  ##########
+  c5.goedW()
+  while True:
+    print("At c5 W edge.")
+    uline = input("u>> ")
+    if uline == 'q':  return
+    if uline == '':   break
+    if uline == 'a':  c5.selef()
+  ##########
+  c4.goedN()
+  while True:
+    print("At c4 N edge.")
+    uline = input("u>> ")
+    if uline == 'q':  return
+    if uline == '':   break
+    if uline == 'a':  c4.setop()
+  ##########
+  c4.goedW()
+  while True:
+    print("At c4 W edge.")
+    uline = input("u>> ")
+    if uline == 'q':  return
+    if uline == '':   break
+    if uline == 'a':  c4.selef()
   ##########
   print("Done with adjustments.")
   return
