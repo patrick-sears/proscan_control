@@ -28,8 +28,11 @@ class c_arec:
     print("DANGER:  Backup system not implemented yet.")
     print("  If you set areas and then load, you will loose your data.")
   #
-  def prefix(self,p):
-    self.name_prefix = p
+  def prefix(self,p=None):
+    if p != None:
+      self.name_prefix = p
+    print("Using new prefix'"+self.name_prefix+"'")
+    print("  Next area name will be: ",self.next_name())
   #
   def clear_areas(self):
     self.name = []  # area name
@@ -162,6 +165,39 @@ class c_arec:
       ou += '\n'
       fz.write(ou)
     fz.close()
+  #
+  def run(self):   # human user system
+    ####################################
+    while( 1 ):
+      #########################
+      print()
+      print("Entering arec user run.")
+      print("  Use q to quit.")
+      while True:
+        print()
+        uline = input("u>> ")
+        if uline == 'q':
+          print()
+          return
+        elif uline == 'ls':  self.ls()
+        elif uline == 'load':  self.load()
+        elif uline == 'save':  self.save()
+        elif uline.startswith('prefix'):
+          if uline == 'prefix':
+            self.prefix()  # Just show the current prefix.
+          elif len(uline) <= len('prefix '):  # note the extra space
+            print("No prefix entered.")
+            self.prefix()
+          else:
+            # prefix abc
+            # 01234567
+            pre = uline[7:]
+            self.prefix( pre )
+        else:
+          print("Unrecognized input.")
+      #########################
+    ####################################
+  #
 #######################################################
 
 
