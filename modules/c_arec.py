@@ -3,6 +3,7 @@ import sys
 import os
 import winsound
 import time
+from datetime import datetime
 
 from modules.m1_basic_control import *
 from modules.m99_sim_serial import spo
@@ -144,12 +145,13 @@ class c_arec:
     self.n_area = len(self.name)
     print("  Done.")
   #
-  def save(self):
-  #
+  def save(self, ufname=None):
     if self.n_area == 0:
       print("Nothing to save.")
       return
     fname_base =  "arec.data"
+    if ufname != None:
+      fname_base = ufname
     fname_user = "user/"+fname_base
     fname = fname_user
     print("Saving "+fname+" ...")
@@ -165,6 +167,12 @@ class c_arec:
       ou += '\n'
       fz.write(ou)
     fz.close()
+  #
+  def backup(self):
+    ts_dto = datetime.now()
+    ts = ts_dto.strftime("%Y%m%d_%H%M%S")
+    ufname = "arec_"+ts+".data"
+    self.save( ufname )
   #
   def run(self):   # human user system
     ####################################
@@ -182,6 +190,7 @@ class c_arec:
         elif uline == 'ls':  self.ls()
         elif uline == 'load':  self.load()
         elif uline == 'save':  self.save()
+        elif uline == 'backup':  self.backup()
         elif uline.startswith('go '):
           if len(uline) <= len('go '):
             print("No entered entered.")
