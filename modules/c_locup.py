@@ -396,14 +396,24 @@ class c_locup:
     self.pay = []  # pattern y
     self.paname = []  # a short name for that item in the pattern list
     # several items can have the same name.
+    next_pam = ""
     f = open(fname)
     for l in f:
       l = l.strip()
       if len(l) == 0:  continue
       if l[0] == '#':  continue
+      if l.startswith('!m '):
+        lla = l.split(':')
+        next_pam = lla[1].strip()
+        continue
       lla = l.split(':')
-      if len(lla) > 1:  self.pam.append( lla[1].strip() )
-      else:           self.pam.append( "" )
+      if len(lla) > 1:
+        # This overrides next_pam.
+        self.pam.append( lla[1].strip() )
+        next_pam = ""
+      else:
+        self.pam.append( next_pam )
+        next_pam = ""
       llb = lla[0].strip().split(' ')
       self.paname.append( llb[0] )
       self.pax.append( int(llb[1]) )
