@@ -17,6 +17,7 @@ class c_locup:
     self.x0 = None
     self.y0 = None
     self.cnum = 1    # the culture number
+    self.pattern_file = "locup_pattern.data"
   #
   def load_config(self):
     print("Loading config...")
@@ -42,6 +43,8 @@ class c_locup:
       if key == '!culture_diam':
         self.culture_diam = int(ll[1])
         self.culture_r = int(self.culture_diam / 2)
+      elif key == '!pattern_file':
+        self.pattern_file = ll[1]
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
@@ -376,7 +379,7 @@ class c_locup:
   def load_pattern_data(self):
     print("Loading pattern data...")
     #
-    fname_base =  "locup_pattern.data"
+    fname_base = self.pattern_file
     fname_default = "config/"+fname_base
     fname_user = "user/"+fname_base
     if os.path.isfile( fname_user ):
