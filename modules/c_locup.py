@@ -402,11 +402,19 @@ class c_locup:
       l = l.strip()
       if len(l) == 0:  continue
       if l[0] == '#':  continue
-      if l.startswith('!m '):
-        lla = l.split(':')
+      ll = l.split(' ')
+      lla = l.split(':')
+      key = ll[0]
+      ###
+      if key == '!culture_diam':
+        # This allows the pattern file to override the culture diameter
+        # from the config file.
+        self.culture_diam = int(ll[1])
+        self.culture_r = int(self.culture_diam / 2)
+        continue
+      elif key == '!m':
         next_pam = lla[1].strip()
         continue
-      lla = l.split(':')
       if len(lla) > 1:
         # This overrides next_pam.
         self.pam.append( lla[1].strip() )
