@@ -1,6 +1,8 @@
 
+# For 12 mm inserts.
 
-1 614 691 : 6 central FOVs.
+!m : 6 central FOVs.
+1 614 691
 2 -614 691
 3 614 0
 4 -614 0
