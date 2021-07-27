@@ -175,6 +175,53 @@ class c_arec:
     ufname = "arec_"+ts+".data"
     self.save( ufname )
   #
+  def ls_rel(self):
+    # Show the positions of all the areas relative
+    # to the current stage position.
+    cbuf() # Make sure the buffer is clear.
+    send = bytes( "p\r\n".encode() )
+    spo.write( send )
+    serda = spo.readline()
+    ll = serda.decode("Ascii").split(',')
+    cupx = int(ll[0])
+    cupy = int(ll[1])
+    #
+    # relative positions.
+    repx = []
+    repy = []
+    reran = []  # relative range (distance)
+    reazi = []  # relative azimuth
+    #
+    for i in range(self.n_area):
+      repx.append(0)
+      repy.append(0)
+      reran.append(0)
+      reazi.append(0)
+      #
+      repx[i] = -( self.px[i] - cupx ) # neg because inverted stage x axis
+      repy[i] = self.py[i] - cupy
+      reran[i] = math.hypot( repx[i], repy[i] )
+      reazi[i] = math.atan2( repy[i], repx[i] )
+      reazi[i] *= 180 / math.pi
+      reazi[i] = 90 - reazi[i]
+      if reazi[i] < 0:  reazi[i] += 360
+    #
+    for i in range(self.n_area):
+      line = str(i)+'. '
+      line += "pos_xy("+str(self.px[i])+','+str(self.py[i])+")"
+      line += "  "
+      # line += "range_azim("+str(reran[i])+','+str(reazi[i])+")"
+      line += "azim_range({0:0.0f}".format(reazi[i])
+      line += "deg,"
+      line += "{0:0.0f}um)".format(reran[i])
+      line += "  ["+self.name[i]+"]"
+      # line += "  - " + self.notes[i]
+      print(line)
+    print("azimuths use geo reference frame and degrees.")
+    print("current pos: ", cupx, cupy)
+    print("n_area: ", self.n_area)
+    #
+  #
   def run(self):   # human user system
     ####################################
     while( 1 ):
@@ -189,6 +236,8 @@ class c_arec:
           print()
           return
         elif uline == 'ls':  self.ls()
+        elif uline == 'ls rel':
+          self.ls_rel()
         elif uline == 'load':  self.load()
         elif uline == 'save':  self.save()
         elif uline == 'backup':  self.backup()
