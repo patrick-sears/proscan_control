@@ -212,10 +212,18 @@ class c_arec:
       line += "  "
       # line += "range_azim("+str(reran[i])+','+str(reazi[i])+")"
       line += "azim_range({0:0.0f}".format(reazi[i])
-      line += "deg,"
-      line += "{0:0.0f}um)".format(reran[i])
+      # line += "deg,"
+      # line += "°," # fails
+      line += u'\u00B0'  # degree symbol
+      line += ","
+      line += "{0:0.0f}".format(reran[i])
+      # line += ",um)"
+      # line += ","
+      line += u'\u00B5'  # greek mu
+      line += "m)"
       line += "  ["+self.name[i]+"]"
       # line += "  - " + self.notes[i]
+      uline = line.encode('utf-8')
       print(line)
     print("azimuths use geo reference frame and degrees.")
     print("current pos: ", cupx, cupy)
