@@ -4,6 +4,7 @@ import os
 import winsound
 import time
 from datetime import datetime
+import math
 
 from modules.m1_basic_control import *
 from modules.m99_sim_serial import spo
@@ -191,6 +192,7 @@ class c_arec:
         elif uline == 'load':  self.load()
         elif uline == 'save':  self.save()
         elif uline == 'backup':  self.backup()
+        elif uline == 'clear':  self.clear_areas()
         elif uline.startswith( 'set' ):
           if uline == 'set':
             self.set()
