@@ -191,6 +191,15 @@ class c_arec:
         elif uline == 'load':  self.load()
         elif uline == 'save':  self.save()
         elif uline == 'backup':  self.backup()
+        elif uline.startswith( 'set' ):
+          if uline == 'set':
+            self.set()
+          elif len(uline) > len('set '):
+            aname = uline[4:]
+            self.set(aname)
+          else:
+            print("Problem using set.  Unexpected uline.")
+            print("  uline: ", uline)
         elif uline.startswith('go '):
           if len(uline) <= len('go '):
             print("No entered entered.")
