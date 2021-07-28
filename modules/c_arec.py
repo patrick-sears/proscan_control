@@ -237,43 +237,70 @@ class c_arec:
     if self.n_area == 0:
       print("No areas defined.")
       return
+    # The edge will be either a circle "e+c"/n_s
+    # or a rectangle "e+r"/n_rec.
     n_s = 0
+    n_rec = 0
     # Center will be at (cx, cy)
     cx = 0
     cy = 0
     for i in range(self.n_area):
-      if self.name[i].startswith("s+"):
+      if self.name[i].startswith("e+c"):
         n_s += 1
         cx += self.px[i]
         cy += self.py[i]
-    if n_s != 4:
-      print("Didn't find four s+### names for N W S E.")
+      if self.name[i].startswith("e+r"):
+        n_rec += 1
+    if n_s != 4 and n_rec != 4:
+      print("Didn't find four e+?### names for N W S E.")
+      print("  n_s   (e+c): ", n_s)
+      print("  n_rec (e+r): ", n_rec)
       return
     #
-    cx /= 4
-    cy /= 4
-    circ_r = 0
-    for i in range(self.n_area):
-      if self.name[i].startswith("s+"):
-        circ_r += math.hypot( cx - self.px[i], cy - self.py[i] )
+    if n_s == 4:
+      cx /= 4
+      cy /= 4
+      circ_r = 0
+      for i in range(self.n_area):
+        if self.name[i].startswith("e+c"):
+          circ_r += math.hypot( cx - self.px[i], cy - self.py[i] )
+      #
+      circ_r /= 4
+      circ_n_seg = 80
+      circ_n_pnt = circ_n_seg+1
+      circ_x = []
+      circ_y = []
+      circ_dang = math.pi * 2 / circ_n_seg
+      for i in range(circ_n_pnt):
+        ang = circ_dang * i
+        circ_x.append( cx + circ_r * math.cos( ang ) )
+        circ_y.append( cy + circ_r * math.sin( ang ) )
     #
-    circ_r /= 4
-    circ_n_seg = 80
-    circ_n_pnt = circ_n_seg+1
-    circ_x = []
-    circ_y = []
-    circ_dang = math.pi * 2 / circ_n_seg
-    for i in range(circ_n_pnt):
-      ang = circ_dang * i
-      circ_x.append( cx + circ_r * math.cos( ang ) )
-      circ_y.append( cy + circ_r * math.sin( ang ) )
+    if n_rec == 4:
+      rec_xmin = None
+      rec_xmax = None
+      rec_ymin = None
+      rec_ymax = None
+      for i in range(self.n_area):
+        if self.name[i].startswith("e+r"):
+          if rec_xmin == None:  rec_xmin = self.px[i]
+          if rec_ymin == None:  rec_ymin = self.px[i]
+          if rec_xmax == None:  rec_xmax = self.px[i]
+          if rec_ymax == None:  rec_ymax = self.px[i]
+          if self.px[i] < rec_xmin:  rec_xmin = self.px[i]
+          if self.py[i] < rec_ymin:  rec_ymin = self.py[i]
+          if self.px[i] > rec_xmax:  rec_xmax = self.px[i]
+          if self.py[i] > rec_ymax:  rec_ymax = self.py[i]
+      # grr:  graph of rectangle edge.
+      grrx = [rec_xmin, rec_xmax, rec_xmax, rec_xmin, rec_xmin]
+      grry = [rec_ymin, rec_ymin, rec_ymax, rec_ymax, rec_ymin]
     #
     # gra will be the areas.
     grax = []
     gray = []
     graa = []  # annotation
     for i in range(self.n_area):
-      if not self.name[i].startswith("s+"):
+      if not self.name[i].startswith("e+"):
         grax.append( self.px[i] )
         gray.append( self.py[i] )
         graa.append( self.name[i] )
@@ -294,9 +321,14 @@ class c_arec:
       grcx.append(cupx)
       grcy.append(cupy)
     #
-    plt.plot( circ_x, circ_y,
-      color='#000099'
-      )
+    if n_s == 4:
+      plt.plot( circ_x, circ_y,
+        color='#000099'
+        )
+    if n_rec == 4:
+      plt.plot( grrx, grry,
+        color='#000099'
+        )
     if plot_grc == 1:
       plt.plot( grcx, grcy,
         marker='+',
