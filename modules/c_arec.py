@@ -5,6 +5,7 @@ import winsound
 import time
 from datetime import datetime
 import math
+from matplotlib import pyplot as plt
 
 from modules.m1_basic_control import *
 from modules.m99_sim_serial import spo
@@ -230,6 +231,102 @@ class c_arec:
     print("n_area: ", self.n_area)
     #
   #
+  def plot(self, plot_save=0, plot_grc=0):
+    # plot_save:  0 no, 1 yes
+    # plot_grc:  0 no, 1 yes plot current stage position
+    if self.n_area == 0:
+      print("No areas defined.")
+      return
+    n_s = 0
+    # Center will be at (cx, cy)
+    cx = 0
+    cy = 0
+    for i in range(self.n_area):
+      if self.name[i].startswith("s+"):
+        n_s += 1
+        cx += self.px[i]
+        cy += self.py[i]
+    if n_s != 4:
+      print("Didn't find four s+### names for N W S E.")
+      return
+    #
+    cx /= 4
+    cy /= 4
+    circ_r = 0
+    for i in range(self.n_area):
+      if self.name[i].startswith("s+"):
+        circ_r += math.hypot( cx - self.px[i], cy - self.py[i] )
+    #
+    circ_r /= 4
+    circ_n_seg = 80
+    circ_n_pnt = circ_n_seg+1
+    circ_x = []
+    circ_y = []
+    circ_dang = math.pi * 2 / circ_n_seg
+    for i in range(circ_n_pnt):
+      ang = circ_dang * i
+      circ_x.append( cx + circ_r * math.cos( ang ) )
+      circ_y.append( cy + circ_r * math.sin( ang ) )
+    #
+    # gra will be the areas.
+    grax = []
+    gray = []
+    graa = []  # annotation
+    for i in range(self.n_area):
+      if not self.name[i].startswith("s+"):
+        grax.append( self.px[i] )
+        gray.append( self.py[i] )
+        graa.append( self.name[i] )
+    gra_n = len(grax)
+    #
+    # grc:  graph current position.
+    grcx = []
+    grcy = []
+    if plot_grc == 1:
+      cbuf() # Make sure the buffer is clear.
+      send = bytes( "p\r\n".encode() )
+      spo.write( send )
+      serda = spo.readline()
+      ll = serda.decode("Ascii").split(',')
+      cupx = int(ll[0])
+      cupy = int(ll[1])
+      #
+      grcx.append(cupx)
+      grcy.append(cupy)
+    #
+    plt.plot( circ_x, circ_y,
+      color='#000099'
+      )
+    if plot_grc == 1:
+      plt.plot( grcx, grcy,
+        marker='+',
+        markerfacecolor='None',
+        markeredgecolor='#aa0000',
+        linestyle='None'
+        )
+    plt.plot( grax, gray,
+      marker='o',
+      markerfacecolor='None',
+      markeredgecolor='#ff0000',
+      linestyle='None'
+      )
+    #
+    ax = plt.gca()
+    gra_style = dict(size=8, color='black')
+    for i in range(gra_n):
+      ha='left'
+      ax.text( grax[i], gray[i], ' '+graa[i], ha=ha, **gra_style )
+    #
+    ax.invert_xaxis()
+    ax.set_aspect('equal', adjustable='box')
+    #
+    ts_dto = datetime.now()
+    ts = ts_dto.strftime("%Y%m%d_%H%M%S")
+    ufname = "user/arec_"+ts+".png"
+    #
+    if plot_save == 1:  plt.savefig( ufname )
+    plt.show()
+  #
   def run(self):   # human user system
     ####################################
     while( 1 ):
@@ -249,6 +346,19 @@ class c_arec:
         elif uline == 'load':  self.load()
         elif uline == 'save':  self.save()
         elif uline == 'backup':  self.backup()
+        elif uline == 'plot ?':
+          print("Usage:")
+          print("  plot          # Just show the plot.")
+          print("  plot cp       # Also plot current position.")
+          print("  plot save     # Also save a PNG of the graph.")
+          print("  plot save cp  # Save PNG, include current pos.")
+          print("  plot cp save  # Save PNG, include current pos.")
+        elif uline == 'plot':  self.plot()
+        elif uline == 'plot save':  self.plot( plot_save=1)
+        elif uline == 'plot cp':  # cp:  also plot current position
+          self.plot(plot_grc=1)
+        elif uline == 'plot save cp':  self.plot( plot_save=1, plot_grc=1)
+        elif uline == 'plot cp save':  self.plot( plot_save=1, plot_grc=1)
         elif uline == 'clear':  self.clear_areas()
         elif uline.startswith( 'set' ):
           if uline == 'set':
