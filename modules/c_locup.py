@@ -50,6 +50,7 @@ class c_locup:
         print("  key: ", key)
         sys.exit(1)
     f.close()
+    print("  culture diam: ", self.culture_diam)
     print("  Done.")
   #
   def run(self):
