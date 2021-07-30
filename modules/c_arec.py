@@ -284,9 +284,9 @@ class c_arec:
       for i in range(self.n_area):
         if self.name[i].startswith("e+r"):
           if rec_xmin == None:  rec_xmin = self.px[i]
-          if rec_ymin == None:  rec_ymin = self.px[i]
+          if rec_ymin == None:  rec_ymin = self.py[i]
           if rec_xmax == None:  rec_xmax = self.px[i]
-          if rec_ymax == None:  rec_ymax = self.px[i]
+          if rec_ymax == None:  rec_ymax = self.py[i]
           if self.px[i] < rec_xmin:  rec_xmin = self.px[i]
           if self.py[i] < rec_ymin:  rec_ymin = self.py[i]
           if self.px[i] > rec_xmax:  rec_xmax = self.px[i]
