@@ -211,7 +211,7 @@ class c_muwp:
       self.load_plate()
     while( 1 ):
       print()
-      uline = input("u>> ")
+      uline = input("muwp>> ")
       if uline == 'q':
         print()
         return
