@@ -14,8 +14,13 @@ from modules.m99_sim_serial import spo
 class c_muwp:
   #
   def __init__(self):
-    self.x0 = None
-    self.y0 = None
+    #
+    # Assume that the stage coordinates have been set
+    # from a previous run.
+    self.psx0 = 0
+    self.psy0 = 0
+    # For now, allow resetting of these in the config file.
+    #
     self.fname_plate = None
     #
     self.clear_fidu()
@@ -116,8 +121,9 @@ class c_muwp:
       ll = l.split(' ')
       key = ll[0]
       ###
-      if key == '!fname_plate':
-        self.fname_plate = ll[1]
+      if key == '!fname_plate': self.fname_plate = ll[1]
+      elif key == '!psx0':  self.psx0 = int(ll[1])
+      elif key == '!psy0':  self.psy0 = int(ll[1])
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
@@ -136,6 +142,33 @@ class c_muwp:
     elif u == 2:
       winsound.Beep(1600,200)  # (freq in Hz, duration in ms)
   #
+  def set_fidu(self, fiduname):
+    # Sets the origin of our plate coordinates using the
+    # current fiducial marker position.
+    ifidu = None
+    for i in range(self.n_fidu):
+      if fiduname == self.fidu_name[i]:
+        ifidu = i
+        break
+    if ifidu == None:
+      print("Error.  Couldn't find fidu name.")
+      print("  Name: ", fiduname)
+      return
+    ################## 
+    fidx = self.fidu_x[ifidu]
+    fidy = self.fidu_y[ifidu]
+    ################## 
+    cbuf() # Make sure the buffer is clear.
+    send = bytes( "p\r\n".encode() )
+    spo.write( send )
+    serda = spo.readline()
+    ll = serda.decode("Ascii").split(',')
+    psx = int(ll[0])
+    psy = int(ll[1])
+    ################## 
+    self.psx0 = psx - fidx
+    self.psy0 = psy - fidy
+  #
   def go_well_center(self, iw):
     if iw < 0 or iw >= self.n_well:
       print("Error.  iw out of range.")
@@ -143,9 +176,26 @@ class c_muwp:
       print("  n_well = ", self.n_well)
       return
     gx, gy = self.well_center_x[iw], self.well_center_y[iw]
+    psx, psy = gx+self.psx0, gy+self.psy0
     ouline = "g"
-    ouline += " {0:d}".format( gx )
-    ouline += " {0:d}".format( gy )
+    ouline += " {0:d}".format( psx )
+    ouline += " {0:d}".format( psy )
+    print("Going to:   ["+ouline+"]")
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
+    spo.write( send )
+  #
+  def go_fidu(self, ifidu):
+    if ifidu < 0 or ifidu >= self.n_fidu:
+      print("Error.  ifidu out of range.")
+      print("  ifidu =     ", ifidu, " (So fidu #"+str(ifidu+1)+")")
+      print("  n_fidu = ", self.n_fidu)
+      return
+    gx, gy = self.fidu_x[ifidu], self.fidu_y[ifidu]
+    psx, psy = gx+self.psx0, gy+self.psy0
+    ouline = "g"
+    ouline += " {0:d}".format( psx )
+    ouline += " {0:d}".format( psy )
     print("Going to:   ["+ouline+"]")
     ouline += "\r\n"
     send = bytes( ouline.encode() )
@@ -167,8 +217,8 @@ class c_muwp:
         return
       elif uline == 'info':
         print("fname_plate: ", self.fname_plate)
-        print("x0:  ", self.x0)
-        print("y0:  ", self.y0)
+        print("psx0:  ", self.psx0)
+        print("psy0:  ", self.psy0)
         print("well centers:")
         for i in range(self.n_well):
           print("  ", i+1, self.well_center_x[i], self.well_center_y[i])
@@ -179,6 +229,8 @@ class c_muwp:
       elif uline == 'load plate':  self.load_plate()
       elif uline == 'print pos':
         p()
+        print("TO IMPLEMENT:  These are psx psy (prior stage).")
+        print("  We would also like muwp internal plate coordinates.")
       elif uline.startswith('go well'):
         ll = uline.split(' ')
         if len(ll)!=4:
@@ -189,6 +241,28 @@ class c_muwp:
         if ppos == 'center':  self.go_well_center(iw)
         else:
           print("Unrecognized ppos: ", ppos)
+      elif uline.startswith('set fidu'):
+        ll = uline.split(' ')
+        if len(ll)!=3:
+          print("Strange uline split length.")
+          continue
+        fiduname = ll[2]
+        self.set_fidu(fiduname)
+      elif uline.startswith('go fidu'):
+        ll = uline.split(' ')
+        if len(ll)!=3:
+          print("Strange uline split length.")
+          continue
+        fiduname = ll[2]
+        ifidu = None
+        for i in range(self.n_fidu):
+          if fiduname == self.fidu_name[i]:
+            ifidu = i
+        if ifidu == None:
+          print("Error.  Couldn't find fiduname.")
+          print("  fiduname: ", fiduname)
+        else:
+          self.go_fidu(ifidu)
       else:
         print("Unrecognized input.")
   #
