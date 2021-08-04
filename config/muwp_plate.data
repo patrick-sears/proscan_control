@@ -1,0 +1,35 @@
+
+# 6-well plate using well6_holder number 1.
+
+# fiducial marks:  <namw> <x coord> <y coord>
+!fidu
+x1 76000 37000    # left side X
+x2 37000 37000    # right side X
+
+
+!well_center
+1 95606 56396
+2 57092 56163
+3 17930 56240
+4 96256 17317
+5 57118 17760
+6 18274 17497
+
+!ins_center
+1 95628 56302
+2 56927 56235
+3 18112 56368
+4 96180 17327
+5 57153 17561
+6 18484 17536
+
+
+
+
+
+
+
+
+
+
+
