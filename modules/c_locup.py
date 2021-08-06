@@ -14,8 +14,9 @@ class c_locup:
   #
   def __init__(self):
     print("Remember, use q to quit any time.")
-    self.x0 = None
-    self.y0 = None
+    # center of insert:  cx cy
+    self.cx = None
+    self.cy = None
     self.cnum = 1    # the culture number
     self.pattern_file = "locup_pattern.data"
   #
@@ -61,13 +62,6 @@ class c_locup:
       #
       if self.get_edges() == -1:  return  # quit on 'q'
       #
-      ##########################
-      # Old system...............
-      # if self.get_y0() == -1:  return  # quit on 'q'
-      # self.go_N_to_W_edge_rough()
-      # if self.get_x0() == -1:  return  # quit on 'q'
-      ##########################
-      #
       ######################################
       # This section is here to make sure the human doesn't
       # keep moving to edges and hitting enter when they
@@ -106,10 +100,10 @@ class c_locup:
         p()
       elif uline == 'xy':
         print("n_pattern = ", self.n_pattern)
-        print("x0,y0 = ", int(self.x0), int(self.y0))
+        print("xc,yc = ", int(self.xc), int(self.yc))
         for i in range(self.n_pattern):
-          x = self.x0 + self.pax[i]
-          y = self.y0 + self.pay[i]
+          x = self.cx + self.pax[i]
+          y = self.cy + self.pay[i]
           print("  i,x,y: ", i+1, int(x), int(y))
     #####
     return 0
@@ -125,8 +119,6 @@ class c_locup:
       pline += " : "+self.paname[i]+'\n'
       print(pline)
       #########
-      # x = self.x0 + self.pax[i]
-      # y = self.y0 + self.pay[i]
       x = self.cx + self.pax[i]
       y = self.cy + self.pay[i]
       ouline = "g"
@@ -139,44 +131,6 @@ class c_locup:
       uline = input("  Hit [enter] when done (q=quit):  \n")
       if uline == 'q':  return -1
     ######################
-    return 0
-  #
-  def get_y0(self):
-    pline = "Go to culture "+str(self.cnum)
-    pline += " North edge and hit e[enter]\n"
-    #####
-    while True:
-      print(pline)
-      uline = input("u>> ")
-      if uline == 'q':  return -1
-      if uline == 'e':  break
-    #####
-    cbuf()
-    send = bytes( "p\r\n".encode() )
-    spo.write( send )
-    serda = spo.readline()
-    ll = serda.decode("Ascii").split(',')
-    self.y0 = int(ll[1]) - self.culture_diam  # 0 x, 1 y
-    #####
-    return 0
-  #
-  def get_x0(self):
-    pline = "Go to culture "+str(self.cnum)
-    pline += " West edge and hit e[enter]\n"
-    #####
-    while True:
-      print(pline)
-      uline = input("u>> ")
-      if uline == 'q':  return -1
-      if uline == 'e':  break
-    #####
-    cbuf()
-    send = bytes( "p\r\n".encode() )
-    spo.write( send )
-    serda = spo.readline()
-    ll = serda.decode("Ascii").split(',')
-    self.x0 = int(ll[0]) - self.culture_diam  # 0 x, 1 y
-    #####
     return 0
   #
   def beep(self, u):
@@ -309,20 +263,9 @@ class c_locup:
     edvaly[edi] = int(ll[1])  # 0 x, 1 y
     ######################################
     #
-    # Figure out x0 y0 ----------------------->
-    ### # Reset culture diam.
-    ### self.culture_diam = int(edvalx[2] - edvalx[0])
-    ### alt_diam = int(edvaly[1] - edvaly[3])
-    ### if alt_diam < self.culture_diam:  self.culture_daim = alt_diam
-    ### self.culture_r = int(self.culture_diam / 2)
-    #
     # Set the center.
     self.cx = int((edvalx[0] + edvalx[2]) / 2)
     self.cy = int((edvaly[1] + edvaly[3]) / 2)
-    #
-    # Set x0 and y0
-    self.x0 = self.cx - self.culture_r
-    self.y0 = self.cy - self.culture_r
     #
     return 0
     #
