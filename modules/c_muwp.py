@@ -7,6 +7,7 @@ import time
 
 from modules.m1_basic_control import *
 from modules.m99_sim_serial import spo
+from modules.c_locup import c_locup
 
 
 
@@ -32,6 +33,13 @@ class c_muwp:
     self.fidu_x = []
     self.fidu_y = []
     self.n_fidu = 0
+  #
+  def create_locups(self):
+    self.mlocup = []
+    for i in range(self.n_well):
+      self.mlocup.append( c_locup() )
+      self.mlocup[i].load_config()
+      self.mlocup[i].load_pattern_data()
   #
   def clear_well_center(self):
     self.well_center_x = []
@@ -227,6 +235,8 @@ class c_muwp:
         self.load_plate()
       elif uline == 'load config':  self.load_config()
       elif uline == 'load plate':  self.load_plate()
+      elif uline == 'create locups':
+        self.create_locups()
       elif uline == 'print pos':
         p()
         print("TO IMPLEMENT:  These are psx psy (prior stage).")
