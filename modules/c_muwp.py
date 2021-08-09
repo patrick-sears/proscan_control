@@ -302,11 +302,26 @@ class c_muwp:
           print("  Need 4 words.")
           print("  Example:  go well 2 center")
           continue
-        iw = int( uline.split(' ')[2] ) - 1
+        iw = int( ll[2] ) - 1
         ppos = ll[3]
         if ppos == 'center':  self.go_well_center(iw)
         else:
           print("Unrecognized ppos: ", ppos)
+      elif uline.startswith('reset lp') and uline.endswith(' edges') and len(uline) > len('reset lpedges'):
+        ll = uline.strip().split(' ')
+        iw = int( ll[1][2:] ) - 1
+        if iw < 0 or iw >= self.n_ins:
+          print("Bad lp number.")
+          continue
+        rv = self.mlocup[iw].get_edges()
+        if rv == 0:
+          # all is ok
+          print("Resetting muwp ins",iw+1,"center.")
+          self.ins_center_x[iw] = self.mlocup[iw].cx
+          self.ins_center_y[iw] = self.mlocup[iw].cy
+        else:
+          print("locup get_edges() didn't return 0.")
+          print("  So not resetting muwp ins center.")
       elif uline.startswith('go ins') or uline.startswith('go lp'):
         ll = uline.strip().split(' ')
         if len(ll) == 3:
