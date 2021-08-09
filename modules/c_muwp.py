@@ -40,6 +40,8 @@ class c_muwp:
       self.mlocup.append( c_locup() )
       self.mlocup[i].load_config()
       self.mlocup[i].load_pattern_data()
+      self.mlocup[iw].cx = self.ins_center_x[iw]
+      self.mlocup[iw].cy = self.ins_center_y[iw]
   #
   def clear_well_center(self):
     self.well_center_x = []
@@ -193,6 +195,22 @@ class c_muwp:
     send = bytes( ouline.encode() )
     spo.write( send )
   #
+  def go_ins_center(self, iw):
+    if iw < 0 or iw >= self.n_ins:
+      print("Error.  iw out of range.")
+      print("  iw =     ", iw, " (So ins #"+str(iw+1)+")")
+      print("  n_ins = ", self.n_ins)
+      return
+    gx, gy = self.ins_center_x[iw], self.ins_center_y[iw]
+    psx, psy = gx+self.psx0, gy+self.psy0
+    ouline = "g"
+    ouline += " {0:d}".format( psx )
+    ouline += " {0:d}".format( psy )
+    print("Going to:   ["+ouline+"]")
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
+    spo.write( send )
+  #
   def go_fidu(self, ifidu):
     if ifidu < 0 or ifidu >= self.n_fidu:
       print("Error.  ifidu out of range.")
@@ -244,7 +262,21 @@ class c_muwp:
           print("  Need 3 words.")
           print("  Example:  run lp 2")
           continue
-        iw = int(ll[2])
+        iw = int(ll[2]-1)
+        if iw < 0 or iw >= len(self.mlocup):
+          print("Entered number is out of range.")
+          print("  n_well:      ", self.n_well)
+          print("  len(mlocup): ", len(self.mlocup))
+          continue
+        self.mlocup[iw].run_pattern()
+      elif uline.startswith('setrun lp '):
+        ll = uline.strip().split(' ')
+        if len(ll)!=3:
+          print("Strange uline split length.")
+          print("  Need 3 words.")
+          print("  Example:  setrun lp 2")
+          continue
+        iw = int(ll[2]-1)
         if iw < 0 or iw >= len(self.mlocup):
           print("Entered number is out of range.")
           print("  n_well:      ", self.n_well)
@@ -265,6 +297,18 @@ class c_muwp:
         iw = int( uline.split(' ')[2] ) - 1
         ppos = ll[3]
         if ppos == 'center':  self.go_well_center(iw)
+        else:
+          print("Unrecognized ppos: ", ppos)
+      elif uline.startswith('go ins'):
+        ll = uline.strip().split(' ')
+        if len(ll)!=4:
+          print("Strange uline split length.")
+          print("  Need 4 words.")
+          print("  Example:  go ins 2 center")
+          continue
+        iw = int( uline.split(' ')[2] ) - 1
+        ppos = ll[3]
+        if ppos == 'center':  self.go_ins_center(iw)
         else:
           print("Unrecognized ppos: ", ppos)
       elif uline.startswith('set fidu'):
