@@ -237,14 +237,30 @@ class c_muwp:
       elif uline == 'load plate':  self.load_plate()
       elif uline == 'create locups':
         self.create_locups()
+      elif uline.startswith('run locup '):
+        ll = uline.strip().split(' ')
+        if len(ll)!=3:
+          print("Strange uline split length.")
+          print("  Need 3 words.")
+          print("  Example:  run locup 2")
+          continue
+        iw = int(ll[2])
+        if iw < 0 or iw >= len(self.mlocup):
+          print("Entered number is out of range.")
+          print("  n_well:      ", self.n_well)
+          print("  len(mlocup): ", len(self.mlocup))
+          continue
+        self.mlocup[iw].run()
       elif uline == 'print pos':
         p()
         print("TO IMPLEMENT:  These are psx psy (prior stage).")
         print("  We would also like muwp internal plate coordinates.")
       elif uline.startswith('go well'):
-        ll = uline.split(' ')
+        ll = uline.strip().split(' ')
         if len(ll)!=4:
           print("Strange uline split length.")
+          print("  Need 4 words.")
+          print("  Example:  go well 2 center")
           continue
         iw = int( uline.split(' ')[2] ) - 1
         ppos = ll[3]
@@ -255,6 +271,8 @@ class c_muwp:
         ll = uline.split(' ')
         if len(ll)!=3:
           print("Strange uline split length.")
+          print("  Need 3 words.")
+          print("  Example:  set fidu x1")
           continue
         fiduname = ll[2]
         self.set_fidu(fiduname)
