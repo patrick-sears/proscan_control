@@ -4,6 +4,8 @@ import sys
 import os
 import winsound
 import time
+from datetime import datetime
+import shutil
 
 from modules.m1_basic_control import *
 from modules.m99_sim_serial import spo
@@ -84,6 +86,8 @@ class c_muwp:
           self.fidu_x.append( int(ll[1]) )
           self.fidu_y.append( int(ll[2]) )
         self.n_fidu = len(self.fidu_x)
+      elif key == '!psx0':  self.psx0 = int(ll[1])
+      elif key == '!psy0':  self.psy0 = int(ll[1])
       elif key == '!well_center':
         self.clear_well_center()
         for l in f:
@@ -110,6 +114,42 @@ class c_muwp:
         sys.exit(1)
     f.close()
     print("  Done.")
+  #
+  def save_plate(self):
+    fz_name = 'user/muwp_plate.data'
+    if os.path.exists( fz_name ):
+      stime = datetime.now().strftime("%Y%m%d_%H%M%S")
+      fbak_name = fz_name + '.'+stime+'.bak'
+      shutil.copyfile(fz_name, fbak_name)
+    #
+    ou = '\n'
+    ou += '!psx0 '+str(self.psx0)+'\n'
+    ou += '!psy0 '+str(self.psy0)+'\n'
+    ou += '\n'
+    ou += '!fidu\n'
+    for i in range(self.n_fidu):
+      ou += self.fidu_name[i]
+      ou += ' ' + str(self.fidu_x[i])
+      ou += ' ' + str(self.fidu_y[i])
+      ou += '\n'
+    ou += '\n'
+    ou += '!well_center\n'
+    for i in range(self.n_well):
+      ou += str(i+1)
+      ou += ' ' + str(self.well_center_x[i])
+      ou += ' ' + str(self.well_center_y[i])
+      ou += '\n'
+    ou += '\n'
+    ou += '!ins_center\n'
+    for i in range(self.n_ins):
+      ou += str(i+1)
+      ou += ' ' + str(self.ins_center_x[i])
+      ou += ' ' + str(self.ins_center_y[i])
+      ou += '\n'
+    ou += '\n'
+    fz = open(fz_name, 'w')
+    fz.write(ou)
+    fz.close()
   #
   def load_config(self):
     print("Loading config...")
@@ -261,6 +301,7 @@ class c_muwp:
         self.load_plate()
       elif uline == 'load config':  self.load_config()
       elif uline == 'load plate':  self.load_plate()
+      elif uline == 'save plate':  self.save_plate()
       elif uline == 'create lps':
         self.create_locups()
       elif uline.startswith('run lp '):
