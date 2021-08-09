@@ -309,15 +309,26 @@ class c_muwp:
           print("Unrecognized ppos: ", ppos)
       elif uline.startswith('go ins') or uline.startswith('go lp'):
         ll = uline.strip().split(' ')
-        if len(ll)!=4:
+        if len(ll) == 3:
+          if ll[1].startswith('lp'):
+            iw = int( ll[1][2:] ) - 1
+          elif ll[1].startswith('ins'):
+            iw = int( ll[1][3:] ) - 1
+          ppos = ll[2]
+        elif len(ll)== 4:
+          iw = int( ll[2] ) - 1
+          ppos = ll[3]
+        else:
           print("Strange uline split length.")
           print("  Need 4 words.")
           print("  Examples:")
+          print("    go lp 2 center")
+          print("    go lp2 center")
+          print("    go lp2 N-edge")
+          print("    go ins 2 center")
           print("    go ins 2 center")
           print("    go ins 2 N-edge")
           continue
-        iw = int( ll[2] ) - 1
-        ppos = ll[3]
         if ppos == 'center':  self.go_ins_center(iw)
         elif ppos.endswith('-edge'):
           capo = ppos[0]  # N W S E
