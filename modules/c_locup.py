@@ -133,6 +133,32 @@ class c_locup:
     ######################
     return 0
   #
+  def go_edge(self, capo):  # capo:  "cardinal point"
+    #  self.culture_r = int(self.culture_diam / 2)
+    if capo == 'N':
+      x = self.cx
+      y = self.cy + self.culture_r
+    elif capo == 'S':
+      x = self.cx
+      y = self.cy - self.culture_r
+    elif capo == 'W':
+      x = self.cx + self.culture_r
+      y = self.cy
+    elif capo == 'E':
+      x = self.cx - self.culture_r
+      y = self.cy
+    else:
+      print("Error.  Unrecognized cardinal point.")
+      print("  capo: ", capo)
+      print("  Expected on of:  N W S E.")
+      return
+    ouline = "g"
+    ouline += " {0:d}".format( x )
+    ouline += " {0:d}".format( y )
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
+    spo.write( send )
+  #
   def beep(self, u):
     if u == 1:
       winsound.Beep(1600,200)  # (freq in Hz, duration in ms)

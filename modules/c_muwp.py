@@ -40,8 +40,8 @@ class c_muwp:
       self.mlocup.append( c_locup() )
       self.mlocup[i].load_config()
       self.mlocup[i].load_pattern_data()
-      self.mlocup[iw].cx = self.ins_center_x[iw]
-      self.mlocup[iw].cy = self.ins_center_y[iw]
+      self.mlocup[i].cx = self.ins_center_x[i]
+      self.mlocup[i].cy = self.ins_center_y[i]
   #
   def clear_well_center(self):
     self.well_center_x = []
@@ -227,6 +227,14 @@ class c_muwp:
     send = bytes( ouline.encode() )
     spo.write( send )
   #
+  def go_locup_edge(self, iw, capo):  # capo is "cardinal point"
+    if iw < 0 or iw >= self.n_ins:
+      print("Error.  iw out of range.")
+      print("  iw =     ", iw, " (So ins #"+str(iw+1)+")")
+      print("  n_ins = ", self.n_ins)
+      return
+    mlocup[iw].go_edge(capo)
+  #
   def run(self, amode=0):   # run the hui (human user interface)
     self.beep(2)
     print()
@@ -299,16 +307,21 @@ class c_muwp:
         if ppos == 'center':  self.go_well_center(iw)
         else:
           print("Unrecognized ppos: ", ppos)
-      elif uline.startswith('go ins'):
+      elif uline.startswith('go ins') or uline.startswith('go lp'):
         ll = uline.strip().split(' ')
         if len(ll)!=4:
           print("Strange uline split length.")
           print("  Need 4 words.")
-          print("  Example:  go ins 2 center")
+          print("  Examples:")
+          print("    go ins 2 center")
+          print("    go ins 2 N-edge")
           continue
-        iw = int( uline.split(' ')[2] ) - 1
+        iw = int( ll[2] ) - 1
         ppos = ll[3]
         if ppos == 'center':  self.go_ins_center(iw)
+        elif ppos.endswith('-edge'):
+          capo = ppos[0]  # N W S E
+          self.mlocup[iw].go_edge( capo )
         else:
           print("Unrecognized ppos: ", ppos)
       elif uline.startswith('set fidu'):
