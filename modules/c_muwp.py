@@ -235,14 +235,14 @@ class c_muwp:
         self.load_plate()
       elif uline == 'load config':  self.load_config()
       elif uline == 'load plate':  self.load_plate()
-      elif uline == 'create locups':
+      elif uline == 'create lps':
         self.create_locups()
-      elif uline.startswith('run locup '):
+      elif uline.startswith('run lp '):
         ll = uline.strip().split(' ')
         if len(ll)!=3:
           print("Strange uline split length.")
           print("  Need 3 words.")
-          print("  Example:  run locup 2")
+          print("  Example:  run lp 2")
           continue
         iw = int(ll[2])
         if iw < 0 or iw >= len(self.mlocup):
