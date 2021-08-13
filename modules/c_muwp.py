@@ -304,14 +304,18 @@ class c_muwp:
       elif uline == 'save plate':  self.save_plate()
       elif uline == 'create lps':
         self.create_locups()
-      elif uline.startswith('run lp '):
+      elif uline.startswith('run lp'):
         ll = uline.strip().split(' ')
-        if len(ll)!=3:
+        if len(ll)== 2:
+          iw = int(ll[1][2:])-1
+        elif len(ll)==3:
+          iw = int(ll[2])-1
+        else:
           print("Strange uline split length.")
-          print("  Need 3 words.")
+          print("  Need 2 or 3 words.")
+          print("  Example:  run lp2")
           print("  Example:  run lp 2")
           continue
-        iw = int(ll[2]-1)
         if iw < 0 or iw >= len(self.mlocup):
           print("Entered number is out of range.")
           print("  n_well:      ", self.n_well)
