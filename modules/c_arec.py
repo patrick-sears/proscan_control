@@ -75,16 +75,17 @@ class c_arec:
   #
   def set(self, name=None):
     #
+    if name == None:  uname = self.next_name()
+    else:             uname = name
     i = self.n_area
-    self.name.append( self.next_name() )
     self.n_area += 1
     #
-    # self.name.append( self.name_prefix+str(i) )
+    self.name.append( uname )
     self.px.append( 0 )
     self.py.append( 0 )
     self.notes.append( "" )
+    print("Setting ", self.name[i])
     #
-    if name != None: self.name[i] = name
     ###
     cbuf() # Make sure the buffer is clear.
     send = bytes( "p\r\n".encode() )
