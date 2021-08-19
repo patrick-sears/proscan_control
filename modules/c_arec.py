@@ -23,6 +23,7 @@ class c_arec:
     self.name = []  # area name
     self.px = []    # x pos
     self.py = []    # y pos
+    self.pz = []    # z pos
     self.notes = [] 
     self.name_prefix = 'a'
     #
@@ -41,6 +42,7 @@ class c_arec:
     self.name = []  # area name
     self.px = []    # x pos
     self.py = []    # y pos
+    self.pz = []    # z pos
     self.notes = [] 
     #
     self.n_area = 0
@@ -48,7 +50,8 @@ class c_arec:
   def ls(self):  # list
     for i in range(self.n_area):
       line = str(i)+'. '
-      line += "("+str(self.px[i])+','+str(self.py[i])+")"
+      # line += "("+str(self.px[i])+','+str(self.py[i])+")"
+      line += "("+str(self.px[i])+','+str(self.py[i])+","+str(self.pz[i])+")"
       line += "  ["+self.name[i]+"]"
       line += "  - " + self.notes[i]
       print(line)
@@ -83,17 +86,20 @@ class c_arec:
     self.name.append( uname )
     self.px.append( 0 )
     self.py.append( 0 )
+    self.pz.append( 0 )
     self.notes.append( "" )
     print("Setting ", self.name[i])
     #
     ###
-    cbuf() # Make sure the buffer is clear.
-    send = bytes( "p\r\n".encode() )
-    spo.write( send )
-    serda = spo.readline()
-    ll = serda.decode("Ascii").split(',')
-    self.px[i] = int(ll[0])
-    self.py[i] = int(ll[1])
+    ### cbuf() # Make sure the buffer is clear.
+    ### send = bytes( "p\r\n".encode() )
+    ### spo.write( send )
+    ### serda = spo.readline()
+    ### ll = serda.decode("Ascii").split(',')
+    ### self.px[i] = int(ll[0])
+    ### self.py[i] = int(ll[1])
+    ### self.pz[i] = int(ll[2])
+    self.px[i], self.py[i], self.pz[i] = self.pos()
   #
   def pos(self, mode=None):
     # report the current position
@@ -119,12 +125,49 @@ class c_arec:
     ###
     x = self.px[j]
     y = self.py[j]
+    # ignore the z pos
     ouline = "g"
     ouline += " {0:d}".format( x )
     ouline += " {0:d}".format( y )
     ouline += "\r\n"
     send = bytes( ouline.encode() )
     spo.write( send )
+  #
+  def load_old_format(self):
+    print("Loading data...")
+    #
+    fname_base =  "arec.data"
+    fname_default = "config/"+fname_base
+    fname_user = "user/"+fname_base
+    if os.path.isfile( fname_user ):
+      fname = fname_user
+      print("Found user file.")
+    else:
+      fname = fname_default
+      print("Using default file.")
+    #
+    self.clear_areas()
+    #
+    print("  Loading: ", fname )
+    f = open(fname)
+    for l in f:
+      l = l.strip()
+      if len(l) == 0:  continue
+      if l[0] == '#':  continue
+      ###
+      ll = l.split(';')
+      self.px.append( int(ll[1].strip()) )
+      self.py.append( int(ll[2].strip()) )
+      self.pz.append( 0 )
+      self.name.append( ll[3].strip() )
+      if len(ll) > 4:
+        self.notes.append( ll[4].strip() )
+      else:
+        self.notes.append("")
+      ###
+    f.close()
+    self.n_area = len(self.name)
+    print("  Done.")
   #
   def load(self):
     print("Loading data...")
@@ -151,9 +194,10 @@ class c_arec:
       ll = l.split(';')
       self.px.append( int(ll[1].strip()) )
       self.py.append( int(ll[2].strip()) )
-      self.name.append( ll[3].strip() )
-      if len(ll) > 4:
-        self.notes.append( ll[4].strip() )
+      self.pz.append( int(ll[3].strip()) )
+      self.name.append( ll[4].strip() )
+      if len(ll) > 5:
+        self.notes.append( ll[5].strip() )
       else:
         self.notes.append("")
       ###
@@ -177,6 +221,7 @@ class c_arec:
       ou = str(i)
       ou += " ; " + str(self.px[i])
       ou += " ; " + str(self.py[i])
+      ou += " ; " + str(self.pz[i])
       ou += " ; " + self.name[i]
       if len(self.notes[i])>0:
         ou += " ; " + self.notes[i]
@@ -193,28 +238,32 @@ class c_arec:
   def ls_rel(self):
     # Show the positions of all the areas relative
     # to the current stage position.
-    cbuf() # Make sure the buffer is clear.
-    send = bytes( "p\r\n".encode() )
-    spo.write( send )
-    serda = spo.readline()
-    ll = serda.decode("Ascii").split(',')
-    cupx = int(ll[0])
-    cupy = int(ll[1])
+    ### cbuf() # Make sure the buffer is clear.
+    ### send = bytes( "p\r\n".encode() )
+    ### spo.write( send )
+    ### serda = spo.readline()
+    ### ll = serda.decode("Ascii").split(',')
+    ### cupx = int(ll[0])
+    ### cupy = int(ll[1])
+    cupx, cupy, cupz = self.pos()
     #
     # relative positions.
     repx = []
     repy = []
-    reran = []  # relative range (distance)
+    repz = []
+    reran = []  # relative range (distance), not including z
     reazi = []  # relative azimuth
     #
     for i in range(self.n_area):
       repx.append(0)
       repy.append(0)
+      repz.append(0)
       reran.append(0)
       reazi.append(0)
       #
       repx[i] = -( self.px[i] - cupx ) # neg because inverted stage x axis
       repy[i] = self.py[i] - cupy
+      repz[i] = self.pz[i] - cupz
       reran[i] = math.hypot( repx[i], repy[i] )
       reazi[i] = math.atan2( repy[i], repx[i] )
       reazi[i] *= 180 / math.pi
@@ -223,7 +272,8 @@ class c_arec:
     #
     for i in range(self.n_area):
       line = str(i)+'. '
-      line += "pos_xy("+str(self.px[i])+','+str(self.py[i])+")"
+      # line += "pos_xyz("+str(self.px[i])+','+str(self.py[i])+','+str(self.pz[i])+")"
+      line += "rel xyz("+str(repx[i])+','+str(repy[i])+','+str(repz[i])+")"
       line += "  "
       # line += "range_azim("+str(reran[i])+','+str(reazi[i])+")"
       line += "azim_range({0:0.0f}".format(reazi[i])
@@ -241,7 +291,7 @@ class c_arec:
       uline = line.encode('utf-8')
       print(line)
     print("azimuths use geo reference frame and degrees.")
-    print("current pos: ", cupx, cupy)
+    print("current x y z: ", cupx, cupy, cupz)
     print("n_area: ", self.n_area)
     #
   #
@@ -390,6 +440,7 @@ class c_arec:
         elif uline == 'ls rel':
           self.ls_rel()
         elif uline == 'load':  self.load()
+        elif uline == 'load old format':  self.load_old_format()
         elif uline == 'save':  self.save()
         elif uline == 'backup':  self.backup()
         elif uline == 'plot ?':
