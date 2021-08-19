@@ -95,6 +95,19 @@ class c_arec:
     self.px[i] = int(ll[0])
     self.py[i] = int(ll[1])
   #
+  def pos(self, mode=None):
+    # report the current position
+    cbuf() # Make sure the buffer is clear.
+    send = bytes( "p\r\n".encode() )
+    spo.write( send )
+    serda = spo.readline()
+    ll = serda.decode("Ascii").split(',')
+    posx = int(ll[0])
+    posy = int(ll[1])
+    posz = int(ll[2])
+    if mode == 'print':  print("x y z: ",posx, posy, posz)
+    return posx, posy, posz
+  #
   def go(self,name):
     j = -1
     for i in range(self.n_area):
@@ -393,6 +406,7 @@ class c_arec:
         elif uline == 'plot save cp':  self.plot( plot_save=1, plot_grc=1)
         elif uline == 'plot cp save':  self.plot( plot_save=1, plot_grc=1)
         elif uline == 'clear':  self.clear_areas()
+        elif uline == 'pos':  self.pos(mode='print')
         elif uline.startswith( 'set' ):
           if uline == 'set':
             self.set()
