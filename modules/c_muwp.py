@@ -369,30 +369,30 @@ class c_muwp:
           print("  So not resetting muwp ins center.")
       elif uline.startswith('go ins') or uline.startswith('go lp'):
         ll = uline.strip().split(' ')
-        if len(ll) == 3:
-          if ll[1].startswith('lp'):
-            iw = int( ll[1][2:] ) - 1
-          elif ll[1].startswith('ins'):
-            iw = int( ll[1][3:] ) - 1
-          ppos = ll[2]
-        elif len(ll)== 4:
-          iw = int( ll[2] ) - 1
-          ppos = ll[3]
-        else:
+        ######.#
+        if len(ll) != 3:
           print("Strange uline split length.")
-          print("  Need 4 words.")
+          print("  Need 3 words.")
           print("  Examples:")
-          print("    go lp 2 center")
           print("    go lp2 center")
           print("    go lp2 N-edge")
-          print("    go ins 2 center")
-          print("    go ins 2 center")
-          print("    go ins 2 N-edge")
+          print("    go lp3 fov1")
           continue
+        if not ll[1].startswith('lp'):
+          print("Strange uline.")
+          print("  Expected second word to start with 'lp'.")
+          continue
+        ######.#
+        iw = int( ll[1][2:] ) - 1   # iw is the lp index
+        ppos = ll[2]
+        ######.#
         if ppos == 'center':  self.go_ins_center(iw)
         elif ppos.endswith('-edge'):
           capo = ppos[0]  # N W S E
           self.mlocup[iw].go_edge( capo )
+        elif ppos.startswith('fov'):
+          i1o_fov = int( ll[2][3:] )  # the fov number
+          self.mlocup[iw].go_fov(i1o_fov)
         else:
           print("Unrecognized ppos: ", ppos)
       elif uline.startswith('set fidu'):

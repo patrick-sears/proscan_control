@@ -108,6 +108,24 @@ class c_locup:
     #####
     return 0
   #
+  def go_fov(self, i1o_fov):
+    i = i1o_fov-1
+    if i < 0 or i >= self.n_pattern:
+      print("Error.  locup asked for OOR FOV.")
+      print("  i1o_fov: ", i1o_fov)
+      print("  n_pattern:  ", self.n_pattern)
+      return
+    #########
+    x = self.cx + self.pax[i]
+    y = self.cy + self.pay[i]
+    ouline = "g"
+    ouline += " {0:d}".format( x )
+    ouline += " {0:d}".format( y )
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
+    spo.write( send )
+    #########
+  #
   def run_pattern(self):
     ######################
     for i in range(self.n_pattern):
