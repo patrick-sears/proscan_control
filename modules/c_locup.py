@@ -148,6 +148,7 @@ class c_locup:
       uline = input("  Hit [enter] when done (q=quit):  \n")
       if uline == 'q':  return -1
     ######################
+    self.beep(1)
     return 0
   #
   def go_edge(self, capo):  # capo:  "cardinal point"
