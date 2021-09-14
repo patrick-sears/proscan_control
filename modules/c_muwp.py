@@ -352,7 +352,7 @@ class c_muwp:
         if ppos == 'center':  self.go_well_center(iw)
         else:
           print("Unrecognized ppos: ", ppos)
-      elif uline.startswith('reset lp') and uline.endswith(' edges') and len(uline) > len('reset lpedges'):
+      elif uline.startswith('reset lp') and uline.endswith(' edges') and len(uline) >= len('reset lpx edges'):
         ll = uline.strip().split(' ')
         iw = int( ll[1][2:] ) - 1
         if iw < 0 or iw >= self.n_ins:
