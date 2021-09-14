@@ -66,7 +66,6 @@ class c_locup:
       # This section is here to make sure the human doesn't
       # keep moving to edges and hitting enter when they
       # should be taking videos using the pattern.
-      self.beep(1)
       pline = "Ready to start pattern run (y for yes / q to quit):"
       while True:
         print(pline)
@@ -294,7 +293,10 @@ class c_locup:
     while True:
       print(pline)
       uline = input("u>> ")
-      if uline == 'q':  return -1
+      if uline == 'q':
+        # No beep needed.  If the user hit 'q', he's looking
+        # at the interface.
+        return -1
       break
     ######################################
     # Get the edge values.
@@ -310,6 +312,8 @@ class c_locup:
     # Set the center.
     self.cx = int((edvalx[0] + edvalx[2]) / 2)
     self.cy = int((edvaly[1] + edvaly[3]) / 2)
+    #
+    self.beep(1)
     #
     return 0
     #
@@ -417,6 +421,7 @@ class c_locup:
     f.close()
     self.n_pattern = len(self.paname)
     print("  Done.")
+    #
   #
   #
 #######################################################
