@@ -116,13 +116,14 @@ class c_muwp:
     print("  Done.")
   #
   def save_plate(self):
-    fz_name = 'user/muwp_plate.data'
-    if os.path.exists( fz_name ):
-      stime = datetime.now().strftime("%Y%m%d_%H%M%S")
-      fbak_name = fz_name + '.'+stime+'.bak'
-      shutil.copyfile(fz_name, fbak_name)
+    #
+    stime = datetime.now().strftime("%Y%m%d_%H%M%S")
+    fz_name = 'user/muwp_plate_'+stime+'.data'
     #
     ou = '\n'
+    ou += '\n'
+    ou += '# Created from:  '+self.fname_plate+'\n'
+    ou += '\n'
     ou += '!psx0 '+str(self.psx0)+'\n'
     ou += '!psy0 '+str(self.psy0)+'\n'
     ou += '\n'
