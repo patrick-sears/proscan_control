@@ -127,13 +127,14 @@ class c_locup:
   #
   def run_pattern(self):
     ######################
+    print()
     for i in range(self.n_pattern):
       #########
       pline = ""
       if self.pam[i] != "":
-        pline += "\n"+self.pam[i]+"\n"
-      pline += "c"+str(self.cnum)
-      pline += " : "+self.paname[i]+'\n'
+        pline += self.pam[i]
+      pline += " : c"+str(self.cnum)
+      pline += " : "+self.paname[i]  # +'\n'
       print(pline)
       #########
       x = self.cx + self.pax[i]
@@ -145,7 +146,8 @@ class c_locup:
       send = bytes( ouline.encode() )
       spo.write( send )
       #########
-      uline = input("  Hit [enter] when done (q=quit):  \n")
+      # uline = input("  Hit [enter] when done (q=quit):  \n")
+      uline = input("  Hit [enter] when done (q=quit):  ")
       if uline == 'q':  return -1
     ######################
     self.beep(1)
