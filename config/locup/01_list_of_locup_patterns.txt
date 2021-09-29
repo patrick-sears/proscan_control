@@ -1,0 +1,16 @@
+
+
+
+From 2021 ipro 0517v10a--prs-proscan_control/au/0610a_pattern_file/
+locup_pattern_01_horiz10_ns_margin_1.data
+locup_pattern_02_horiz10_ns_margin_2.data
+
+
+From 2021 ipro 0627v08a--pattern_files_for_prs-proscan_control/au/
+  0627b_central_6_fovs/
+  0627c_central_8_fovs/
+locup_pattern_03_central_6.data
+locup_pattern_04_central_8.data
+
+
+

@@ -4,8 +4,8 @@ import os
 import winsound
 import time
 
-from m1_basic_control import *
-from m99_sim_serial import spo
+from modules.m1_basic_control import *
+from modules.m99_sim_serial import spo
 
 
 
@@ -14,9 +14,11 @@ class c_locup:
   #
   def __init__(self):
     print("Remember, use q to quit any time.")
-    self.x0 = None
-    self.y0 = None
+    # center of insert:  cx cy
+    self.cx = None
+    self.cy = None
     self.cnum = 1    # the culture number
+    self.pattern_file = "locup_pattern.data"
   #
   def load_config(self):
     print("Loading config...")
@@ -42,11 +44,14 @@ class c_locup:
       if key == '!culture_diam':
         self.culture_diam = int(ll[1])
         self.culture_r = int(self.culture_diam / 2)
+      elif key == '!pattern_file':
+        self.pattern_file = ll[1]
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
         sys.exit(1)
     f.close()
+    print("  culture diam: ", self.culture_diam)
     print("  Done.")
   #
   def run(self):
@@ -57,22 +62,14 @@ class c_locup:
       #
       if self.get_edges() == -1:  return  # quit on 'q'
       #
-      ##########################
-      # Old system...............
-      # if self.get_y0() == -1:  return  # quit on 'q'
-      # self.go_N_to_W_edge_rough()
-      # if self.get_x0() == -1:  return  # quit on 'q'
-      ##########################
-      #
       ######################################
       # This section is here to make sure the human doesn't
       # keep moving to edges and hitting enter when they
       # should be taking videos using the pattern.
-      self.beep(1)
       pline = "Ready to start pattern run (y for yes / q to quit):"
       while True:
         print(pline)
-        uline = input("in<< ")
+        uline = input("u>> ")
         if uline == 'q':  return
         if uline == 'y':  break
       ######################################
@@ -96,33 +93,50 @@ class c_locup:
     #####
     while True:
       print(pline)
-      uline = input("in<< ")
+      uline = input("u>> ")
       if uline == 'q':  return -1
       if uline == 'p':
         p()
       elif uline == 'xy':
         print("n_pattern = ", self.n_pattern)
-        print("x0,y0 = ", int(self.x0), int(self.y0))
+        print("xc,yc = ", int(self.xc), int(self.yc))
         for i in range(self.n_pattern):
-          x = self.x0 + self.pax[i]
-          y = self.y0 + self.pay[i]
+          x = self.cx + self.pax[i]
+          y = self.cy + self.pay[i]
           print("  i,x,y: ", i+1, int(x), int(y))
     #####
     return 0
   #
+  def go_fov(self, i1o_fov):
+    i = i1o_fov-1
+    if i < 0 or i >= self.n_pattern:
+      print("Error.  locup asked for OOR FOV.")
+      print("  i1o_fov: ", i1o_fov)
+      print("  n_pattern:  ", self.n_pattern)
+      return
+    #########
+    x = self.cx + self.pax[i]
+    y = self.cy + self.pay[i]
+    ouline = "g"
+    ouline += " {0:d}".format( x )
+    ouline += " {0:d}".format( y )
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
+    spo.write( send )
+    #########
+  #
   def run_pattern(self):
     ######################
+    print()
     for i in range(self.n_pattern):
       #########
       pline = ""
       if self.pam[i] != "":
-        pline += "\n"+self.pam[i]+"\n"
-      pline += "c"+str(self.cnum)
-      pline += " : "+self.paname[i]+'\n'
+        pline += self.pam[i]
+      pline += " : c"+str(self.cnum)
+      pline += " : "+self.paname[i]  # +'\n'
       print(pline)
       #########
-      # x = self.x0 + self.pax[i]
-      # y = self.y0 + self.pay[i]
       x = self.cx + self.pax[i]
       y = self.cy + self.pay[i]
       ouline = "g"
@@ -132,48 +146,38 @@ class c_locup:
       send = bytes( ouline.encode() )
       spo.write( send )
       #########
-      uline = input("  Hit [enter] when done (q=quit):  \n")
+      # uline = input("  Hit [enter] when done (q=quit):  \n")
+      uline = input("  Hit [enter] when done (q=quit):  ")
       if uline == 'q':  return -1
     ######################
+    self.beep(1)
     return 0
   #
-  def get_y0(self):
-    pline = "Go to culture "+str(self.cnum)
-    pline += " North edge and hit e[enter]\n"
-    #####
-    while True:
-      print(pline)
-      uline = input("in<< ")
-      if uline == 'q':  return -1
-      if uline == 'e':  break
-    #####
-    cbuf()
-    send = bytes( "p\r\n".encode() )
+  def go_edge(self, capo):  # capo:  "cardinal point"
+    #  self.culture_r = int(self.culture_diam / 2)
+    if capo == 'N':
+      x = self.cx
+      y = self.cy + self.culture_r
+    elif capo == 'S':
+      x = self.cx
+      y = self.cy - self.culture_r
+    elif capo == 'W':
+      x = self.cx + self.culture_r
+      y = self.cy
+    elif capo == 'E':
+      x = self.cx - self.culture_r
+      y = self.cy
+    else:
+      print("Error.  Unrecognized cardinal point.")
+      print("  capo: ", capo)
+      print("  Expected on of:  N W S E.")
+      return
+    ouline = "g"
+    ouline += " {0:d}".format( x )
+    ouline += " {0:d}".format( y )
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
     spo.write( send )
-    serda = spo.readline()
-    ll = serda.decode("Ascii").split(',')
-    self.y0 = int(ll[1]) - self.culture_diam  # 0 x, 1 y
-    #####
-    return 0
-  #
-  def get_x0(self):
-    pline = "Go to culture "+str(self.cnum)
-    pline += " West edge and hit e[enter]\n"
-    #####
-    while True:
-      print(pline)
-      uline = input("in<< ")
-      if uline == 'q':  return -1
-      if uline == 'e':  break
-    #####
-    cbuf()
-    send = bytes( "p\r\n".encode() )
-    spo.write( send )
-    serda = spo.readline()
-    ll = serda.decode("Ascii").split(',')
-    self.x0 = int(ll[0]) - self.culture_diam  # 0 x, 1 y
-    #####
-    return 0
   #
   def beep(self, u):
     if u == 1:
@@ -203,7 +207,7 @@ class c_locup:
     pline += "  Or q to quit.\n"
     while True:
       print(pline)
-      uline = input("in<< ")
+      uline = input("u>> ")
       if uline == 'q':  return -1
       elif uline == 'E' or uline == 'e':
         edi = 0
@@ -241,7 +245,7 @@ class c_locup:
     pline = "Go to "+ped+" and hit [enter], q to quit.\n"
     while True:
       print(pline)
-      uline = input("in<< ")
+      uline = input("u>> ")
       if uline == 'q':  return -1
       break
     ######################################
@@ -266,7 +270,7 @@ class c_locup:
     pline = "Go to "+ped+" and hit m[enter].\n"
     while True:
       print(pline)
-      uline = input("in<< ")
+      uline = input("u>> ")
       if uline == 'q':  return -1
       break
     ######################################
@@ -291,8 +295,11 @@ class c_locup:
     pline = "Go to "+ped+" and hit m[enter].\n"
     while True:
       print(pline)
-      uline = input("in<< ")
-      if uline == 'q':  return -1
+      uline = input("u>> ")
+      if uline == 'q':
+        # No beep needed.  If the user hit 'q', he's looking
+        # at the interface.
+        return -1
       break
     ######################################
     # Get the edge values.
@@ -305,20 +312,11 @@ class c_locup:
     edvaly[edi] = int(ll[1])  # 0 x, 1 y
     ######################################
     #
-    # Figure out x0 y0 ----------------------->
-    ### # Reset culture diam.
-    ### self.culture_diam = int(edvalx[2] - edvalx[0])
-    ### alt_diam = int(edvaly[1] - edvaly[3])
-    ### if alt_diam < self.culture_diam:  self.culture_daim = alt_diam
-    ### self.culture_r = int(self.culture_diam / 2)
-    #
     # Set the center.
     self.cx = int((edvalx[0] + edvalx[2]) / 2)
     self.cy = int((edvaly[1] + edvaly[3]) / 2)
     #
-    # Set x0 and y0
-    self.x0 = self.cx - self.culture_r
-    self.y0 = self.cy - self.culture_r
+    self.beep(1)
     #
     return 0
     #
@@ -376,7 +374,7 @@ class c_locup:
   def load_pattern_data(self):
     print("Loading pattern data...")
     #
-    fname_base =  "locup_pattern.data"
+    fname_base = self.pattern_file
     fname_default = "config/"+fname_base
     fname_user = "user/"+fname_base
     if os.path.isfile( fname_user ):
@@ -393,14 +391,32 @@ class c_locup:
     self.pay = []  # pattern y
     self.paname = []  # a short name for that item in the pattern list
     # several items can have the same name.
+    next_pam = ""
     f = open(fname)
     for l in f:
       l = l.strip()
       if len(l) == 0:  continue
       if l[0] == '#':  continue
+      ll = l.split(' ')
       lla = l.split(':')
-      if len(lla) > 1:  self.pam.append( lla[1].strip() )
-      else:           self.pam.append( "" )
+      key = ll[0]
+      ###
+      if key == '!culture_diam':
+        # This allows the pattern file to override the culture diameter
+        # from the config file.
+        self.culture_diam = int(ll[1])
+        self.culture_r = int(self.culture_diam / 2)
+        continue
+      elif key == '!m':
+        next_pam = lla[1].strip()
+        continue
+      if len(lla) > 1:
+        # This overrides next_pam.
+        self.pam.append( lla[1].strip() )
+        next_pam = ""
+      else:
+        self.pam.append( next_pam )
+        next_pam = ""
       llb = lla[0].strip().split(' ')
       self.paname.append( llb[0] )
       self.pax.append( int(llb[1]) )
@@ -408,12 +424,13 @@ class c_locup:
     f.close()
     self.n_pattern = len(self.paname)
     print("  Done.")
+    #
   #
   #
 #######################################################
 
 
-
+locup = c_locup()
 
 
 

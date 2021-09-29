@@ -1,6 +1,9 @@
 
 
-1 4124 0 : 10 FOVs horizontally across.
+# For 12 mm insert.
+
+!m : 10 FOVs horizontally across.
+1 4124 0
 2 3208 0
 3 2291 0
 4 1375 0
@@ -12,7 +15,8 @@
 10 -4124 0
 
 
-N 0 4124 : North and South FOVs.
+!m : North and South FOVs.
+N 0 4124
 S 0 -4124
 
 

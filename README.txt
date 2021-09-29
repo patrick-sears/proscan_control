@@ -14,12 +14,19 @@ On the Chapel Hill UNC network, see the mtorpedi server:
 
 
 
+__________________________________________________________________
+m system.
+
+Do this to start:
+>>> from modules.m import *
+
 
 __________________________________________________________________
-For locup system:
+locup system.
 
-from m_locup import locup
-locup.run()
+Do this to start:
+>>> from modules.c_locup import locup
+>>> locup.run()
 
           N
         -----
@@ -30,6 +37,11 @@ locup.run()
           S
 
 
+__________________________________________________________________
+arec system.
 
+
+Do this to start:
+>>> from modules.c_arec import arec
 
 
