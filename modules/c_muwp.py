@@ -292,6 +292,14 @@ class c_muwp:
         return
       elif uline == 'info':
         print("fname_plate: ", self.fname_plate)
+        if os.path.isfile( "config/"+self.fname_plate):
+          print("  File exists in config/")
+        else:
+          print("  File does not exist in config/")
+        if os.path.isfile( "user/"+self.fname_plate):
+          print("  File exists in user/")
+        else:
+          print("  File does not exist in user/")
         print("psx0:  ", self.psx0)
         print("psy0:  ", self.psy0)
         print("well centers:")
