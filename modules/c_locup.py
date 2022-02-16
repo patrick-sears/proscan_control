@@ -334,25 +334,35 @@ class c_locup:
     #
     # Get the first edge ----------------------->
     pline =  "Getting edges in culture "+str(self.cnum)+'\n'
-    pline += "  Hit [enter] after each edge adjustment.\n"
-    pline += "  Or q to quit."
     print(pline)
-    if start_fov == 'E' or start_fov == 'e':
+    if start_fov == 'E':
       edi = 0
-      break
-    elif start_fov == 'N' or start_fov == 'n':
+    elif start_fov == 'N':
       edi = 1
-      break
-    elif start_fov == 'W' or start_fov == 'w':
+    elif start_fov == 'W':
       edi = 2
-      break
-    elif start_fov == 'S' or start_fov == 's':
+    elif start_fov == 'S':
       edi = 3
-      break
     else:
       print("Unrecognized get_edges_2() start_fov..")
       print("  start_fov: ", start_fov)
       return -2
+    ######################################
+    #
+    # Get the first edge ----------------------->
+    self.go_edge(start_fov)
+    #
+    # Do not incremente edit here because it's already set.
+    if   edi == 0:  ped = 'E'
+    elif edi == 1:  ped = 'N'
+    elif edi == 2:  ped = 'W'
+    elif edi == 3:  ped = 'S'
+    pline = "Go to "+ped+" and hit [enter], q to quit.\n"
+    while True:
+      print(pline)
+      uline = input("u>> ")
+      if uline == 'q':  return -1
+      break
     ######################################
     # Get the edge values.
     cbuf()
