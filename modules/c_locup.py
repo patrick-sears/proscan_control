@@ -179,16 +179,13 @@ class c_locup:
     send = bytes( ouline.encode() )
     spo.write( send )
   #
-  def beep(self, u):
-    if u == 1:
-      winsound.Beep(1600,200)  # (freq in Hz, duration in ms)
-      time.sleep(0.1)
+  def beep(self, n_beep):
+    for i in range(n_beep):
+      if i != 0:  time.sleep(0.1)
       winsound.Beep(1600,200)  # (freq in Hz, duration in ms)
       # os.system('\a')
       # sys.stdout.write('\a')
       # sys.stdout.flush()
-    elif u == 2:
-      winsound.Beep(1600,200)  # (freq in Hz, duration in ms)
   #
   def get_edges(self):
     #####
