@@ -189,8 +189,6 @@ class c_locup:
   #
   def get_edges(self):
     #####
-    self.beep(2)
-    #####
     #
     # 0 E, 1 N, 2 W, 3 S
     edvalx = [0,0,0,0]
@@ -320,8 +318,6 @@ class c_locup:
   #
   def get_edges_2(self, start_fov):
     # start fov:  N S E W
-    #####
-    self.beep(2)
     #####
     #
     # 0 E, 1 N, 2 W, 3 S
@@ -453,6 +449,7 @@ class c_locup:
     self.cx = int((edvalx[0] + edvalx[2]) / 2)
     self.cy = int((edvaly[1] + edvaly[3]) / 2)
     #
+    # Print with this culture.
     self.beep(1)
     #
     return 0

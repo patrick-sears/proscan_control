@@ -374,8 +374,7 @@ class c_muwp:
           print("locup get_edges() didn't return 0.")
           print("  So not resetting muwp ins center.")
       elif uline.startswith('reset all edges'):
-        print("UNDER CONSTRUCTION.")
-        print("Testing...")
+        print("This functions needs some checking. ***")
         # self.mlocup[0].get_edges_2('N')
         #
         rv = 0
