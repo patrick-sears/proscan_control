@@ -379,7 +379,31 @@ class c_muwp:
       elif uline.startswith('reset all edges'):
         print("UNDER CONSTRUCTION.")
         print("Testing...")
-        self.mlocup[0].get_edges_2('N')
+        # self.mlocup[0].get_edges_2('N')
+        #
+        rv = 0
+        if self.n_ins == 2:
+          rv = self.reset_edges_2(0, 'N')
+          if rv == 0:
+            rv = self.reset_edges_2(1, 'W')
+        elif self.n_ins == 6:
+          # First row:  c1 -> c2 -> c3
+          rv = self.reset_edges_2(0, 'N')
+          if rv == 0:  rv = self.reset_edges_2(1, 'N')
+          if rv == 0:  rv = self.reset_edges_2(2, 'N')
+          # Second row:  c6 <- c5 <- c4
+          if rv == 0:  rv = self.reset_edges_2(5, 'S')
+          if rv == 0:  rv = self.reset_edges_2(4, 'S')
+          if rv == 0:  rv = self.reset_edges_2(3, 'S')
+        else:
+          print("Unsupported n_ins.")
+        #
+        if rv == 0:
+          print("All edges reset.")
+        else:
+          print("Some edges not reset.")
+        self.beep(2)
+        #
       elif uline.startswith('go ins') or uline.startswith('go lp'):
         ll = uline.strip().split(' ')
         ######.#
@@ -435,6 +459,12 @@ class c_muwp:
       else:
         print("Unrecognized input.")
   #
+  def reset_edges_2(self, iw, start_fov):
+    rv = self.mlocup[iw].get_edges_2(start_fov)
+    if rv == 0:
+      self.ins_center_x[iw] = self.mlocup[iw].cx
+      self.ins_center_y[iw] = self.mlocup[iw].cy
+    return rv
   #
 #######################################################
 

@@ -407,7 +407,7 @@ class c_locup:
     elif edi == 1:  ped = 'N'
     elif edi == 2:  ped = 'W'
     elif edi == 3:  ped = 'S'
-    pline = "Go to "+ped+" and hit m[enter].\n"
+    pline = "Go to "+ped+" and hit [enter].\n"
     while True:
       print(pline)
       uline = input("u>> ")
@@ -432,7 +432,7 @@ class c_locup:
     elif edi == 1:  ped = 'N'
     elif edi == 2:  ped = 'W'
     elif edi == 3:  ped = 'S'
-    pline = "Go to "+ped+" and hit m[enter].\n"
+    pline = "Go to "+ped+" and hit [enter].\n"
     while True:
       print(pline)
       uline = input("u>> ")
