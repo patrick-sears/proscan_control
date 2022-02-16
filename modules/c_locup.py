@@ -321,6 +321,137 @@ class c_locup:
     return 0
     #
   #
+  def get_edges_2(self, start_fov):
+    # start fov:  N S E W
+    #####
+    self.beep(2)
+    #####
+    #
+    # 0 E, 1 N, 2 W, 3 S
+    edvalx = [0,0,0,0]
+    edvaly = [0,0,0,0]
+    edi = None
+    #
+    # Get the first edge ----------------------->
+    pline =  "Getting edges in culture "+str(self.cnum)+'\n'
+    pline += "  Hit [enter] after each edge adjustment.\n"
+    pline += "  Or q to quit."
+    print(pline)
+    if start_fov == 'E' or start_fov == 'e':
+      edi = 0
+      break
+    elif start_fov == 'N' or start_fov == 'n':
+      edi = 1
+      break
+    elif start_fov == 'W' or start_fov == 'w':
+      edi = 2
+      break
+    elif start_fov == 'S' or start_fov == 's':
+      edi = 3
+      break
+    else:
+      print("Unrecognized get_edges_2() start_fov..")
+      print("  start_fov: ", start_fov)
+      return -2
+    ######################################
+    # Get the edge values.
+    cbuf()
+    send = bytes( "p\r\n".encode() )
+    spo.write( send )
+    serda = spo.readline()
+    ll = serda.decode("Ascii").split(',')
+    edvalx[edi] = int(ll[0])  # 0 x, 1 y
+    edvaly[edi] = int(ll[1])  # 0 x, 1 y
+    ######################################
+    #
+    # Get the second edge ----------------------->
+    self.go_ccw_edge_rough(edi)
+    #
+    edi = edi+1 if edi<3 else 0
+    if   edi == 0:  ped = 'E'
+    elif edi == 1:  ped = 'N'
+    elif edi == 2:  ped = 'W'
+    elif edi == 3:  ped = 'S'
+    pline = "Go to "+ped+" and hit [enter], q to quit.\n"
+    while True:
+      print(pline)
+      uline = input("u>> ")
+      if uline == 'q':  return -1
+      break
+    ######################################
+    # Get the edge values.
+    cbuf()
+    send = bytes( "p\r\n".encode() )
+    spo.write( send )
+    serda = spo.readline()
+    ll = serda.decode("Ascii").split(',')
+    edvalx[edi] = int(ll[0])  # 0 x, 1 y
+    edvaly[edi] = int(ll[1])  # 0 x, 1 y
+    ######################################
+    #
+    # Get the third edge ----------------------->
+    self.go_ccw_edge_rough(edi)
+    #
+    edi = edi+1 if edi<3 else 0
+    if   edi == 0:  ped = 'E'
+    elif edi == 1:  ped = 'N'
+    elif edi == 2:  ped = 'W'
+    elif edi == 3:  ped = 'S'
+    pline = "Go to "+ped+" and hit m[enter].\n"
+    while True:
+      print(pline)
+      uline = input("u>> ")
+      if uline == 'q':  return -1
+      break
+    ######################################
+    # Get the edge values.
+    cbuf()
+    send = bytes( "p\r\n".encode() )
+    spo.write( send )
+    serda = spo.readline()
+    ll = serda.decode("Ascii").split(',')
+    edvalx[edi] = int(ll[0])  # 0 x, 1 y
+    edvaly[edi] = int(ll[1])  # 0 x, 1 y
+    ######################################
+    #
+    # Get the fourth edge ----------------------->
+    self.go_ccw_edge_rough(edi)
+    #
+    edi = edi+1 if edi<3 else 0
+    if   edi == 0:  ped = 'E'
+    elif edi == 1:  ped = 'N'
+    elif edi == 2:  ped = 'W'
+    elif edi == 3:  ped = 'S'
+    pline = "Go to "+ped+" and hit m[enter].\n"
+    while True:
+      print(pline)
+      uline = input("u>> ")
+      if uline == 'q':
+        # No beep needed.  If the user hit 'q', he's looking
+        # at the interface.
+        return -1
+      break
+    ######################################
+    # Get the edge values.
+    cbuf()
+    send = bytes( "p\r\n".encode() )
+    spo.write( send )
+    serda = spo.readline()
+    ll = serda.decode("Ascii").split(',')
+    edvalx[edi] = int(ll[0])  # 0 x, 1 y
+    edvaly[edi] = int(ll[1])  # 0 x, 1 y
+    ######################################
+    #
+    # Set the center.
+    self.cx = int((edvalx[0] + edvalx[2]) / 2)
+    self.cy = int((edvaly[1] + edvaly[3]) / 2)
+    #
+    self.beep(1)
+    #
+    return 0
+    #
+  #
+  #
   def go_ccw_edge_rough(self, in_edi):
     if   in_edi == 0:  self.go_E_to_N_edge_rough()
     elif in_edi == 1:  self.go_N_to_W_edge_rough()
