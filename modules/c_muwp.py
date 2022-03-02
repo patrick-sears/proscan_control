@@ -29,6 +29,9 @@ class c_muwp:
     self.clear_fidu()
     self.clear_well_center()
     self.clear_ins_center()
+    #
+    self.n_remulti = 0
+    #
   #
   def clear_fidu(self):
     self.fidu_name = []
@@ -108,6 +111,38 @@ class c_muwp:
           self.ins_center_x.append( int(ll[1]) )
           self.ins_center_y.append( int(ll[2]) )
         self.n_ins = len(self.ins_center_x)
+      elif key == '!reset_multi_edges':
+        self.remulti_i = []   # index of ins
+        self.remulti_fe = []  # fe:  first edge
+        # The "first edge" is the one to start with.
+        #
+        for l in f:
+          l = l.strip()
+          ll = l.split(' ')
+          if len(l) == 0:  break
+          if l[0] == '#':  continue
+          idx = int(ll[0])-1
+          data_ok = True
+          if idx < 0 or idx >= self.n_ins:
+            print("Error reading plate data.")
+            print("  idx out of range: ", idx)
+            print("  fname: ", fname) 
+            print("  !reset_multi_edges is incomplete.")
+            data_ok = False
+          a = ll[1]
+          if a!='N' and a!='S' and a!='W' and a!='E':
+            print("Error reading plate data.")
+            print("  Bad fov: ", a)
+            print("  fname: ", fname) 
+            print("  !reset_multi_edges is incomplete.")
+            data_ok = False
+          #
+          self.remulti_i.append( idx )
+          self.remulti_fe.append( a )
+          #
+        #
+        self.n_remulti = len(self.remulti_i)
+        #
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
@@ -373,26 +408,17 @@ class c_muwp:
         else:
           print("locup get_edges() didn't return 0.")
           print("  So not resetting muwp ins center.")
-      elif uline.startswith('reset all edges'):
+      # elif uline.startswith('reset all edges'):
+      elif uline.startswith('reset multi edges') or uline == 'rme':
         print("This functions needs some checking. ***")
-        # self.mlocup[0].get_edges_2('N')
+        if self.n_remulti == 0:
+          print("The multi edges have been configured.")
+          continue
         #
         rv = 0
-        if self.n_ins == 2:
-          rv = self.reset_edges_2(0, 'N')
-          if rv == 0:
-            rv = self.reset_edges_2(1, 'W')
-        elif self.n_ins == 6:
-          # First row:  c1 -> c2 -> c3
-          rv = self.reset_edges_2(0, 'N')
-          if rv == 0:  rv = self.reset_edges_2(1, 'N')
-          if rv == 0:  rv = self.reset_edges_2(2, 'N')
-          # Second row:  c6 <- c5 <- c4
-          if rv == 0:  rv = self.reset_edges_2(5, 'S')
-          if rv == 0:  rv = self.reset_edges_2(4, 'S')
-          if rv == 0:  rv = self.reset_edges_2(3, 'S')
-        else:
-          print("Unsupported n_ins.")
+        for i in range(self.n_remulti):
+          rv = self.reset_edges_2(self.remulti_i[i], self.remulti_fe[i])
+          if rv != 0:  break
         #
         if rv == 0:
           print("All edges reset.")
