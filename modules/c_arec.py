@@ -21,6 +21,7 @@ class c_arec:
   def __init__(self):
     print("Remember, use q to quit any time.")
     self.name = []  # area name
+    self.tstamp = []  # time stamp
     self.px = []    # x pos
     self.py = []    # y pos
     self.pz = []    # z pos
@@ -40,6 +41,7 @@ class c_arec:
   #
   def clear_areas(self):
     self.name = []  # area name
+    self.tstamp = []  # time stamp
     self.px = []    # x pos
     self.py = []    # y pos
     self.pz = []    # z pos
@@ -84,6 +86,7 @@ class c_arec:
     self.n_area += 1
     #
     self.name.append( uname )
+    self.tstamp.append( datetime.now() )
     self.px.append( 0 )
     self.py.append( 0 )
     self.pz.append( 0 )
@@ -133,7 +136,10 @@ class c_arec:
     send = bytes( ouline.encode() )
     spo.write( send )
   #
-  def load_old_format(self):
+  def load(self):
+    self.load_data_format_3()
+  #
+  def load_data_format_3(self):
     print("Loading data...")
     #
     fname_base =  "arec.data"
@@ -150,26 +156,45 @@ class c_arec:
     #
     print("  Loading: ", fname )
     f = open(fname)
+    l = f.readline().strip()
+    if not l.startswith('!data_format'):
+      print("Loading failed due to incorrect version.")
+      print("  l:  ", l)
+      print("  Expect sart:  !data_format")
+      return
+    ll = l.split(' ')
+    if len(ll) < 2:
+      print("Loading failed due to incorrect version.")
+      print("  l:  ", l)
+      return
+    if ll[1] != '3':
+      print("Loading failed due to incorrect version.")
+      print("  ll[1]:  ", ll[1])
+      print("  Expected:  3")
+      return
     for l in f:
       l = l.strip()
       if len(l) == 0:  continue
       if l[0] == '#':  continue
       ###
       ll = l.split(';')
-      self.px.append( int(ll[1].strip()) )
-      self.py.append( int(ll[2].strip()) )
-      self.pz.append( 0 )
-      self.name.append( ll[3].strip() )
-      if len(ll) > 4:
-        self.notes.append( ll[4].strip() )
-      else:
-        self.notes.append("")
+      if len(ll) < 7:
+        print("A failure occurred during loading.")
+        print("  Data not completely loaded.")
+        return
+      tstamp = datetime.strptime(ll[1].strip(), '%Y-%m-%d %H:%M:%S.%f')
+      self.tstamp.append( tstamp )
+      self.px.append( int(ll[2].strip()) )
+      self.py.append( int(ll[3].strip()) )
+      self.pz.append( int(ll[4].strip()) )
+      self.name.append(   ll[5].strip() )
+      self.notes.append(  ll[6].strip() )
       ###
     f.close()
     self.n_area = len(self.name)
     print("  Done.")
   #
-  def load(self):
+  def load_data_format_2(self):
     print("Loading data...")
     #
     fname_base =  "arec.data"
@@ -206,6 +231,9 @@ class c_arec:
     print("  Done.")
   #
   def save(self, ufname=None):
+    self.save_data_format_3(ufname)
+  #
+  def save_data_format_2(self, ufname=None):
     if self.n_area == 0:
       print("Nothing to save.")
       return
@@ -227,6 +255,38 @@ class c_arec:
         ou += " ; " + self.notes[i]
       ou += '\n'
       fz.write(ou)
+    fz.close()
+  #
+  def save_data_format_3(self, ufname=None):
+    if self.n_area == 0:
+      print("Nothing to save.")
+      return
+    fname_base =  "arec.data"
+    if ufname != None:
+      fname_base = ufname
+    fname_user = "user/"+fname_base
+    fname = fname_user
+    print("Saving "+fname+" ...")
+    #
+    savetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    ou = ''
+    ou += '!data_format 3\n'
+    ou += '# Save time: '+savetime+'\n'
+    ou += '# Position data is in um.\n'
+    ou += '# Blank lines and comment lines starting with # are allowed in the data.\n'
+    ou += '# i ; time stamp ; px(inverted) ; py ; pz ; name ; notes\n'
+    for i in range(self.n_area):
+      tstr = self.tstamp[i].strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+      ou += str(i)
+      ou += " ; " + tstr
+      ou += " ; " + str(self.px[i])
+      ou += " ; " + str(self.py[i])
+      ou += " ; " + str(self.pz[i])
+      ou += " ; " + self.name[i]
+      ou += " ; " + self.notes[i]
+      ou += '\n'
+    fz = open(fname, 'w')
+    fz.write(ou)
     fz.close()
   #
   def backup(self):
