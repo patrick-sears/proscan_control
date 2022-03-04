@@ -31,8 +31,6 @@ class c_arec:
     #
     self.n_area = 0
     #
-    print("DANGER:  Backup system not implemented yet.")
-    print("  If you set areas and then load, you will loose your data.")
   #
   def prefix(self,p=None):
     if p != None:
@@ -152,6 +150,11 @@ class c_arec:
     else:
       fname = fname_default
       print("Using default file.")
+    #
+    if self.n_area != 0:
+      # If there are data in ram, make a backup.
+      ufname = 'arec_'+datetime.now().strftime("%Y%m%d_%H%M%S")+'.data'
+      self.save(ufname)
     #
     self.clear_areas()
     #
@@ -301,7 +304,7 @@ class c_arec:
     fz.write(ou)
     fz.close()
   #
-  def backup(self):
+  def backup_user_demand(self):
     ts_dto = datetime.now()
     ts = ts_dto.strftime("%Y%m%d_%H%M%S")
     ufname = "arec_"+ts+".data"
@@ -512,9 +515,10 @@ class c_arec:
         elif uline == 'ls rel':
           self.ls_rel()
         elif uline == 'load':  self.load()
-        elif uline == 'load old format':  self.load_old_format()
         elif uline == 'save':  self.save()
-        elif uline == 'backup':  self.backup()
+        elif uline == 'backup':
+          self.backup_user_demand()
+          # This backups up user/arec.data.
         elif uline == 'plot ?':
           print("Usage:")
           print("  plot          # Just show the plot.")
