@@ -370,40 +370,109 @@ class c_arec:
     print("n_area: ", self.n_area)
     #
   #
+  #
+  def determine_area_cir(self):
+    all_good = True
+    n_cir = 0
+    x_min = None
+    x_max = None
+    y_min = None
+    y_max = None
+    first = True
+    ###
+    for i in range(self.n_area):
+      if self.name[i].startswith("e+c"):
+        n_cir += 1
+        x = self.px[i]
+        y = self.py[i]
+        if first:
+          first = False
+          x_min = x
+          x_max = x
+          y_min = y
+          y_max = y
+        else:
+          if x < x_min:    x_min = x
+          if x > x_max:    x_max = x
+          if y < y_min:    y_min = y
+          if y > y_max:    y_max = y
+    ###
+    if x_min == x_max or y_min == y_max:
+      all_good = False
+    #
+    diag1_x = x_max - x_min
+    diag1_y = y_max - y_min
+    cx0 = x_min + diag1_x/2
+    cy0 = y_min + diag1_y/2
+    #
+    r = 0
+    for i in range(self.n_area):
+      if self.name[i].startswith("e+c"):
+        x = self.px[i]
+        y = self.py[i]
+        tesr = math.hypot(x-cx0, y-cy0)
+        if tesr > r:  t = tesr
+    #
+    return all_good, cx0, cy0, r
+  #
+  def determine_area_rec(self):
+    all_good = True
+    n_rec = 0
+    x_min = None
+    x_max = None
+    y_min = None
+    y_max = None
+    first = True
+    for i in range(self.n_area):
+      if self.name[i].startswith("e+r"):
+        n_rec += 1
+        x = self.px[i]
+        y = self.py[i]
+        if first:
+          first = False
+          x_min = x
+          x_max = x
+          y_min = y
+          y_max = y
+        else:
+          if x < x_min:    x_min = x
+          if x > x_max:    x_max = x
+          if y < y_min:    y_min = y
+          if y > y_max:    y_max = y
+    ###
+    if x_min == x_max or y_min == y_max:
+      all_good = False
+    #
+    # For plotting.
+    # grr:  graph of rectangle edge.
+    grrx = [xmin, xmax, xmax, xmin, xmin]
+    grry = [ymin, ymin, ymax, ymax, ymin]
+    #
+    return all_good, grrx, grry
+    #
+  #
   def plot(self, plot_save=0, plot_grc=0):
     # plot_save:  0 no, 1 yes
     # plot_grc:  0 no, 1 yes plot current stage position
     if self.n_area == 0:
       print("No areas defined.")
       return
-    # The edge will be either a circle "e+c"/n_s
+    # The edge will be either a circle "e+c"/n_cir
     # or a rectangle "e+r"/n_rec.
-    n_s = 0
-    n_rec = 0
     # Center will be at (cx, cy)
-    cx = 0
-    cy = 0
-    for i in range(self.n_area):
-      if self.name[i].startswith("e+c"):
-        n_s += 1
-        cx += self.px[i]
-        cy += self.py[i]
-      if self.name[i].startswith("e+r"):
-        n_rec += 1
-    if n_s != 4 and n_rec != 4:
-      print("Didn't find four e+?### names for N W S E.")
-      print("  n_s   (e+c): ", n_s)
-      print("  n_rec (e+r): ", n_rec)
+    cir_good, cx, cy, circ_r = self.determine_area_cir()
+    rec_good, grrx, grry = self.determine_area_rec()
+    #
+    if (not cir_good) and (not rec_good):
+      print("Didn't find enough e+?### names for a border.")
+      print("  You need at least three (e+c) or (e+r).")
+      print("  And they must be able to define a min")
+      print("  and a max in both x and y.")
+      # print("  n_cir (e+c): ", n_cir)
+      # print("  n_rec (e+r): ", n_rec)
       return
     #
-    if n_s == 4:
-      cx /= 4
-      cy /= 4
-      circ_r = 0
-      for i in range(self.n_area):
-        if self.name[i].startswith("e+c"):
-          circ_r += math.hypot( cx - self.px[i], cy - self.py[i] )
-      #
+    if cir_good:
       circ_r /= 4
       circ_n_seg = 80
       circ_n_pnt = circ_n_seg+1
@@ -414,25 +483,6 @@ class c_arec:
         ang = circ_dang * i
         circ_x.append( cx + circ_r * math.cos( ang ) )
         circ_y.append( cy + circ_r * math.sin( ang ) )
-    #
-    if n_rec == 4:
-      rec_xmin = None
-      rec_xmax = None
-      rec_ymin = None
-      rec_ymax = None
-      for i in range(self.n_area):
-        if self.name[i].startswith("e+r"):
-          if rec_xmin == None:  rec_xmin = self.px[i]
-          if rec_ymin == None:  rec_ymin = self.py[i]
-          if rec_xmax == None:  rec_xmax = self.px[i]
-          if rec_ymax == None:  rec_ymax = self.py[i]
-          if self.px[i] < rec_xmin:  rec_xmin = self.px[i]
-          if self.py[i] < rec_ymin:  rec_ymin = self.py[i]
-          if self.px[i] > rec_xmax:  rec_xmax = self.px[i]
-          if self.py[i] > rec_ymax:  rec_ymax = self.py[i]
-      # grr:  graph of rectangle edge.
-      grrx = [rec_xmin, rec_xmax, rec_xmax, rec_xmin, rec_xmin]
-      grry = [rec_ymin, rec_ymin, rec_ymax, rec_ymax, rec_ymin]
     #
     # gra will be the areas.
     grax = []
@@ -460,11 +510,11 @@ class c_arec:
       grcx.append(cupx)
       grcy.append(cupy)
     #
-    if n_s == 4:
+    if cir_good:
       plt.plot( circ_x, circ_y,
         color='#000099'
         )
-    if n_rec == 4:
+    if rec_good:
       plt.plot( grrx, grry,
         color='#000099'
         )
