@@ -373,7 +373,6 @@ class c_arec:
   #
   def determine_area_cir(self):
     all_good = True
-    n_cir = 0
     x_min = None
     x_max = None
     y_min = None
@@ -382,7 +381,6 @@ class c_arec:
     ###
     for i in range(self.n_area):
       if self.name[i].startswith("e+c"):
-        n_cir += 1
         x = self.px[i]
         y = self.py[i]
         if first:
@@ -399,6 +397,7 @@ class c_arec:
     ###
     if x_min == x_max or y_min == y_max:
       all_good = False
+      return all_good, 0, 0, 0
     #
     diag1_x = x_max - x_min
     diag1_y = y_max - y_min
@@ -411,7 +410,7 @@ class c_arec:
         x = self.px[i]
         y = self.py[i]
         tesr = math.hypot(x-cx0, y-cy0)
-        if tesr > r:  t = tesr
+        if tesr > r:  r = tesr
     #
     return all_good, cx0, cy0, r
   #
@@ -442,11 +441,12 @@ class c_arec:
     ###
     if x_min == x_max or y_min == y_max:
       all_good = False
+      return all_good, [0,0,0,0,0], [0,0,0,0,0]
     #
     # For plotting.
     # grr:  graph of rectangle edge.
-    grrx = [xmin, xmax, xmax, xmin, xmin]
-    grry = [ymin, ymin, ymax, ymax, ymin]
+    grrx = [x_min, x_max, x_max, x_min, x_min]
+    grry = [y_min, y_min, y_max, y_max, y_min]
     #
     return all_good, grrx, grry
     #
@@ -471,9 +471,13 @@ class c_arec:
       # print("  n_cir (e+c): ", n_cir)
       # print("  n_rec (e+r): ", n_rec)
       return
+    else:
+      print("e+c:")
+      print("  cx: ", cx)
+      print("  cy: ", cy)
+      print("  circ_r: ", circ_r)
     #
     if cir_good:
-      circ_r /= 4
       circ_n_seg = 80
       circ_n_pnt = circ_n_seg+1
       circ_x = []
