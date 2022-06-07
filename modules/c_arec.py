@@ -1,6 +1,7 @@
 
 import sys
 import os
+import shutil
 import winsound
 import time
 from datetime import datetime
@@ -21,6 +22,7 @@ class c_arec:
   def __init__(self):
     print("Remember, use q to quit any time.")
     self.name = []  # area name
+    self.tstamp = []  # time stamp
     self.px = []    # x pos
     self.py = []    # y pos
     self.pz = []    # z pos
@@ -29,8 +31,6 @@ class c_arec:
     #
     self.n_area = 0
     #
-    print("DANGER:  Backup system not implemented yet.")
-    print("  If you set areas and then load, you will loose your data.")
   #
   def prefix(self,p=None):
     if p != None:
@@ -40,6 +40,7 @@ class c_arec:
   #
   def clear_areas(self):
     self.name = []  # area name
+    self.tstamp = []  # time stamp
     self.px = []    # x pos
     self.py = []    # y pos
     self.pz = []    # z pos
@@ -84,6 +85,7 @@ class c_arec:
     self.n_area += 1
     #
     self.name.append( uname )
+    self.tstamp.append( datetime.now() )
     self.px.append( 0 )
     self.py.append( 0 )
     self.pz.append( 0 )
@@ -133,7 +135,10 @@ class c_arec:
     send = bytes( ouline.encode() )
     spo.write( send )
   #
-  def load_old_format(self):
+  def load(self):
+    self.load_data_format_3()
+  #
+  def load_data_format_3(self):
     print("Loading data...")
     #
     fname_base =  "arec.data"
@@ -146,30 +151,54 @@ class c_arec:
       fname = fname_default
       print("Using default file.")
     #
+    if self.n_area != 0:
+      # If there are data in ram, make a backup.
+      ufname = 'arec_'+datetime.now().strftime("%Y%m%d_%H%M%S")+'.data'
+      self.save(ufname)
+    #
     self.clear_areas()
     #
     print("  Loading: ", fname )
     f = open(fname)
+    l = f.readline().strip()
+    if not l.startswith('!data_format'):
+      print("Loading failed due to incorrect version.")
+      print("  l:  ", l)
+      print("  Expect sart:  !data_format")
+      return
+    ll = l.split(' ')
+    if len(ll) < 2:
+      print("Loading failed due to incorrect version.")
+      print("  l:  ", l)
+      return
+    if ll[1] != '3':
+      print("Loading failed due to incorrect version.")
+      print("  ll[1]:  ", ll[1])
+      print("  Expected:  3")
+      return
     for l in f:
       l = l.strip()
       if len(l) == 0:  continue
       if l[0] == '#':  continue
       ###
       ll = l.split(';')
-      self.px.append( int(ll[1].strip()) )
-      self.py.append( int(ll[2].strip()) )
-      self.pz.append( 0 )
-      self.name.append( ll[3].strip() )
-      if len(ll) > 4:
-        self.notes.append( ll[4].strip() )
-      else:
-        self.notes.append("")
+      if len(ll) < 7:
+        print("A failure occurred during loading.")
+        print("  Data not completely loaded.")
+        return
+      tstamp = datetime.strptime(ll[1].strip(), '%Y-%m-%d %H:%M:%S.%f')
+      self.tstamp.append( tstamp )
+      self.px.append( int(ll[2].strip()) )
+      self.py.append( int(ll[3].strip()) )
+      self.pz.append( int(ll[4].strip()) )
+      self.name.append(   ll[5].strip() )
+      self.notes.append(  ll[6].strip() )
       ###
     f.close()
     self.n_area = len(self.name)
     print("  Done.")
   #
-  def load(self):
+  def load_data_format_2(self):
     print("Loading data...")
     #
     fname_base =  "arec.data"
@@ -206,6 +235,9 @@ class c_arec:
     print("  Done.")
   #
   def save(self, ufname=None):
+    self.save_data_format_3(ufname)
+  #
+  def save_data_format_2(self, ufname=None):
     if self.n_area == 0:
       print("Nothing to save.")
       return
@@ -229,7 +261,50 @@ class c_arec:
       fz.write(ou)
     fz.close()
   #
-  def backup(self):
+  def save_data_format_3(self, ufname=None):
+    savetime_dto = datetime.now()
+    savetime_for_fname = savetime_dto.strftime("%Y%m%d_%H%M%S")
+    if self.n_area == 0:
+      print("Nothing to save.")
+      return
+    fname_base =  "arec.data"
+    if ufname != None:
+      fname_base = ufname
+    fname_user = "user/"+fname_base
+    fname = fname_user
+    if fname == 'user/arec.data':
+      # Automatic backup of old file but only if it was
+      # called arec.data.  Note that the timestamp that
+      # is part of the backup filename will match exactly
+      # the timestamp on the save time comment line in
+      # the new file.
+      if os.path.exists(fname):
+        backname = 'user/arec_'+savetime_for_fname+'.data'
+        shutil.copyfile('user/arec.data', backname)
+    print("Saving "+fname+" ...")
+    #
+    savetime = savetime_dto.strftime("%Y-%m-%d %H:%M:%S")
+    ou = ''
+    ou += '!data_format 3\n'
+    ou += '# Save time: '+savetime+'\n'
+    ou += '# Position data is in um.\n'
+    ou += '# Blank lines and comment lines starting with # are allowed in the data.\n'
+    ou += '# i ; time stamp ; px(inverted) ; py ; pz ; name ; notes\n'
+    for i in range(self.n_area):
+      tstr = self.tstamp[i].strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+      ou += str(i)
+      ou += " ; " + tstr
+      ou += " ; " + str(self.px[i])
+      ou += " ; " + str(self.py[i])
+      ou += " ; " + str(self.pz[i])
+      ou += " ; " + self.name[i]
+      ou += " ; " + self.notes[i]
+      ou += '\n'
+    fz = open(fname, 'w')
+    fz.write(ou)
+    fz.close()
+  #
+  def backup_user_demand(self):
     ts_dto = datetime.now()
     ts = ts_dto.strftime("%Y%m%d_%H%M%S")
     ufname = "arec_"+ts+".data"
@@ -295,41 +370,114 @@ class c_arec:
     print("n_area: ", self.n_area)
     #
   #
+  #
+  def determine_area_cir(self):
+    all_good = True
+    x_min = None
+    x_max = None
+    y_min = None
+    y_max = None
+    first = True
+    ###
+    for i in range(self.n_area):
+      if self.name[i].startswith("e+c"):
+        x = self.px[i]
+        y = self.py[i]
+        if first:
+          first = False
+          x_min = x
+          x_max = x
+          y_min = y
+          y_max = y
+        else:
+          if x < x_min:    x_min = x
+          if x > x_max:    x_max = x
+          if y < y_min:    y_min = y
+          if y > y_max:    y_max = y
+    ###
+    if x_min == x_max or y_min == y_max:
+      all_good = False
+      return all_good, 0, 0, 0
+    #
+    diag1_x = x_max - x_min
+    diag1_y = y_max - y_min
+    cx0 = x_min + diag1_x/2
+    cy0 = y_min + diag1_y/2
+    #
+    r = 0
+    for i in range(self.n_area):
+      if self.name[i].startswith("e+c"):
+        x = self.px[i]
+        y = self.py[i]
+        tesr = math.hypot(x-cx0, y-cy0)
+        if tesr > r:  r = tesr
+    #
+    return all_good, cx0, cy0, r
+  #
+  def determine_area_rec(self):
+    all_good = True
+    n_rec = 0
+    x_min = None
+    x_max = None
+    y_min = None
+    y_max = None
+    first = True
+    for i in range(self.n_area):
+      if self.name[i].startswith("e+r"):
+        n_rec += 1
+        x = self.px[i]
+        y = self.py[i]
+        if first:
+          first = False
+          x_min = x
+          x_max = x
+          y_min = y
+          y_max = y
+        else:
+          if x < x_min:    x_min = x
+          if x > x_max:    x_max = x
+          if y < y_min:    y_min = y
+          if y > y_max:    y_max = y
+    ###
+    if x_min == x_max or y_min == y_max:
+      all_good = False
+      return all_good, [0,0,0,0,0], [0,0,0,0,0]
+    #
+    # For plotting.
+    # grr:  graph of rectangle edge.
+    grrx = [x_min, x_max, x_max, x_min, x_min]
+    grry = [y_min, y_min, y_max, y_max, y_min]
+    #
+    return all_good, grrx, grry
+    #
+  #
   def plot(self, plot_save=0, plot_grc=0):
     # plot_save:  0 no, 1 yes
     # plot_grc:  0 no, 1 yes plot current stage position
     if self.n_area == 0:
       print("No areas defined.")
       return
-    # The edge will be either a circle "e+c"/n_s
+    # The edge will be either a circle "e+c"/n_cir
     # or a rectangle "e+r"/n_rec.
-    n_s = 0
-    n_rec = 0
     # Center will be at (cx, cy)
-    cx = 0
-    cy = 0
-    for i in range(self.n_area):
-      if self.name[i].startswith("e+c"):
-        n_s += 1
-        cx += self.px[i]
-        cy += self.py[i]
-      if self.name[i].startswith("e+r"):
-        n_rec += 1
-    if n_s != 4 and n_rec != 4:
-      print("Didn't find four e+?### names for N W S E.")
-      print("  n_s   (e+c): ", n_s)
-      print("  n_rec (e+r): ", n_rec)
-      return
+    cir_good, cx, cy, circ_r = self.determine_area_cir()
+    rec_good, grrx, grry = self.determine_area_rec()
     #
-    if n_s == 4:
-      cx /= 4
-      cy /= 4
-      circ_r = 0
-      for i in range(self.n_area):
-        if self.name[i].startswith("e+c"):
-          circ_r += math.hypot( cx - self.px[i], cy - self.py[i] )
-      #
-      circ_r /= 4
+    if (not cir_good) and (not rec_good):
+      print("Didn't find enough e+?### names for a border.")
+      print("  You need at least three (e+c) or (e+r).")
+      print("  And they must be able to define a min")
+      print("  and a max in both x and y.")
+      # print("  n_cir (e+c): ", n_cir)
+      # print("  n_rec (e+r): ", n_rec)
+      return
+    else:
+      print("e+c:")
+      print("  cx: ", cx)
+      print("  cy: ", cy)
+      print("  circ_r: ", circ_r)
+    #
+    if cir_good:
       circ_n_seg = 80
       circ_n_pnt = circ_n_seg+1
       circ_x = []
@@ -339,25 +487,6 @@ class c_arec:
         ang = circ_dang * i
         circ_x.append( cx + circ_r * math.cos( ang ) )
         circ_y.append( cy + circ_r * math.sin( ang ) )
-    #
-    if n_rec == 4:
-      rec_xmin = None
-      rec_xmax = None
-      rec_ymin = None
-      rec_ymax = None
-      for i in range(self.n_area):
-        if self.name[i].startswith("e+r"):
-          if rec_xmin == None:  rec_xmin = self.px[i]
-          if rec_ymin == None:  rec_ymin = self.py[i]
-          if rec_xmax == None:  rec_xmax = self.px[i]
-          if rec_ymax == None:  rec_ymax = self.py[i]
-          if self.px[i] < rec_xmin:  rec_xmin = self.px[i]
-          if self.py[i] < rec_ymin:  rec_ymin = self.py[i]
-          if self.px[i] > rec_xmax:  rec_xmax = self.px[i]
-          if self.py[i] > rec_ymax:  rec_ymax = self.py[i]
-      # grr:  graph of rectangle edge.
-      grrx = [rec_xmin, rec_xmax, rec_xmax, rec_xmin, rec_xmin]
-      grry = [rec_ymin, rec_ymin, rec_ymax, rec_ymax, rec_ymin]
     #
     # gra will be the areas.
     grax = []
@@ -385,11 +514,11 @@ class c_arec:
       grcx.append(cupx)
       grcy.append(cupy)
     #
-    if n_s == 4:
+    if cir_good:
       plt.plot( circ_x, circ_y,
         color='#000099'
         )
-    if n_rec == 4:
+    if rec_good:
       plt.plot( grrx, grry,
         color='#000099'
         )
@@ -440,9 +569,10 @@ class c_arec:
         elif uline == 'ls rel':
           self.ls_rel()
         elif uline == 'load':  self.load()
-        elif uline == 'load old format':  self.load_old_format()
         elif uline == 'save':  self.save()
-        elif uline == 'backup':  self.backup()
+        elif uline == 'backup':
+          self.backup_user_demand()
+          # This backups up user/arec.data.
         elif uline == 'plot ?':
           print("Usage:")
           print("  plot          # Just show the plot.")

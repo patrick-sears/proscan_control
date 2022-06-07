@@ -29,6 +29,9 @@ class c_muwp:
     self.clear_fidu()
     self.clear_well_center()
     self.clear_ins_center()
+    #
+    self.n_remulti = 0
+    #
   #
   def clear_fidu(self):
     self.fidu_name = []
@@ -108,6 +111,38 @@ class c_muwp:
           self.ins_center_x.append( int(ll[1]) )
           self.ins_center_y.append( int(ll[2]) )
         self.n_ins = len(self.ins_center_x)
+      elif key == '!reset_multi_edges':
+        self.remulti_i = []   # index of ins
+        self.remulti_fe = []  # fe:  first edge
+        # The "first edge" is the one to start with.
+        #
+        for l in f:
+          l = l.strip()
+          ll = l.split(' ')
+          if len(l) == 0:  break
+          if l[0] == '#':  continue
+          idx = int(ll[0])-1
+          data_ok = True
+          if idx < 0 or idx >= self.n_ins:
+            print("Error reading plate data.")
+            print("  idx out of range: ", idx)
+            print("  fname: ", fname) 
+            print("  !reset_multi_edges is incomplete.")
+            data_ok = False
+          a = ll[1]
+          if a!='N' and a!='S' and a!='W' and a!='E':
+            print("Error reading plate data.")
+            print("  Bad fov: ", a)
+            print("  fname: ", fname) 
+            print("  !reset_multi_edges is incomplete.")
+            data_ok = False
+          #
+          self.remulti_i.append( idx )
+          self.remulti_fe.append( a )
+          #
+        #
+        self.n_remulti = len(self.remulti_i)
+        #
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
@@ -182,16 +217,13 @@ class c_muwp:
     f.close()
     print("  Done.")
   #
-  def beep(self, u):
-    if u == 1:
-      winsound.Beep(1600,200)  # (freq in Hz, duration in ms)
-      time.sleep(0.1)
+  def beep(self, n_beep):
+    for i in range(n_beep):
+      if i != 0:  time.sleep(0.1)
       winsound.Beep(1600,200)  # (freq in Hz, duration in ms)
       # os.system('\a')
       # sys.stdout.write('\a')
       # sys.stdout.flush()
-    elif u == 2:
-      winsound.Beep(1600,200)  # (freq in Hz, duration in ms)
   #
   def set_fidu(self, fiduname):
     # Sets the origin of our plate coordinates using the
@@ -292,6 +324,14 @@ class c_muwp:
         return
       elif uline == 'info':
         print("fname_plate: ", self.fname_plate)
+        if os.path.isfile( "config/"+self.fname_plate):
+          print("  File exists in config/")
+        else:
+          print("  File does not exist in config/")
+        if os.path.isfile( "user/"+self.fname_plate):
+          print("  File exists in user/")
+        else:
+          print("  File does not exist in user/")
         print("psx0:  ", self.psx0)
         print("psy0:  ", self.psy0)
         print("well centers:")
@@ -368,6 +408,24 @@ class c_muwp:
         else:
           print("locup get_edges() didn't return 0.")
           print("  So not resetting muwp ins center.")
+      # elif uline.startswith('reset all edges'):
+      elif uline.startswith('reset multi edges') or uline == 'rme':
+        print("This functions needs some checking. ***")
+        if self.n_remulti == 0:
+          print("The multi edges have been configured.")
+          continue
+        #
+        rv = 0
+        for i in range(self.n_remulti):
+          rv = self.reset_edges_2(self.remulti_i[i], self.remulti_fe[i])
+          if rv != 0:  break
+        #
+        if rv == 0:
+          print("All edges reset.")
+        else:
+          print("Some edges not reset.")
+        self.beep(2)
+        #
       elif uline.startswith('go ins') or uline.startswith('go lp'):
         ll = uline.strip().split(' ')
         ######.#
@@ -423,6 +481,12 @@ class c_muwp:
       else:
         print("Unrecognized input.")
   #
+  def reset_edges_2(self, iw, start_fov):
+    rv = self.mlocup[iw].get_edges_2(start_fov)
+    if rv == 0:
+      self.ins_center_x[iw] = self.mlocup[iw].cx
+      self.ins_center_y[iw] = self.mlocup[iw].cy
+    return rv
   #
 #######################################################
 

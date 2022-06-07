@@ -1,10 +1,16 @@
 
 
+proscan_control is a python interface to the Prior Scientific
+ProScan III motorized microscope stage.  It used most often
+to run through a sequence of positions in a set of cultures.
+Another use is to remember positions visited and plot them.
+
 
 __________________________________________________________________
 Source.
 
 2021 ipro 0412v12a.
+2022 ipro 0211v12a.
 
 __________________________________________________________________
 Documentation.
