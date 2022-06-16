@@ -155,22 +155,22 @@ class c_locup:
   #
   def go_edge(self, capo):  # capo:  "cardinal point"
     #  self.culture_r = int(self.culture_diam / 2)
-    if capo == 'N':
+    if capo == 'N' or capo == 'n':
       x = self.cx
       y = self.cy + self.culture_r
-    elif capo == 'S':
+    elif capo == 'S' or capo == 's':
       x = self.cx
       y = self.cy - self.culture_r
-    elif capo == 'W':
+    elif capo == 'W' or capo == 'w':
       x = self.cx + self.culture_r
       y = self.cy
-    elif capo == 'E':
+    elif capo == 'E' or capo == 'e':
       x = self.cx - self.culture_r
       y = self.cy
     else:
       print("Error.  Unrecognized cardinal point.")
       print("  capo: ", capo)
-      print("  Expected on of:  N W S E.")
+      print("  Expected on of:  N W S E n w s e.")
       return
     ouline = "g"
     ouline += " {0:d}".format( x )
