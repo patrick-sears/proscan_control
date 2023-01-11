@@ -308,6 +308,30 @@ class c_muwp:
       return
     mlocup[iw].go_edge(capo)
   #
+  def send(self, s):
+    cbuf() # Make sure the buffer is clear.
+    ss = s.strip()
+    ouline = ss+'\r\n'
+    send = bytes(ouline.encode())
+    spo.write( send )
+    while True:
+      serda = spo.readline()
+      slen = len(serda)
+      if slen == 0:  break
+      dade = serda.decode("Ascii")
+      print("  serda:  ["+dade+"]")
+  #
+  def user_send(self, uline):
+    # Expect:  send "something in here"
+    # Or:      send 'something in here'
+    ll = uline.split("'")
+    if len(ll) != 3:
+      ll = uline.split('"')
+    if len(ll) != 3:
+      print("Didn't find a message.")
+      return
+    self.send( ll[1] )
+  #
   def run(self, amode=0):   # run the hui (human user interface)
     self.beep(2)
     print()
@@ -322,6 +346,8 @@ class c_muwp:
       if uline == 'q':
         print()
         return
+      elif uline.startswith('send '):
+        self.user_send(uline)
       elif uline == 'info':
         print("fname_plate: ", self.fname_plate)
         if os.path.isfile( "config/"+self.fname_plate):
