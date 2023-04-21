@@ -468,7 +468,12 @@ class c_muwp:
           print("  Expected second word to start with 'lp'.")
           continue
         ######.#
-        iw = int( ll[1][2:] ) - 1   # iw is the lp index
+        iws = ll[1][2:]
+        if not iws.isdigit():
+          print("uError.")
+          print("  lp not followed by a digit.")
+          continue
+        iw = int( iws ) - 1   # iw is the lp index
         ppos = ll[2]
         ######.#
         if ppos == 'center':  self.go_ins_center(iw)
