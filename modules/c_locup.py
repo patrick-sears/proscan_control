@@ -34,6 +34,12 @@ class c_locup:
       print("Using default file.")
     #
     print("  Loading: ", fname )
+    if not os.path.exists( fname ):
+      print("Warning w33.  Missing config file.")
+      print("  In c_locup::load_config().")
+      print("  File not loaded.")
+      print("  fname: ", fname)
+      return
     f = open(fname)
     for l in f:
       if not l.startswith('!'):  continue
@@ -520,6 +526,12 @@ class c_locup:
       print("Using default file.")
     #
     print("  Loading: ", fname )
+    if not os.path.exists( fname ):
+      print("Warning w34.  Missing pattern file.")
+      print("  In c_locup::load_pattern_data().")
+      print("  File not loaded.")
+      print("  fname: ", fname)
+      return
     #
     self.pam = []  # pattern message
     self.pax = []  # pattern x

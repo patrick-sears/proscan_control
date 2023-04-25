@@ -71,6 +71,12 @@ class c_muwp:
       print("Using default file.")
     #
     print("  Loading: ", fname )
+    if not os.path.exists( fname ):
+      print("Warning w33.  Missing plate file.")
+      print("  In c_muwp::load_plate().")
+      print("  File not loaded.")
+      print("  fname: ", fname)
+      return
     f = open(fname)
     for l in f:
       if not l.startswith('!'):  continue
@@ -200,6 +206,12 @@ class c_muwp:
       print("Using default file.")
     #
     print("  Loading: ", fname )
+    if not os.path.exists( fname ):
+      print("Warning w32.  Missing config file.")
+      print("  In c_muwp::load_config().")
+      print("  File not loaded.")
+      print("  fname: ", fname)
+      return
     f = open(fname)
     for l in f:
       if not l.startswith('!'):  continue
