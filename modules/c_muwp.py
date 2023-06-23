@@ -24,6 +24,8 @@ class c_muwp:
     self.psy0 = 0
     # For now, allow resetting of these in the config file.
     #
+    self.n_well = 0
+    #
     self.fname_plate = None
     #
     self.clear_fidu()
@@ -361,15 +363,18 @@ class c_muwp:
       elif uline.startswith('send '):
         self.user_send(uline)
       elif uline == 'info':
-        print("fname_plate: ", self.fname_plate)
-        if os.path.isfile( "config/"+self.fname_plate):
-          print("  File exists in config/")
+        if self.fname_plate == None:
+          print("fname_plate:  None.")
         else:
-          print("  File does not exist in config/")
-        if os.path.isfile( "user/"+self.fname_plate):
-          print("  File exists in user/")
-        else:
-          print("  File does not exist in user/")
+          print("fname_plate: ", self.fname_plate)
+          if os.path.isfile( "config/"+self.fname_plate):
+            print("  File exists in config/")
+          else:
+            print("  File does not exist in config/")
+          if os.path.isfile( "user/"+self.fname_plate):
+            print("  File exists in user/")
+          else:
+            print("  File does not exist in user/")
         print("psx0:  ", self.psx0)
         print("psy0:  ", self.psy0)
         print("well centers:")
