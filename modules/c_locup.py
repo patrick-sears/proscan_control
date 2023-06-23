@@ -202,10 +202,9 @@ class c_locup:
     edi = None
     #
     # Get the first edge ----------------------->
-    pline =  "Go to and edge in culture "+str(self.cnum)+'\n'
-    pline += "  Then hit N or S or E or W, and [enter]\n"
-    pline += "  n s e w also ok.\n"
-    pline += "  Or q to quit.\n"
+    pline =  "Go to the N edge of culture "+str(self.cnum)+'\n'
+    pline += "  Then hit [enter].\n"
+    pline += "  Or q[enter] to quit.\n"
     while True:
       print(pline)
       uline = input("u>> ")
@@ -213,7 +212,7 @@ class c_locup:
       elif uline == 'E' or uline == 'e':
         edi = 0
         break
-      elif uline == 'N' or uline == 'n':
+      elif uline == 'N' or uline == 'n' or uline == '':
         edi = 1
         break
       elif uline == 'W' or uline == 'w':
