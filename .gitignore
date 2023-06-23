@@ -15,5 +15,7 @@ __pycache__/
 .*.bak
 .*.swp
 
+z_git_commit.data
+
 !.gitignore
 
