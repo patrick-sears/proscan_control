@@ -388,17 +388,20 @@ class c_muwp:
       elif uline == 'save plate':  self.save_plate()
       elif uline == 'create lps':
         self.create_locups()
-      elif uline.startswith('run lp'):
+      elif uline.startswith('run c'):
         ll = uline.strip().split(' ')
         if len(ll)== 2:
-          iw = int(ll[1][2:])-1
-        elif len(ll)==3:
-          iw = int(ll[2])-1
+          # iw = int(ll[1][2:])-1
+          iws = ll[1][1:]
+          if not iws.isdigit():
+            print("uError.")
+            print("  c not followed by a digit.")
+            continue
+          iw = int(iws)-1
         else:
           print("Strange uline split length.")
-          print("  Need 2 or 3 words.")
-          print("  Example:  run lp2")
-          print("  Example:  run lp 2")
+          print("  Need 2 words.")
+          print("  Example:  run c2")
           continue
         if iw < 0 or iw >= len(self.mlocup):
           print("Entered number is out of range.")
@@ -436,11 +439,17 @@ class c_muwp:
         if ppos == 'center':  self.go_well_center(iw)
         else:
           print("Unrecognized ppos: ", ppos)
-      elif uline.startswith('reset lp') and uline.endswith(' edges') and len(uline) >= len('reset lpx edges'):
+      elif uline.startswith('reset c') and uline.endswith(' edges') and len(uline) >= len('reset cx edges'):
         ll = uline.strip().split(' ')
-        iw = int( ll[1][2:] ) - 1
+        iws = ll[1][1:]
+        if not iws.isdigit():
+          print("uError.")
+          print("  c not followed by a digit.")
+          continue
+        ###
+        iw = int(iws) - 1
         if iw < 0 or iw >= self.n_ins:
-          print("Bad lp number.")
+          print("Bad c number.")
           continue
         rv = self.mlocup[iw].get_edges()
         if rv == 0:
@@ -469,26 +478,26 @@ class c_muwp:
           print("Some edges not reset.")
         self.beep(2)
         #
-      elif uline.startswith('go ins') or uline.startswith('go lp'):
+      elif uline.startswith('go c'):
         ll = uline.strip().split(' ')
         ######.#
         if len(ll) != 3:
           print("Strange uline split length.")
           print("  Need 3 words.")
           print("  Examples:")
-          print("    go lp2 center")
-          print("    go lp2 N-edge")
-          print("    go lp3 fov1")
+          print("    go c2 center")
+          print("    go c2 N-edge")
+          print("    go c3 fov1")
           continue
-        if not ll[1].startswith('lp'):
+        if not ll[1].startswith('c'):
           print("Strange uline.")
-          print("  Expected second word to start with 'lp'.")
+          print("  Expected second word to start with 'c'.")
           continue
         ######.#
-        iws = ll[1][2:]
+        iws = ll[1][1:]
         if not iws.isdigit():
           print("uError.")
-          print("  lp not followed by a digit.")
+          print("  c not followed by a digit.")
           continue
         iw = int( iws ) - 1   # iw is the lp index
         ppos = ll[2]
