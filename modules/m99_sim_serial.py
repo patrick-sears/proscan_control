@@ -1,5 +1,5 @@
 
-
+import sys
 import platform
 import socket
 
@@ -38,10 +38,17 @@ if hostname == 'shiva2':
   ###   port='COM5', baudrate=9600, bytesize=8,
   ###   timeout=2, stopbits=serial.STOPBITS_ONE
   ###   )
-  spo = serial.Serial(
-    port='COM5', baudrate=9600, bytesize=8,
-    timeout=1, stopbits=serial.STOPBITS_ONE
-    )
+  try:
+    spo = serial.Serial(
+      port='COM5', baudrate=9600, bytesize=8,
+      timeout=1, stopbits=serial.STOPBITS_ONE
+      )
+  except:
+    print("Error.  An exception was raised by the")
+    print("  call to serial.Serial().")
+    print("  - Do you have two programs trying to")
+    print("    access the serial port maybe?")
+    sys.exit(1)
   #
 else:
   # from m99_sim_serial import *
