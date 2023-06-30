@@ -409,6 +409,39 @@ class c_muwp:
           print("  len(mlocup): ", len(self.mlocup))
           continue
         self.mlocup[iw].run_pattern()
+      elif uline.startswith('run.r4e c'):
+        # HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH--here--
+        ll = uline.strip().split(' ')
+        if len(ll)== 2:
+          # iw = int(ll[1][2:])-1
+          iws = ll[1][1:]
+          if not iws.isdigit():
+            print("uError.")
+            print("  c not followed by a digit.")
+            continue
+          iw = int(iws)-1
+        else:
+          print("Strange uline split length.")
+          print("  Need 2 words.")
+          print("  Example:  run c2")
+          continue
+        if iw < 0 or iw >= len(self.mlocup):
+          print("Entered number is out of range.")
+          print("  n_well:      ", self.n_well)
+          print("  len(mlocup): ", len(self.mlocup))
+          continue
+        self.mlocup[iw].go_edge( 'N' )
+        rv = self.mlocup[iw].get_edges()
+        if rv == 0:
+          # all is ok
+          print("Resetting muwp ins",iw+1,"center.")
+          self.ins_center_x[iw] = self.mlocup[iw].cx
+          self.ins_center_y[iw] = self.mlocup[iw].cy
+        else:
+          print("locup get_edges() didn't return 0.")
+          print("  So not resetting muwp ins center.")
+        self.mlocup[iw].run_pattern()
+        #
       elif uline.startswith('setrun lp '):
         ll = uline.strip().split(' ')
         if len(ll)!=3:
