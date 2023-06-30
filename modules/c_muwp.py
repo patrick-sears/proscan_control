@@ -409,8 +409,7 @@ class c_muwp:
           print("  len(mlocup): ", len(self.mlocup))
           continue
         self.mlocup[iw].run_pattern()
-      elif uline.startswith('run.r4e c'):
-        # HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH--here--
+      elif uline.startswith('r4e.run c'):
         ll = uline.strip().split(' ')
         if len(ll)== 2:
           # iw = int(ll[1][2:])-1
