@@ -526,24 +526,13 @@ class c_muwp:
             print("locup get_edges() didn't return 0.")
             print("  So not resetting muwp ins center.")
         elif ac2 == 'multi':
-          if self.n_remulti == 0:
-            print("The multi edges have not been configured.")
-            continue
-          #
-          for i in range(self.n_remulti):
-            rv = self.reset_edges_2(self.remulti_i[i], self.remulti_fe[i])
-            if rv != 0:  break
-          #
-          if rv == 0:
-            print("All edges reset.")
-          else:
-            print("Some edges not reset.")
-          self.beep(2)
-          #
+          self.reset_multi_edges()
         else:
           print("uError.")
           print("  ac2 not recognized.")
         #
+      elif ac2 == 'rme':
+          self.reset_multi_edges()
       elif action == 'run':
         if n_ull != 2:
           print("Strange uline split length.")
@@ -619,6 +608,20 @@ class c_muwp:
           print("uError.  Unrecognized ac2.")
       else:
         print("uError.  Unrecognized action.")
+  #
+  def hui_reset_multi_edges(self):
+    if self.n_remulti == 0:
+      print("The multi edges have not been configured.")
+    #
+    for i in range(self.n_remulti):
+      rv = self.reset_edges_2(self.remulti_i[i], self.remulti_fe[i])
+      if rv != 0:  break
+    #
+    if rv == 0:
+      print("All edges reset.")
+    else:
+      print("Some edges not reset.")
+    self.beep(2)
   #
   def print_info(self):
     if self.fname_plate == None:
