@@ -408,14 +408,7 @@ class c_muwp:
           self.run_mode = rm
         else:
           print("uError.  Bad set run_mode.")
-      elif uline.startswith('run'):
-        loc_run_mode = 'a'
-        if   uline.startswith('run '): loc_run_mode = self.run_mode
-        elif uline.startswith('run.a '):  loc_run_mode = 'a'
-        elif uline.startswith('run.b '):  loc_run_mode = 'b'
-        else:
-          print("uError.  Unrecognized input.")
-          continue
+      elif uline.startswith('run '):
         #
         ll = uline.strip().split(' ')
         if len(ll) != 2:
@@ -439,8 +432,8 @@ class c_muwp:
           print("  len(mlocup): ", len(self.mlocup))
           continue
         ###
-        if   loc_run_mode == 'a':   self.mlocup[iw].run_pattern()
-        elif loc_run_mode == 'b':
+        if   self.run_mode == 'a':   self.mlocup[iw].run_pattern()
+        elif self.run_mode == 'b':
           self.mlocup[iw].go_edge( 'N' )
           rv = self.mlocup[iw].get_edges()
           if rv == 0:
