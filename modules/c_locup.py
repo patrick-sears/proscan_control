@@ -461,6 +461,61 @@ class c_locup:
     #
   #
   #
+  def go_edge_rough(self, edge1, edge2):
+    ee = edge1+"->"+edge2
+    rad = int(self.culture_r)
+    diam = int(2 * self.culture_r)
+    #
+    if   ee == 'N->S':
+      dx =   0
+      dy =  -diam
+    elif ee == 'S->N':
+      dx =   0
+      dy =   diam
+    elif ee == 'W->E':
+      dx =  -diam
+      dy =   0
+    elif ee == 'E->W':
+      dx =   diam
+      dy =   0
+    elif ee == 'N->W':
+      dx =   rad
+      dy =  -rad
+    elif ee == 'W->N':
+      dx =  -rad
+      dy =   rad
+    elif ee == 'N->E':
+      dx =  -rad
+      dy =  -rad
+    elif ee == 'E->N':
+      dx =   rad
+      dy =   rad
+    elif ee == 'S->W':
+      dx =   rad
+      dy =   rad
+    elif ee == 'W->S':
+      dx =  -rad
+      dy =  -rad
+    elif ee == 'S->E':
+      dx =  -rad
+      dy =   rad
+    elif ee == 'E->S':
+      dx =   rad
+      dy =  -rad
+    else:
+      print("Warning:  c_locup::go_edge_rough() failed.")
+      print("  The requested edges were not recognized."
+      print("  edge1: ", edge1)
+      print("  edge2: ", edge2)
+      return
+    #
+    ouline = "gr"  # the "r" is to go relative to current position
+    ouline += " {0:d}".format( dx )
+    ouline += " {0:d}".format( dy )
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
+    spo.write( send )
+  #
   def go_ccw_edge_rough(self, in_edi):
     if   in_edi == 0:  self.go_E_to_N_edge_rough()
     elif in_edi == 1:  self.go_N_to_W_edge_rough()
