@@ -495,6 +495,55 @@ class c_muwp:
         if ac2 == 'plate':  self.save_plate()
         else:
           print("uError.")
+      elif action == 'reset':
+        if n_ull != 3:
+          print("uError.")
+          continue
+        ac2 = ull[1]
+        ac3 = ull[2]
+        if ac3 != 'edges':
+          print("uError.")
+          continue
+        if ac2.startswith('c'):
+          if len(ac2) < 2:
+            print("uError.")
+            continue
+          iws = ac2[1:]
+          if not iws.isdigit():
+            print("uError.")
+            print("  c not followed by a digit.")
+            continue
+          iw = int(iws) - 1
+          if iw < 0 or iw >= self.n_ins:
+            print("uError.  c number out of range.")
+            continue
+          rv = self.mlocup[iw].get_edges()
+          if rv == 0:
+            print("Resetting muwp ins",iw+1,"center.")
+            self.ins_center_x[iw] = self.mlocup[iw].cx
+            self.ins_center_y[iw] = self.mlocup[iw].cy
+          else:
+            print("locup get_edges() didn't return 0.")
+            print("  So not resetting muwp ins center.")
+        elif ac2 == 'multi':
+          if self.n_remulti == 0:
+            print("The multi edges have not been configured.")
+            continue
+          #
+          for i in range(self.n_remulti):
+            rv = self.reset_edges_2(self.remulti_i[i], self.remulti_fe[i])
+            if rv != 0:  break
+          #
+          if rv == 0:
+            print("All edges reset.")
+          else:
+            print("Some edges not reset.")
+          self.beep(2)
+          #
+        else:
+          print("uError.")
+          print("  ac2 not recognized.")
+        #
       elif action == 'run':
         if n_ull != 2:
           print("Strange uline split length.")
@@ -567,60 +616,9 @@ class c_muwp:
           else:
             print("uError.  Bad set run_mode.")
         else:
-          print("uError.  Unrecognized action.")
-      ################################# HHHHHHHH--here--
-      elif uline.startswith('go well'):
-        ll = uline.strip().split(' ')
-        if len(ll)!=4:
-          print("Strange uline split length.")
-          print("  Need 4 words.")
-          print("  Example:  go well 2 center")
-          continue
-        iw = int( ll[2] ) - 1
-        ppos = ll[3]
-        if ppos == 'center':  self.go_well_center(iw)
-        else:
-          print("Unrecognized ppos: ", ppos)
-      elif uline.startswith('reset c') and uline.endswith(' edges') and len(uline) >= len('reset cx edges'):
-        ll = uline.strip().split(' ')
-        iws = ll[1][1:]
-        if not iws.isdigit():
-          print("uError.")
-          print("  c not followed by a digit.")
-          continue
-        ###
-        iw = int(iws) - 1
-        if iw < 0 or iw >= self.n_ins:
-          print("Bad c number.")
-          continue
-        rv = self.mlocup[iw].get_edges()
-        if rv == 0:
-          # all is ok
-          print("Resetting muwp ins",iw+1,"center.")
-          self.ins_center_x[iw] = self.mlocup[iw].cx
-          self.ins_center_y[iw] = self.mlocup[iw].cy
-        else:
-          print("locup get_edges() didn't return 0.")
-          print("  So not resetting muwp ins center.")
-      elif uline.startswith('reset multi edges') or uline == 'rme':
-        print("This functions needs some checking. ***")
-        if self.n_remulti == 0:
-          print("The multi edges have been configured.")
-          continue
-        #
-        rv = 0
-        for i in range(self.n_remulti):
-          rv = self.reset_edges_2(self.remulti_i[i], self.remulti_fe[i])
-          if rv != 0:  break
-        #
-        if rv == 0:
-          print("All edges reset.")
-        else:
-          print("Some edges not reset.")
-        self.beep(2)
-        #
+          print("uError.  Unrecognized ac2.")
       else:
-        print("Unrecognized input.")
+        print("uError.  Unrecognized action.")
   #
   def print_info(self):
     if self.fname_plate == None:
