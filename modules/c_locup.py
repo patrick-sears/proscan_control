@@ -205,7 +205,7 @@ class c_locup:
     else:                    useq = None
   return useq
   #
-  def get_edges(self, start_edge=None):
+  def get_edges(self, start_edge=None, go_to_first_edge=False):
     #
     # 0 E, 1 N, 2 W, 3 S
     edvalx = [0,0,0,0]
@@ -238,7 +238,9 @@ class c_locup:
        # useq[esi]:  Edges in sequence they are set.
       preped = ped
       ped = useq[esi]
-      if i != 0:  self.go_edge_rough(preped, ped)
+      if i == 0:
+        if go_to_first_edge:  self.go_edge(ped)
+      else:  self.go_edge_rough(preped, ped)
       pline = "Go to "+ped+" and hit [enter], q to quit.\n"
       while True:
         print(pline)
@@ -270,7 +272,9 @@ class c_locup:
     # Called by muwp during reset multi edges.
     # start_edge is one of these:  N S E W
     #####
-    rv = self.get_edges(start_edge=start_edge)
+    rv = self.get_edges(
+      start_edge=start_edge,
+      go_to_first_edge=True )
     # Returns -1 if a quit was requested.
     #
     return rv
