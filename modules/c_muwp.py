@@ -364,9 +364,12 @@ class c_muwp:
     if amode == 1:
       self.load_config()
       self.load_plate()
+    ############################ Start of hui while(1)...
     while( 1 ):
       print()
       uline = input("muwp>> ")
+      uline = uline.strip()
+      uline = ' '.join( uline.split() )  # remove duplicate spaces
       if uline == 'q':
         print()
         return
