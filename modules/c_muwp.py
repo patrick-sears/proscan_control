@@ -389,23 +389,10 @@ class c_muwp:
           continue
         ac2 = ull[1]
         if ac2.startswith('c'):
-          rv = self.hui_go_c(ull)
-          # rv is ignored.
+          rv = self.hui_go_c(ull)     # rv is ignored.
         elif ac2 == 'fidu':
-          if n_ull != 3:
-            print("uError.")
-            continue
-          fiduname = ull[2]
-          ifidu = None
-          for i in range(self.n_fidu):
-            if fiduname == self.fidu_name[i]:
-              ifidu = i
-          if ifidu == None:
-            print("Error.  Couldn't find fiduname.")
-            print("  fiduname: ", fiduname)
-          else:
-            self.go_fidu(ifidu)
-        if ac2.startswith('w'):
+          rv = self.hui_go_fidu(ull)  # rv is ignored.
+        elif ac2.startswith('w'):
           if n_ull != 3:
             print("uError")
             print("  Need 3 words.")
@@ -616,6 +603,22 @@ class c_muwp:
       print("Unrecognized ac3: ", ac3)
       return -1
     return 0  # all ok
+  #
+  def hui_go_fidu(self, ull):
+    if n_ull != 3:
+      print("uError.")
+      return -1
+    fiduname = ull[2]
+    ifidu = None
+    for i in range(self.n_fidu):
+      if fiduname == self.fidu_name[i]:
+        ifidu = i
+    if ifidu == None:
+      print("Error.  Couldn't find fiduname.")
+      print("  fiduname: ", fiduname)
+      return -1
+    self.go_fidu(ifidu)
+    return 0 # ok
   #
   def hui_reset_multi_edges(self):
     if self.n_remulti == 0:
