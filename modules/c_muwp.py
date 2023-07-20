@@ -370,12 +370,15 @@ class c_muwp:
       uline = input("muwp>> ")
       uline = uline.strip()
       uline = ' '.join( uline.split() )  # remove duplicate spaces
+      ull = uline.split(' ')
+      n_ull = len(ull)
+      action = ull[0]
       if uline == 'q':
         print()
         return
-      elif uline.startswith('send '):
+      elif action == 'send':
         self.user_send(uline)
-      elif uline == 'info':
+      elif action == 'info':
         if self.fname_plate == None:
           print("fname_plate:  None.")
         else:
@@ -393,14 +396,19 @@ class c_muwp:
         print("well centers:")
         for i in range(self.n_well):
           print("  ", i+1, self.well_center_x[i], self.well_center_y[i])
-      elif uline == 'load all':
-        self.load_config()
-        self.load_plate()
-      elif uline == 'load config':  self.load_config()
-      elif uline == 'load plate':  self.load_plate()
+      elif action == 'load':
+        if n_ull != 2:
+          print("uError.  Bad uline.")
+          continue
+        if ll[1] == 'all':
+          self.load_config()
+          self.load_plate()
+        elif ll[1] == 'config':  self.load_config()
+        elif ll[1] == 'plate':   self.load_plate()
+        else:
+          print("uError.  Bad uline.")
       elif uline == 'save plate':  self.save_plate()
-      elif uline == 'create lps':
-        self.create_locups()
+      elif uline == 'create lps':  self.create_locups()
       elif uline.startswith('set run_mode '):
         ll = uline.split(' ')
         rm = ll[2]
@@ -411,15 +419,16 @@ class c_muwp:
           self.run_mode = rm
         else:
           print("uError.  Bad set run_mode.")
-      elif uline.startswith('run '):
-        #
-        ll = uline.strip().split(' ')
-        if len(ll) != 2:
+      elif action == 'run':
+        if n_ull != 2:
           print("Strange uline split length.")
           print("  Need 2 words.")
           print("  Example:  run c2")
           continue
-        if not ll[1][0] == 'c':
+        if len(ull[1]) < 2:
+          print("uError.  Bad culture format.")
+          continue
+        if not ull[1][0] == 'c':
           print("uError.")
           print("  Missing c.")
           continue
