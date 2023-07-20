@@ -372,12 +372,17 @@ class c_muwp:
       uline = ' '.join( uline.split() )  # remove duplicate spaces
       ull = uline.split(' ')
       n_ull = len(ull)
+      if n_ull == 0:  continue  # Handle just hitting enter.
       action = ull[0]
-      if uline == 'q':
-        print()
-        return
-      elif action == 'send':
-        self.user_send(uline)
+      if action == '0':
+        print("No action.")
+      elif action == 'create':
+        if n_ull != 2:
+          print("uError.  Bad uline.")
+          ac2 = ull[1]
+          if ac2 == 'lps':  self.create_locups()
+          else:
+            print("uError.")
       elif action == 'info':
         if self.fname_plate == None:
           print("fname_plate:  None.")
@@ -407,32 +412,35 @@ class c_muwp:
         elif ll[1] == 'plate':   self.load_plate()
         else:
           print("uError.  Bad uline.")
-      elif uline == 'save plate':  self.save_plate()
-      elif uline == 'create lps':  self.create_locups()
-      elif uline.startswith('set run_mode '):
-        ll = uline.split(' ')
-        rm = ll[2]
-        ok = False
-        if   rm == 'a':  ok = True
-        elif rm == 'b':  ok = True
-        if ok:
-          self.run_mode = rm
+      elif action == 'q':
+        if n_ull != 1:
+          print("uError.")
+          continue
+        print()
+        return
+      elif action == 'save':
+        if n_ull != 2:
+          print("uError.")
+          continue
+        ac2 = ull[1]
+        if ac2 == 'plate':  self.save_plate()
         else:
-          print("uError.  Bad set run_mode.")
+          print("uError.")
       elif action == 'run':
         if n_ull != 2:
           print("Strange uline split length.")
           print("  Need 2 words.")
           print("  Example:  run c2")
           continue
-        if len(ull[1]) < 2:
+        ac2 = ull[1]  # Expect:  c1 c2 ... c11 c12 ...
+        if len(ac2) < 2:
           print("uError.  Bad culture format.")
           continue
-        if not ull[1][0] == 'c':
+        if ac2[0] != 'c':
           print("uError.")
           print("  Missing c.")
           continue
-        iws = ll[1][1:]
+        iws = ac2[1:]
         if not iws.isdigit():
           print("uError.")
           print("  c not followed by a digit.")
@@ -459,6 +467,39 @@ class c_muwp:
             print("  Running patter...")
           self.mlocup[iw].run_pattern()
         #
+      elif action == 'send':
+        self.user_send(uline)
+      elif action == 'set':
+        if n_ull < 2:
+          print("uError.  Bad uline.")
+          continue
+        ac2 = ll[1]
+        if ac2 == 'fidu':
+          ll = uline.split(' ')
+          if n_ull != 3:
+            print("Strange uline split length.")
+            print("  Need 3 words.")
+            print("  Example:  set fidu x1")
+            continue
+          fiduname = ll[2]
+          self.set_fidu(fiduname)
+        elif ac2 == 'run_mode':
+          if n_ull != 3:
+            print("Strange uline split length.")
+            print("  Need 3 words.")
+            print("  Example:  set run_mode a")
+            continue
+          ac3 = ll[2]
+          ok = False
+          if   ac3 == 'a':  ok = True
+          elif ac3 == 'b':  ok = True
+          if ok:
+            self.run_mode = ac3
+          else:
+            print("uError.  Bad set run_mode.")
+        else:
+          print("uError.  Unrecognized action.")
+      ################################# HHHHHHHH--here--
       elif uline.startswith('setrun lp '):
         ll = uline.strip().split(' ')
         if len(ll)!=3:
@@ -560,15 +601,6 @@ class c_muwp:
           self.mlocup[iw].go_fov(i1o_fov)
         else:
           print("Unrecognized ppos: ", ppos)
-      elif uline.startswith('set fidu'):
-        ll = uline.split(' ')
-        if len(ll)!=3:
-          print("Strange uline split length.")
-          print("  Need 3 words.")
-          print("  Example:  set fidu x1")
-          continue
-        fiduname = ll[2]
-        self.set_fidu(fiduname)
       elif uline.startswith('go fidu'):
         ll = uline.split(' ')
         if len(ll)!=3:
