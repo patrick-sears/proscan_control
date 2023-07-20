@@ -45,13 +45,14 @@ class c_locup:
       if not l.startswith('!'):  continue
       l = l.strip()
       ll = l.split(' ')
-      key = ll[0]
+      mm = [m.strip() for m in l.split(';')]
+      key = mm[0]
       ###
       if key == '!culture_diam':
-        self.culture_diam = int(ll[1])
+        self.culture_diam = int(mm[1])
         self.culture_r = int(self.culture_diam / 2)
       elif key == '!pattern_file':
-        self.pattern_file = ll[1]
+        self.pattern_file = mm[1]
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
