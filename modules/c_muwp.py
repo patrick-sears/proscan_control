@@ -570,8 +570,8 @@ class c_muwp:
       else:
         print("Unrecognized input.")
   #
-  def reset_edges_2(self, iw, start_fov):
-    rv = self.mlocup[iw].get_edges_2(start_fov)
+  def reset_edges_2(self, iw, start_edge):
+    rv = self.mlocup[iw].get_edges_2(start_edge)
     if rv == 0:
       self.ins_center_x[iw] = self.mlocup[iw].cx
       self.ins_center_y[iw] = self.mlocup[iw].cy
