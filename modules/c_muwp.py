@@ -471,7 +471,7 @@ class c_muwp:
           print("uError.")
           print("  ac2 not recognized.")
         #
-      elif ac2 == 'rme':
+      elif action == 'rme':
           self.reset_multi_edges()
       elif action == 'run':
         if n_ull != 2:
