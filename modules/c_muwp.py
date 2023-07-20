@@ -383,24 +383,6 @@ class c_muwp:
           if ac2 == 'lps':  self.create_locups()
           else:
             print("uError.")
-      elif action == 'info':
-        if self.fname_plate == None:
-          print("fname_plate:  None.")
-        else:
-          print("fname_plate: ", self.fname_plate)
-          if os.path.isfile( "config/"+self.fname_plate):
-            print("  File exists in config/")
-          else:
-            print("  File does not exist in config/")
-          if os.path.isfile( "user/"+self.fname_plate):
-            print("  File exists in user/")
-          else:
-            print("  File does not exist in user/")
-        print("psx0:  ", self.psx0)
-        print("psy0:  ", self.psy0)
-        print("well centers:")
-        for i in range(self.n_well):
-          print("  ", i+1, self.well_center_x[i], self.well_center_y[i])
       elif action == 'load':
         if n_ull != 2:
           print("uError.  Bad uline.")
@@ -412,6 +394,19 @@ class c_muwp:
         elif ll[1] == 'plate':   self.load_plate()
         else:
           print("uError.  Bad uline.")
+      elif action == 'print':
+        if n_ull != 3:
+          print("uError.")
+          continue
+        ac2 = ull[1]
+        if ac2 == 'pos':
+          p()
+          print("TO IMPLEMENT:  These are psx psy (prior stage).")
+          print("  We would also like muwp internal plate coordinates.")
+        elif ac2 == 'info':
+          self.print_info()
+        else:
+          print("uError.")
       elif action == 'q':
         if n_ull != 1:
           print("uError.")
@@ -500,10 +495,6 @@ class c_muwp:
         else:
           print("uError.  Unrecognized action.")
       ################################# HHHHHHHH--here--
-      elif uline == 'print pos':
-        p()
-        print("TO IMPLEMENT:  These are psx psy (prior stage).")
-        print("  We would also like muwp internal plate coordinates.")
       elif uline.startswith('go well'):
         ll = uline.strip().split(' ')
         if len(ll)!=4:
@@ -604,6 +595,25 @@ class c_muwp:
           self.go_fidu(ifidu)
       else:
         print("Unrecognized input.")
+  #
+  def print_info(self):
+    if self.fname_plate == None:
+      print("fname_plate:  None.")
+    else:
+      print("fname_plate: ", self.fname_plate)
+      if os.path.isfile( "config/"+self.fname_plate):
+        print("  File exists in config/")
+      else:
+        print("  File does not exist in config/")
+      if os.path.isfile( "user/"+self.fname_plate):
+        print("  File exists in user/")
+      else:
+        print("  File does not exist in user/")
+    print("psx0:  ", self.psx0)
+    print("psy0:  ", self.psy0)
+    print("well centers:")
+    for i in range(self.n_well):
+      print("  ", i+1, self.well_center_x[i], self.well_center_y[i])
   #
   def reset_edges_2(self, iw, start_edge):
     rv = self.mlocup[iw].get_edges_2(start_edge)
