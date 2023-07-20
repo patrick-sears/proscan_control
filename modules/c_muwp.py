@@ -393,26 +393,7 @@ class c_muwp:
         elif ac2 == 'fidu':
           rv = self.hui_go_fidu(ull)  # rv is ignored.
         elif ac2.startswith('w'):
-          if n_ull != 3:
-            print("uError")
-            print("  Need 3 words.")
-            print("  Examples:")
-            print("    go w2 center")
-            print("    go w2 N-edge")
-            continue
-          if len(ac2) < 2:
-            print("uError.")
-            continue
-          iws = ac2[1:]
-          if not iws.isdigit():
-            print("uError.")
-            print("  w not followed by a digit.")
-            continue
-          iw = int( iws ) - 1   # iw is the lp index
-          ac3 = ull[2]
-          if ac3 == 'center':  self.go_well_center(iw)
-          else:
-            print("Unrecognized ac3: ", ac3)
+          rv = self.hui_go_w(ull)   # rv is ignored.
         else:
           print("uError.  Unrecognized ac2.")
         #
@@ -588,6 +569,9 @@ class c_muwp:
       print("  c not followed by a digit.")
       return -1
     iw = int( iws ) - 1   # iw is the lp index
+    if iw < 0 or iw >= self.n_well:
+      print("uError.  iw out of range.")
+      return -1
     ac3 = ull[2]
     # DANGER:  The following might cause a crash if
     # the user input is bad.  I need to investigate
@@ -619,6 +603,35 @@ class c_muwp:
       return -1
     self.go_fidu(ifidu)
     return 0 # ok
+  #
+  def hui_go_w(self, ull):
+    n_ull = len(ull)
+    if n_ull != 3:
+      print("uError")
+      print("  Need 3 words.")
+      print("  Examples:")
+      print("    go w2 center")
+      print("    go w2 N-edge")
+      return -1
+    ac2 = ull[1]
+    if len(ac2) < 2:
+      print("uError.")
+      return -1
+    iws = ac2[1:]
+    if not iws.isdigit():
+      print("uError.")
+      print("  w not followed by a digit.")
+      return -1
+    iw = int( iws ) - 1   # iw is the lp index
+    if iw < 0 or iw >= self.n_well:
+      print("uError.  iw out of range.")
+      return -1
+    ac3 = ull[2]
+    if ac3 == 'center':  self.go_well_center(iw)
+    else:
+      print("Unrecognized ac3: ", ac3)
+    return 0
+    HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
   #
   def hui_reset_multi_edges(self):
     if self.n_remulti == 0:
