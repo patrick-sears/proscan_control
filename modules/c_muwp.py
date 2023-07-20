@@ -510,7 +510,6 @@ class c_muwp:
         else:
           print("locup get_edges() didn't return 0.")
           print("  So not resetting muwp ins center.")
-      # elif uline.startswith('reset all edges'):
       elif uline.startswith('reset multi edges') or uline == 'rme':
         print("This functions needs some checking. ***")
         if self.n_remulti == 0:
