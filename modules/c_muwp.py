@@ -433,7 +433,27 @@ class c_muwp:
             print("  fiduname: ", fiduname)
           else:
             self.go_fidu(ifidu)
-        elif ac2 == 'well':
+        if ac2.startswith('w'):
+          if n_ull != 3:
+            print("uError")
+            print("  Need 3 words.")
+            print("  Examples:")
+            print("    go w2 center")
+            print("    go w2 N-edge")
+            continue
+          if len(ac2) < 2:
+            print("uError.")
+            continue
+          iws = ac2[1:]
+          if not iws.isdigit():
+            print("uError.")
+            print("  w not followed by a digit.")
+            continue
+          iw = int( iws ) - 1   # iw is the lp index
+          ac3 = ull[2]
+          if ac3 == 'center':  self.go_well_center(iw)
+          else:
+            print("Unrecognized ac3: ", ac3)
         else:
           print("uError.  Unrecognized ac2.")
         #
