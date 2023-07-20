@@ -398,6 +398,16 @@ class c_muwp:
       elif uline == 'save plate':  self.save_plate()
       elif uline == 'create lps':
         self.create_locups()
+      elif uline.startswith('set run_mode '):
+        ll = uline.split(' ')
+        rm = ll[2]
+        ok = False
+        if   rm == 'a':  ok = True
+        elif rm == 'b':  ok = True
+        if ok:
+          self.run_mode = rm
+        else:
+          print("uError.  Bad set run_mode.")
       elif uline.startswith('run'):
         loc_run_mode = 'a'
         if   uline.startswith('run '): loc_run_mode = self.run_mode
