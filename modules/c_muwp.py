@@ -34,6 +34,8 @@ class c_muwp:
     #
     self.n_remulti = 0
     #
+    self.run_mode = 'a'
+    #
   #
   def clear_fidu(self):
     self.fidu_name = []
@@ -223,13 +225,20 @@ class c_muwp:
       key = mm[0]
       ###
       if key == '!fname_plate': self.fname_plate = mm[1]
-      elif key == '!psx0':  self.psx0 = int(mm[1])
-      elif key == '!psy0':  self.psy0 = int(mm[1])
+      elif key == '!psx0':      self.psx0 = int(mm[1])
+      elif key == '!psy0':      self.psy0 = int(mm[1])
+      elif key == '!run_mode':  self.run_mode = mm[1]
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
         sys.exit(1)
     f.close()
+    #
+    if self.run_mode != 'a' and self.run_mode != 'b':
+      print("Error during muwp load config.")
+      print("  Unrecognized run mode.")
+      print("  run_mode: ", run_mode)
+      sys.exit(1)
     print("  Done.")
   #
   def beep(self, n_beep):
@@ -390,10 +399,10 @@ class c_muwp:
       elif uline == 'create lps':
         self.create_locups()
       elif uline.startswith('run'):
-        run_mode = 'a'
-        if   uline.startswith('run '):    run_mode = 'a'
-        elif uline.startswith('run.a '):  run_mode = 'a'
-        elif uline.startswith('run.b '):  run_mode = 'b'
+        loc_run_mode = 'a'
+        if   uline.startswith('run '): loc_run_mode = self.run_mode
+        elif uline.startswith('run.a '):  loc_run_mode = 'a'
+        elif uline.startswith('run.b '):  loc_run_mode = 'b'
         else:
           print("uError.  Unrecognized input.")
           continue
@@ -420,8 +429,8 @@ class c_muwp:
           print("  len(mlocup): ", len(self.mlocup))
           continue
         ###
-        if   run_mode == 'a':   self.mlocup[iw].run_pattern()
-        elif run_mode == 'b':
+        if   loc_run_mode == 'a':   self.mlocup[iw].run_pattern()
+        elif loc_run_mode == 'b':
           self.mlocup[iw].go_edge( 'N' )
           rv = self.mlocup[iw].get_edges()
           if rv == 0:
