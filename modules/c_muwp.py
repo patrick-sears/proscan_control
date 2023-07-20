@@ -383,6 +383,60 @@ class c_muwp:
           if ac2 == 'lps':  self.create_locups()
           else:
             print("uError.")
+      elif action == 'go':
+        if n_ull < 2:
+          print("uError")
+          continue
+        ac2 = ull[1]
+        if ac2.startswith('c'):
+          if n_ull != 3:
+            print("uError")
+            print("  Need 3 words.")
+            print("  Examples:")
+            print("    go c2 center")
+            print("    go c2 N-edge")
+            print("    go c3 fov1")
+            continue
+          if len(ac2) < 2:
+            print("uError.")
+            continue
+          iws = ac2[1:]
+          if not iws.isdigit():
+            print("uError.")
+            print("  c not followed by a digit.")
+            continue
+          iw = int( iws ) - 1   # iw is the lp index
+          ac3 = ull[2]
+          # DANGER:  The following might cause a crash if
+          # the user input is bad.  I need to investigate
+          # this.
+          if ac3 == 'center':  self.go_ins_center(iw)
+          elif ac3.endswith('-edge'):
+            capo = ac3[0]  # N W S E
+            self.mlocup[iw].go_edge( capo )
+          elif ac3.startswith('fov'):
+            i1o_fov = int( ac3[3:] )  # the fov number
+            self.mlocup[iw].go_fov(i1o_fov)
+          else:
+            print("Unrecognized ac3: ", ac3)
+        elif ac2 == 'fidu':
+          if n_ull != 3:
+            print("uError.")
+            continue
+          fiduname = ull[2]
+          ifidu = None
+          for i in range(self.n_fidu):
+            if fiduname == self.fidu_name[i]:
+              ifidu = i
+          if ifidu == None:
+            print("Error.  Couldn't find fiduname.")
+            print("  fiduname: ", fiduname)
+          else:
+            self.go_fidu(ifidu)
+        elif ac2 == 'well':
+        else:
+          print("uError.  Unrecognized ac2.")
+        #
       elif action == 'load':
         if n_ull != 2:
           print("uError.  Bad uline.")
@@ -545,54 +599,6 @@ class c_muwp:
           print("Some edges not reset.")
         self.beep(2)
         #
-      elif uline.startswith('go c'):
-        ll = uline.strip().split(' ')
-        ######.#
-        if len(ll) != 3:
-          print("Strange uline split length.")
-          print("  Need 3 words.")
-          print("  Examples:")
-          print("    go c2 center")
-          print("    go c2 N-edge")
-          print("    go c3 fov1")
-          continue
-        if not ll[1].startswith('c'):
-          print("Strange uline.")
-          print("  Expected second word to start with 'c'.")
-          continue
-        ######.#
-        iws = ll[1][1:]
-        if not iws.isdigit():
-          print("uError.")
-          print("  c not followed by a digit.")
-          continue
-        iw = int( iws ) - 1   # iw is the lp index
-        ppos = ll[2]
-        ######.#
-        if ppos == 'center':  self.go_ins_center(iw)
-        elif ppos.endswith('-edge'):
-          capo = ppos[0]  # N W S E
-          self.mlocup[iw].go_edge( capo )
-        elif ppos.startswith('fov'):
-          i1o_fov = int( ll[2][3:] )  # the fov number
-          self.mlocup[iw].go_fov(i1o_fov)
-        else:
-          print("Unrecognized ppos: ", ppos)
-      elif uline.startswith('go fidu'):
-        ll = uline.split(' ')
-        if len(ll)!=3:
-          print("Strange uline split length.")
-          continue
-        fiduname = ll[2]
-        ifidu = None
-        for i in range(self.n_fidu):
-          if fiduname == self.fidu_name[i]:
-            ifidu = i
-        if ifidu == None:
-          print("Error.  Couldn't find fiduname.")
-          print("  fiduname: ", fiduname)
-        else:
-          self.go_fidu(ifidu)
       else:
         print("Unrecognized input.")
   #
