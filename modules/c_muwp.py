@@ -500,20 +500,6 @@ class c_muwp:
         else:
           print("uError.  Unrecognized action.")
       ################################# HHHHHHHH--here--
-      elif uline.startswith('setrun lp '):
-        ll = uline.strip().split(' ')
-        if len(ll)!=3:
-          print("Strange uline split length.")
-          print("  Need 3 words.")
-          print("  Example:  setrun lp 2")
-          continue
-        iw = int(ll[2]-1)
-        if iw < 0 or iw >= len(self.mlocup):
-          print("Entered number is out of range.")
-          print("  n_well:      ", self.n_well)
-          print("  len(mlocup): ", len(self.mlocup))
-          continue
-        self.mlocup[iw].run()
       elif uline == 'print pos':
         p()
         print("TO IMPLEMENT:  These are psx psy (prior stage).")
