@@ -219,11 +219,12 @@ class c_muwp:
       if not l.startswith('!'):  continue
       l = l.strip()
       ll = l.split(' ')
-      key = ll[0]
+      mm = [m.strip() for m in l.split(';')]
+      key = mm[0]
       ###
-      if key == '!fname_plate': self.fname_plate = ll[1]
-      elif key == '!psx0':  self.psx0 = int(ll[1])
-      elif key == '!psy0':  self.psy0 = int(ll[1])
+      if key == '!fname_plate': self.fname_plate = mm[1]
+      elif key == '!psx0':  self.psx0 = int(mm[1])
+      elif key == '!psy0':  self.psy0 = int(mm[1])
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
