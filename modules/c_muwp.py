@@ -389,36 +389,8 @@ class c_muwp:
           continue
         ac2 = ull[1]
         if ac2.startswith('c'):
-          if n_ull != 3:
-            print("uError")
-            print("  Need 3 words.")
-            print("  Examples:")
-            print("    go c2 center")
-            print("    go c2 N-edge")
-            print("    go c3 fov1")
-            continue
-          if len(ac2) < 2:
-            print("uError.")
-            continue
-          iws = ac2[1:]
-          if not iws.isdigit():
-            print("uError.")
-            print("  c not followed by a digit.")
-            continue
-          iw = int( iws ) - 1   # iw is the lp index
-          ac3 = ull[2]
-          # DANGER:  The following might cause a crash if
-          # the user input is bad.  I need to investigate
-          # this.
-          if ac3 == 'center':  self.go_ins_center(iw)
-          elif ac3.endswith('-edge'):
-            capo = ac3[0]  # N W S E
-            self.mlocup[iw].go_edge( capo )
-          elif ac3.startswith('fov'):
-            i1o_fov = int( ac3[3:] )  # the fov number
-            self.mlocup[iw].go_fov(i1o_fov)
-          else:
-            print("Unrecognized ac3: ", ac3)
+          rv = self.hui_go_c(ull)
+          # rv is ignored.
         elif ac2 == 'fidu':
           if n_ull != 3:
             print("uError.")
@@ -461,11 +433,11 @@ class c_muwp:
         if n_ull != 2:
           print("uError.  Bad uline.")
           continue
-        if ll[1] == 'all':
+        if ull[1] == 'all':
           self.load_config()
           self.load_plate()
-        elif ll[1] == 'config':  self.load_config()
-        elif ll[1] == 'plate':   self.load_plate()
+        elif ull[1] == 'config':  self.load_config()
+        elif ull[1] == 'plate':   self.load_plate()
         else:
           print("uError.  Bad uline.")
       elif action == 'print':
@@ -608,6 +580,42 @@ class c_muwp:
           print("uError.  Unrecognized ac2.")
       else:
         print("uError.  Unrecognized action.")
+  #
+  def hui_go_c(self, ull):
+    n_ull = len(ull)
+    ac2 = ull[1]
+    if n_ull != 3:
+      print("uError")
+      print("  Need 3 words.")
+      print("  Examples:")
+      print("    go c2 center")
+      print("    go c2 N-edge")
+      print("    go c3 fov1")
+      return -1
+    if len(ac2) < 2:
+      print("uError.")
+      return -1
+    iws = ac2[1:]
+    if not iws.isdigit():
+      print("uError.")
+      print("  c not followed by a digit.")
+      return -1
+    iw = int( iws ) - 1   # iw is the lp index
+    ac3 = ull[2]
+    # DANGER:  The following might cause a crash if
+    # the user input is bad.  I need to investigate
+    # this.
+    if ac3 == 'center':  self.go_ins_center(iw)
+    elif ac3.endswith('-edge'):
+      capo = ac3[0]  # N W S E
+      self.mlocup[iw].go_edge( capo )
+    elif ac3.startswith('fov'):
+      i1o_fov = int( ac3[3:] )  # the fov number
+      self.mlocup[iw].go_fov(i1o_fov)
+    else:
+      print("Unrecognized ac3: ", ac3)
+      return -1
+    return 0  # all ok
   #
   def hui_reset_multi_edges(self):
     if self.n_remulti == 0:
