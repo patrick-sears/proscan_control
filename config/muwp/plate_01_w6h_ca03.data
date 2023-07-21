@@ -26,11 +26,11 @@ x2 37000 37000
 
 
 !reset_multi_edges
-1 N
-2 N
-3 N
-6 S
-5 S
-4 S
+1 ; N
+2 ; N
+3 ; N
+6 ; S
+5 ; S
+4 ; S
 
 

@@ -204,7 +204,7 @@ class c_locup:
     elif start_edge == 'W':  useq = ['W', 'E', 'N', 'S']
     elif start_edge == 'E':  useq = ['E', 'W', 'N', 'S']
     else:                    useq = None
-  return useq
+    return useq
   #
   def get_edges(self, start_edge=None, go_to_first_edge=False):
     #
@@ -239,7 +239,7 @@ class c_locup:
        # useq[esi]:  Edges in sequence they are set.
       preped = ped
       ped = useq[esi]
-      if i == 0:
+      if esi == 0:
         if go_to_first_edge:  self.go_edge(ped)
       else:  self.go_edge_rough(preped, ped)
       pline = "Go to "+ped+" and hit [enter], q to quit.\n"
@@ -325,7 +325,7 @@ class c_locup:
       dy =  -rad
     else:
       print("Warning:  c_locup::go_edge_rough() failed.")
-      print("  The requested edges were not recognized."
+      print("  The requested edges were not recognized.")
       print("  edge1: ", edge1)
       print("  edge2: ", edge2)
       return

@@ -32,6 +32,7 @@ class c_muwp:
     self.clear_well_center()
     self.clear_ins_center()
     #
+    self.remulti_source = None
     self.n_remulti = 0
     #
     self.run_mode = 'a'
@@ -121,37 +122,9 @@ class c_muwp:
           self.ins_center_x.append( int(ll[1]) )
           self.ins_center_y.append( int(ll[2]) )
         self.n_ins = len(self.ins_center_x)
+        #
       elif key == '!reset_multi_edges':
-        self.remulti_i = []   # index of ins
-        self.remulti_fe = []  # fe:  first edge
-        # The "first edge" is the one to start with.
-        #
-        for l in f:
-          l = l.strip()
-          ll = l.split(' ')
-          if len(l) == 0:  break
-          if l[0] == '#':  continue
-          idx = int(ll[0])-1
-          data_ok = True
-          if idx < 0 or idx >= self.n_ins:
-            print("Error reading plate data.")
-            print("  idx out of range: ", idx)
-            print("  fname: ", fname) 
-            print("  !reset_multi_edges is incomplete.")
-            data_ok = False
-          a = ll[1]
-          if a!='N' and a!='S' and a!='W' and a!='E':
-            print("Error reading plate data.")
-            print("  Bad fov: ", a)
-            print("  fname: ", fname) 
-            print("  !reset_multi_edges is incomplete.")
-            data_ok = False
-          #
-          self.remulti_i.append( idx )
-          self.remulti_fe.append( a )
-          #
-        #
-        self.n_remulti = len(self.remulti_i)
+        self.read_multi_edges(f, fname, 'plate')
         #
       else:
         print("Error.  Unrecognized key in config file.")
@@ -159,6 +132,57 @@ class c_muwp:
         sys.exit(1)
     f.close()
     print("  Done.")
+  #
+  def read_multi_edges(self, f, fname, source_file):
+    # The config overrides the plate, if it exists.
+    if self.remulti_source == 'config' and source_file == 'plate':
+      return
+      # I.e. If the config already loaded it, don't reload when
+      # reading the plate.
+      # Putting !reset_multi_edges in the config file with no
+      # entries below it allows the loading of edges from the
+      # plate file.
+    self.remulti_source = source_file
+    #
+    self.remulti_i = []   # index of ins
+    self.remulti_fe = []  # fe:  first edge
+    # The "first edge" is the one to start with.
+    #
+    for l in f:
+      l = l.strip()
+      if len(l) == 0:  break
+      if l[0] == '#':  continue
+      mm = [m.strip() for m in l.split(';')]
+      idx = int(mm[0])-1
+      data_ok = True
+      if self.remulti_source == 'plate':
+        # This check can't be made from the config which
+        # will be loaded before the plate.
+        if idx < 0 or idx >= self.n_ins:
+          print("Error reading multi edges.")
+          print("  Might be an error in config file or plate file.")
+          print("  idx out of range: ", idx)
+          print("  fname: ", fname) 
+          print("  !reset_multi_edges is incomplete.")
+          data_ok = False
+      a = mm[1]
+      if a!='N' and a!='S' and a!='W' and a!='E':
+        print("Error reading multi edges.")
+        print("  Might be an error in config file or plate file.")
+        print("  Bad fov: ", a)
+        print("  fname: ", fname) 
+        print("  !reset_multi_edges is incomplete.")
+        data_ok = False
+      #
+      self.remulti_i.append( idx )
+      self.remulti_fe.append( a )
+      #
+    #
+    self.n_remulti = len(self.remulti_i)
+    if self.n_remulti == 0:
+      self.remulti_source = None
+      # Allows changing the config to no entries in !reset_multi_edges
+      # to be able to load the !reset_multi_edges in the plate file.
   #
   def save_plate(self):
     #
@@ -228,6 +252,8 @@ class c_muwp:
       elif key == '!psx0':      self.psx0 = int(mm[1])
       elif key == '!psy0':      self.psy0 = int(mm[1])
       elif key == '!run_mode':  self.run_mode = mm[1]
+      elif key == '!reset_multi_edges':
+        self.read_multi_edges(f, fname, 'config')
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
@@ -379,10 +405,11 @@ class c_muwp:
       elif action == 'create':
         if n_ull != 2:
           print("uError.  Bad uline.")
-          ac2 = ull[1]
-          if ac2 == 'lps':  self.create_locups()
-          else:
-            print("uError.")
+          continue
+        ac2 = ull[1]
+        if ac2 == 'lps':  self.create_locups()
+        else:
+          print("uError.")
       elif action == 'go':
         if n_ull < 2:
           print("uError")
@@ -466,13 +493,13 @@ class c_muwp:
             print("locup get_edges() didn't return 0.")
             print("  So not resetting muwp ins center.")
         elif ac2 == 'multi':
-          self.reset_multi_edges()
+          self.hui_reset_multi_edges()
         else:
           print("uError.")
           print("  ac2 not recognized.")
         #
       elif action == 'rme':
-          self.reset_multi_edges()
+          self.hui_reset_multi_edges()
       elif action == 'run':
         if n_ull != 2:
           print("Strange uline split length.")
@@ -520,15 +547,14 @@ class c_muwp:
         if n_ull < 2:
           print("uError.  Bad uline.")
           continue
-        ac2 = ll[1]
+        ac2 = ull[1]
         if ac2 == 'fidu':
-          ll = uline.split(' ')
           if n_ull != 3:
             print("Strange uline split length.")
             print("  Need 3 words.")
             print("  Example:  set fidu x1")
             continue
-          fiduname = ll[2]
+          fiduname = ull[2]
           self.set_fidu(fiduname)
         elif ac2 == 'run_mode':
           if n_ull != 3:
@@ -536,7 +562,7 @@ class c_muwp:
             print("  Need 3 words.")
             print("  Example:  set run_mode a")
             continue
-          ac3 = ll[2]
+          ac3 = ull[2]
           ok = False
           if   ac3 == 'a':  ok = True
           elif ac3 == 'b':  ok = True
@@ -631,13 +657,17 @@ class c_muwp:
     else:
       print("Unrecognized ac3: ", ac3)
     return 0
-    HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
   #
   def hui_reset_multi_edges(self):
     if self.n_remulti == 0:
       print("The multi edges have not been configured.")
     #
+    #
     for i in range(self.n_remulti):
+      if i > self.n_ins:
+        continue
+        # This might occur when the multi edges are loaded from the
+        # config file.
       rv = self.reset_edges_2(self.remulti_i[i], self.remulti_fe[i])
       if rv != 0:  break
     #
