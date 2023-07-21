@@ -53,6 +53,8 @@ class c_locup:
         self.culture_r = int(self.culture_diam / 2)
       elif key == '!pattern_file':
         self.pattern_file = mm[1]
+      elif key == '!end_of_data':
+        break
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)

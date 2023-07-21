@@ -254,6 +254,8 @@ class c_muwp:
       elif key == '!run_mode':  self.run_mode = mm[1]
       elif key == '!reset_multi_edges':
         self.read_multi_edges(f, fname, 'config')
+      elif key == '!end_of_data':
+        break
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
