@@ -262,28 +262,23 @@ class c_arec:
     fz.close()
   #
   def save_data_format_3(self, ufname=None):
-    savetime_dto = datetime.now()
+    savetime_dto       = datetime.now()
     savetime_for_fname = savetime_dto.strftime("%Y%m%d_%H%M%S")
+    savetime           = savetime_dto.strftime("%Y-%m-%d %H:%M:%S")
+    #
     if self.n_area == 0:
       print("Nothing to save.")
       return
     fname_base =  "arec.data"
     if ufname != None:
       fname_base = ufname
-    fname_user = "user/"+fname_base
-    fname = fname_user
-    if fname == 'user/arec.data':
-      # Automatic backup of old file but only if it was
-      # called arec.data.  Note that the timestamp that
-      # is part of the backup filename will match exactly
-      # the timestamp on the save time comment line in
-      # the new file.
-      if os.path.exists(fname):
-        backname = 'user/arec_'+savetime_for_fname+'.data'
-        shutil.copyfile('user/arec.data', backname)
-    print("Saving "+fname+" ...")
     #
-    savetime = savetime_dto.strftime("%Y-%m-%d %H:%M:%S")
+    fname1 = 'user/arec_'+savetime_for_fname+'.data'
+    fname2 = "user/"+fname_base
+    #
+    # Save as both fname_user and
+    # as:  user/arec_yyyymmdd_hhmmss.data
+    #
     ou = ''
     ou += '!data_format 3\n'
     ou += '# Save time: '+savetime+'\n'
@@ -300,7 +295,13 @@ class c_arec:
       ou += " ; " + self.name[i]
       ou += " ; " + self.notes[i]
       ou += '\n'
-    fz = open(fname, 'w')
+    #
+    print("Saving "+fname1+" ...")
+    fz = open(fname1, 'w')
+    fz.write(ou)
+    fz.close()
+    print("Saving "+fname2+" ...")
+    fz = open(fname2, 'w')
     fz.write(ou)
     fz.close()
   #
