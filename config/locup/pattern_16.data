@@ -5,7 +5,7 @@
 # Return to N at end.
 # pattern 16 = pattern 10 + return to N.
 
-!culture_diam 23000
+# !culture_diam 23000
 
 
 !m : N FOV

@@ -4,7 +4,7 @@
 # Eight FOVs, N NE E ... NW (note cw), equal area radius.
 # To follow u-.
 
-!culture_diam 23000
+# !culture_diam 23000
 
 
 !m : N FOV
