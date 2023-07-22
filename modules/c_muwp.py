@@ -462,43 +462,12 @@ class c_muwp:
         else:
           print("uError.")
       elif action == 'reset':
-        if n_ull != 3:
-          print("uError.")
-          continue
-        ac2 = ull[1]
-        ac3 = ull[2]
-        if ac3 != 'edges':
-          print("uError.")
-          continue
-        if ac2.startswith('c'):
-          if len(ac2) < 2:
-            print("uError.")
-            continue
-          iws = ac2[1:]
-          if not iws.isdigit():
-            print("uError.")
-            print("  c not followed by a digit.")
-            continue
-          iw = int(iws) - 1
-          if iw < 0 or iw >= self.n_ins:
-            print("uError.  c number out of range.")
-            continue
-          rv = self.mlocup[iw].get_edges()
-          if rv == 0:
-            print("Resetting muwp ins",iw+1,"center.")
-            self.ins_center_x[iw] = self.mlocup[iw].cx
-            self.ins_center_y[iw] = self.mlocup[iw].cy
-          else:
-            print("locup get_edges() didn't return 0.")
-            print("  So not resetting muwp ins center.")
-        elif ac2 == 'multi':
-          self.hui_reset_multi_edges()
-        else:
-          print("uError.")
-          print("  ac2 not recognized.")
+        rv = self.hui_reset(ull)
+        # rv ignored
         #
       elif action == 'rme':
-          self.hui_reset_multi_edges()
+        rv = self.hui_reset_multi_edges()
+        # rv ignored
       elif action == 'run':
         if n_ull != 2:
           print("Strange uline split length.")
@@ -573,6 +542,46 @@ class c_muwp:
           print("uError.  Unrecognized ac2.")
       else:
         print("uError.  Unrecognized action.")
+  #
+  def hui_reset(self, ull):
+    n_ull = len(ull)
+    if n_ull != 3:
+      print("uError.")
+      return -1
+    ac2 = ull[1]
+    ac3 = ull[2]
+    if ac3 != 'edges':
+      print("uError.")
+      return -1
+    if ac2.startswith('c'):
+      if len(ac2) < 2:
+        print("uError.")
+        return -1
+      iws = ac2[1:]
+      if not iws.isdigit():
+        print("uError.")
+        print("  c not followed by a digit.")
+        return -1
+      iw = int(iws) - 1
+      if iw < 0 or iw >= self.n_ins:
+        print("uError.  c number out of range.")
+        return -1
+      rv = self.mlocup[iw].get_edges()
+      if rv == 0:
+        print("Resetting muwp ins",iw+1,"center.")
+        self.ins_center_x[iw] = self.mlocup[iw].cx
+        self.ins_center_y[iw] = self.mlocup[iw].cy
+      else:
+        print("locup get_edges() didn't return 0.")
+        print("  So not resetting muwp ins center.")
+    elif ac2 == 'multi':
+      rv = self.hui_reset_multi_edges()
+      if rv != 0:  return -1
+    else:
+      print("uError.")
+      print("  ac2 not recognized.")
+      return -1
+    return 0
   #
   def hui_go_c(self, ull):
     n_ull = len(ull)
