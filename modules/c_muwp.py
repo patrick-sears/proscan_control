@@ -384,14 +384,11 @@ class c_muwp:
       return
     self.send( ll[1] )
   #
-  def run(self, amode=0):   # run the hui (human user interface)
+  def run(self):   # run the hui (human user interface)
     self.beep(2)
     print()
     print("Entering muwp hui.")
     print("  Use q to quit.")
-    if amode == 1:
-      self.load_config()
-      self.load_plate()
     ############################ Start of hui while(1)...
     while( 1 ):
       print()
