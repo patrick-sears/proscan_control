@@ -461,45 +461,8 @@ class c_muwp:
         rv = self.hui_reset_multi_edges()
         # rv ignored
       elif action == 'run':
-        if n_ull != 2:
-          print("Strange uline split length.")
-          print("  Need 2 words.")
-          print("  Example:  run c2")
-          continue
-        ac2 = ull[1]  # Expect:  c1 c2 ... c11 c12 ...
-        if len(ac2) < 2:
-          print("uError.  Bad culture format.")
-          continue
-        if ac2[0] != 'c':
-          print("uError.")
-          print("  Missing c.")
-          continue
-        iws = ac2[1:]
-        if not iws.isdigit():
-          print("uError.")
-          print("  c not followed by a digit.")
-          continue
-        iw = int(iws)-1
-        if iw < 0 or iw >= len(self.mlocup):
-          print("Entered number is out of range.")
-          print("  n_well:      ", self.n_well)
-          print("  len(mlocup): ", len(self.mlocup))
-          continue
-        ###
-        if   self.run_mode == 'a':   self.mlocup[iw].run_pattern()
-        elif self.run_mode == 'b':
-          self.mlocup[iw].go_edge( 'N' )
-          rv = self.mlocup[iw].get_edges()
-          if rv == 0:
-            # all is ok
-            print("Resetting muwp ins",iw+1,"center.")
-            self.ins_center_x[iw] = self.mlocup[iw].cx
-            self.ins_center_y[iw] = self.mlocup[iw].cy
-          else:
-            print("locup get_edges() didn't return 0.")
-            print("  So not resetting muwp ins center.")
-            print("  Running patter...")
-          self.mlocup[iw].run_pattern()
+        rv = self.hui_run(ull)
+        # rv ignored
         #
       elif action == 'save':
         if n_ull != 2:
@@ -542,7 +505,54 @@ class c_muwp:
           print("uError.  Unrecognized ac2.")
       else:
         print("uError.  Unrecognized action.")
-  #
+    #
+  def hui_run(self, ull):
+    n_ull = len(ull)
+    #
+    if n_ull != 2:
+      print("Strange uline split length.")
+      print("  Need 2 words.")
+      print("  Example:  run c2")
+      return -1
+    ac2 = ull[1]  # Expect:  c1 c2 ... c11 c12 ...
+    if len(ac2) < 2:
+      print("uError.  Bad culture format.")
+      return -1
+    if ac2[0] != 'c':
+      print("uError.  Missing c.")
+      return -1
+    iws = ac2[1:]
+    if not iws.isdigit():
+      print("uError.")
+      print("  c not followed by a digit.")
+      return -1
+    iw = int(iws)-1
+    if iw < 0 or iw >= len(self.mlocup):
+      print("Entered number is out of range.")
+      print("  n_well:      ", self.n_well)
+      print("  len(mlocup): ", len(self.mlocup))
+      return -1
+    ###
+    if   self.run_mode == 'a':
+      rv = self.mlocup[iw].run_pattern()
+      # ignore rv
+    elif self.run_mode == 'b':
+      self.mlocup[iw].go_edge( 'N' )
+      rv = self.mlocup[iw].get_edges()
+      if rv == 0:
+        # all is ok
+        print("Resetting muwp ins",iw+1,"center.")
+        self.ins_center_x[iw] = self.mlocup[iw].cx
+        self.ins_center_y[iw] = self.mlocup[iw].cy
+      else:
+        print("locup get_edges() didn't return 0.")
+        print("  So not resetting muwp ins center.")
+        print("  Running patter...")
+      rv = self.mlocup[iw].run_pattern()
+      # ignore rv
+    #
+    return 0
+    #
   def hui_reset(self, ull):
     n_ull = len(ull)
     if n_ull != 3:
