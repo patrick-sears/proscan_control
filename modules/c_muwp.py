@@ -399,8 +399,9 @@ class c_muwp:
       n_ull = len(ull)
       if n_ull == 0:  continue  # Handle just hitting enter.
       action = ull[0]
-      if action == '0':
-        print("No action.")
+      if action == '':
+        # print("No action.")
+        pass
       elif action == 'create':
         if n_ull != 2:
           print("uError.  Bad uline.")
@@ -435,7 +436,7 @@ class c_muwp:
         else:
           print("uError.  Bad uline.")
       elif action == 'print':
-        if n_ull != 3:
+        if n_ull != 2:
           print("uError.")
           continue
         ac2 = ull[1]
