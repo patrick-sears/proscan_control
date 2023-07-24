@@ -52,6 +52,7 @@ class c_muwp:
       self.mlocup[i].load_pattern_data()
       self.mlocup[i].cx = self.ins_center_x[i]
       self.mlocup[i].cy = self.ins_center_y[i]
+      self.mlocup[i].set_cnum(i+1)
   #
   def clear_well_center(self):
     self.well_center_x = []

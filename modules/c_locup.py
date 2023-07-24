@@ -17,8 +17,11 @@ class c_locup:
     # center of insert:  cx cy
     self.cx = None
     self.cy = None
-    self.cnum = 1    # the culture number
+    self.cnum = -1    # the culture number
     self.pattern_file = "locup_pattern.data"
+  #
+  def set_cnum(self, cnum):
+    self.cnum = cnum
   #
   def load_config(self):
     print("Loading config...")
@@ -93,7 +96,6 @@ class c_locup:
         print("Culture "+str(self.cnum)+" done.")
         print()
       #
-      self.cnum += 1
     ##############
   #
   def debug_run(self):
