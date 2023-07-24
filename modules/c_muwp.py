@@ -453,14 +453,6 @@ class c_muwp:
           continue
         print()
         return
-      elif action == 'save':
-        if n_ull != 2:
-          print("uError.")
-          continue
-        ac2 = ull[1]
-        if ac2 == 'plate':  self.save_plate()
-        else:
-          print("uError.")
       elif action == 'reset':
         rv = self.hui_reset(ull)
         # rv ignored
@@ -509,6 +501,14 @@ class c_muwp:
             print("  Running patter...")
           self.mlocup[iw].run_pattern()
         #
+      elif action == 'save':
+        if n_ull != 2:
+          print("uError.")
+          continue
+        ac2 = ull[1]
+        if ac2 == 'plate':  self.save_plate()
+        else:
+          print("uError.")
       elif action == 'send':
         self.user_send(uline)
       elif action == 'set':
