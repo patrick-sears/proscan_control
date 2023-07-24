@@ -218,21 +218,12 @@ class c_locup:
     #
     print("Resetting edges for culture "+str(self.cnum)+".")
     #
+    ped = 'N'
+    useq = self.get_useq(ped)
+    #
     if start_edge != None:
+      ped = start_edge
       useq = self.get_useq(start_edge)
-    else:
-      pline = "Which is your starting edge?\n"
-      pline += "  Type one of these:  n s w e, and hit [Enter].\n"
-      pline += "  Or type q[Enter] to quit.\n"
-      pline += "  Hitting just [Enter] assumes the N edge.\n"
-      while True:
-        print(pline)
-        uline = input("u>> ")
-        uu = uline.upper()  # To upper case.
-        if uu == 'Q':  return -1
-        useq = self.get_useq(uu)
-        if useq == None:  print("Unrecognized input.")
-        else:             break
     ######################################
     # Get temporary edge positions.
     ped = None
@@ -243,13 +234,24 @@ class c_locup:
       ped = useq[esi]
       if esi == 0:
         if go_to_first_edge:  self.go_edge(ped)
-      else:  self.go_edge_rough(preped, ped)
-      pline = "Go to "+ped+" and hit [enter], q to quit.\n"
+        pline = "Adjust "+ped+" edge and hit [enter], q to quit.\n"
+        pline += "  You can choose a different edge to start.\n"
+        pline += "  E.g. w[edge] to force west edge.\n"
+      else:
+        self.go_edge_rough(preped, ped)
+        pline = "Adjust "+ped+" edge and hit [enter], q to quit.\n"
       while True:
         print(pline)
         uline = input("u>> ")
+        if uline == '':  break
         if uline == 'q':  return -1
-        break
+        if esi == 0:
+          uu = uline.upper()
+          if uu=='N' or uu=='S' or uu=='W' or uu=='E':  ped = uu
+          elif uu == '':  break
+          else:  continue
+          useq = self.get_useq(uu)
+          break
       # Get and record temporary values.
       edi = dima[ ped ]
       edvalx[edi], edvaly[edi] = self.get_pos()
