@@ -40,6 +40,11 @@ class c_muwp:
     self.umove_aziname = 'x'  # no motion
     self.umove_n_move  = 0    # no motion
     #
+    self.move_choice_dx = []
+    self.move_choice_dy = []
+    self.move_choice_note = []
+    self.n_move_choice = 0
+    #
   #
   def clear_fidu(self):
     self.fidu_name = []
@@ -263,6 +268,22 @@ class c_muwp:
         self.read_multi_edges(f, fname, 'config')
       elif key == '!end_of_data':
         break
+      elif key == '!move_choice':
+        self.move_choice_dx = []
+        self.move_choice_dy = []
+        self.move_choice_note = []
+        for l in f:
+          l = l.strip()
+          if len(l) == 0:  break
+          if l[0] == '#':  continue
+          mm = [m.strip() for m in l.split(';')]
+          dx = int(mm[0])
+          dy = int(mm[1])
+          note = mm[2]
+          self.move_choice_dx.append(dx)
+          self.move_choice_dy.append(dy)
+          self.move_choice_note.append(note)
+        self.n_move_choice = len(self.move_choice_dx)
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
@@ -409,6 +430,8 @@ class c_muwp:
       if action == '':
         # print("No action.")
         pass
+      elif action == 'choose':
+        rv = self.hui_choose(ull)  # rv ignored
       elif action == 'create':
         if n_ull != 2:
           print("uError.  Bad uline.")
@@ -492,6 +515,52 @@ class c_muwp:
       else:
         print("uError.  Unrecognized action.")
     #
+  def hui_choose(self, ull):
+    n_ull = len(ull)
+    if n_ull != 2:
+      print("uError.")
+      return -1
+    ac2 = ull[1]
+    if ac2 == 'move' or ac2 == 'm':
+      print("Current udx udy values:")
+      ou = ''
+      ou += "  {:4.0f}".format( self.udx )
+      ou += "  {:4.0f}".format( self.udy )
+      print(ou)
+      print("Choices:")
+      for i in range(self.n_move_choice):
+        ou = ''
+        ou += "  {:2d}".format(i+1)
+        ou += "  {:4.0f}".format( self.move_choice_dx[i] )
+        ou += "  {:4.0f}".format( self.move_choice_dy[i] )
+        ou += " ; "+self.move_choice_note[i]
+        print(ou)
+      print("Choose one (x to exit).")
+      v = input("  ? ")
+      if v == 'x':  return 0
+      if not v.isdigit():
+        print("uError.")
+        return -1
+      iv = int(v)-1
+      if iv < 0 or iv >= self.n_move_choice:
+        print("uError.")
+        return -1
+      dx = self.move_choice_dx[iv]
+      dy = self.move_choice_dy[iv]
+      note = self.move_choice_note[iv]
+      print("Changing udx udy to these values:")
+      ou = ''
+      ou += "  {:4.0f}".format( dx )
+      ou += "  {:4.0f}".format( dy )
+      ou += " ; "+note
+      print(ou)
+      self.udx = dx
+      self.udy = dy
+    else:
+      print("uError.")
+      return -1
+    return 0
+    #
   def hui_set(self, ull):
     n_ull = len(ull)
     if n_ull < 2:
@@ -570,7 +639,7 @@ class c_muwp:
         print("uError.")
         return -1
       n_move = int(ac3)
-    if n_move < 0 or n_move >= 10:
+    if n_move < 0 or n_move > 10:
       print("uError.  n_move out of range.")
       print("  Need in range [0, 10].")
       return -1
