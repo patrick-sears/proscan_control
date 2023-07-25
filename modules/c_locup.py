@@ -29,20 +29,19 @@ class c_locup:
     fname_base =  "locup.config"
     fname_default = "config/"+fname_base
     fname_user = "user/"+fname_base
-    if os.path.isfile( fname_user ):
-      fname = fname_user
-      print("Found user file.")
-    else:
-      fname = fname_default
-      print("Using default file.")
     #
+    if not os.path.isfile( fname_default ):
+      print("Error.  Missing default config file.")
+      print("  fname: ", fname_default)
+      sys.exit(1)
+    self.load_one_config(fname_default)
+    #
+    if os.path.isfile( fname_user ):
+      self.load_one_config(fname_user)
+    #
+  #
+  def load_one_config(self, fname):
     print("  Loading: ", fname )
-    if not os.path.exists( fname ):
-      print("Warning w33.  Missing config file.")
-      print("  In c_locup::load_config().")
-      print("  File not loaded.")
-      print("  fname: ", fname)
-      return
     f = open(fname)
     for l in f:
       if not l.startswith('!'):  continue
@@ -61,10 +60,10 @@ class c_locup:
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
+        print("  fname: ", fname)
         sys.exit(1)
     f.close()
-    print("  culture diam: ", self.culture_diam)
-    print("  Done.")
+    # print("  culture diam: ", self.culture_diam)
   #
   def run(self):
     self.load_config()

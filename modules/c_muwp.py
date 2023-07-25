@@ -266,6 +266,7 @@ class c_muwp:
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
+        print("  fname: ", fname)
         sys.exit(1)
     f.close()
     #
