@@ -37,6 +37,9 @@ class c_muwp:
     #
     self.run_mode = 'a'
     #
+    self.umove_aziname = 'x'  # no motion
+    self.umove_n_move  = 0    # no motion
+    #
   #
   def clear_fidu(self):
     self.fidu_name = []
@@ -252,6 +255,8 @@ class c_muwp:
       if key == '!fname_plate': self.fname_plate = mm[1]
       elif key == '!psx0':      self.psx0 = int(mm[1])
       elif key == '!psy0':      self.psy0 = int(mm[1])
+      elif key == '!udx':      self.udx = int(mm[1])
+      elif key == '!udy':      self.udy = int(mm[1])
       elif key == '!run_mode':  self.run_mode = mm[1]
       elif key == '!reset_multi_edges':
         self.read_multi_edges(f, fname, 'config')
@@ -436,6 +441,8 @@ class c_muwp:
         elif ull[1] == 'plate':   self.load_plate()
         else:
           print("uError.  Bad uline.")
+      elif action == 'move' or action == 'm':
+        rv = self.hui_move(ull)  # rv ignored
       elif action == 'print':
         if n_ull != 2:
           print("uError.")
@@ -447,6 +454,8 @@ class c_muwp:
           print("  We would also like muwp internal plate coordinates.")
         elif ac2 == 'info':
           self.print_info()
+        elif ac2 == 'run_mode':
+          print("run_mode: ", self.run_mode)
         else:
           print("uError.")
       elif action == 'q':
@@ -507,6 +516,60 @@ class c_muwp:
           print("uError.  Unrecognized ac2.")
       else:
         print("uError.  Unrecognized action.")
+    #
+  def hui_move(self, ull):
+    n_ull = len(ull)
+    n_move  = 0
+    aziname = 'x'
+    #
+    if n_ull == 1:
+      # Use last move in memory.
+      n_move = self.umove_n_move
+      aziname = self.umove_aziname
+    else:
+      ac2 = ull[1]
+      ok = False
+      if ac2=='x':  ok = True
+      if ac2=='n' or ac2=='s' or ac2=='e' or ac2=='w':  ok = True
+      if ac2=='u' or ac2=='d' or ac2=='r' or ac2=='l':  ok = True
+      if not ok:
+        print("uError.")
+        return -1
+      aziname = ac2
+      n_move = 1
+    if n_ull == 3:
+      ac3 = ull[2]
+      if not ac3.isdigit():
+        print("uError.")
+        return -1
+      n_move = int(ac3)
+    if n_move < 0 or n_move >= 10:
+      print("uError.  n_move out of range.")
+      print("  Need in range [0, 10].")
+      return -1
+    #
+    dx, dy = 0, 0  # In case aziname=='x'
+    if aziname == 'n' or aziname=='u':
+      dx, dy = 0, -self.udy
+    elif aziname == 's' or aziname=='d':
+      dx, dy = 0, self.udy
+    elif aziname == 'e' or aziname=='r':
+      dx, dy = -self.udx, 0
+    elif aziname == 'w' or aziname=='l':
+      dx, dy = self.udx, 0
+    #
+    self.umove_aziname = aziname
+    self.umove_n_move = n_move
+    #
+    dx *= n_move
+    dy *= n_move
+    #
+    ouline = "gr"  # the "r" is to go relative to current position
+    ouline += " {0:d}".format( dx )
+    ouline += " {0:d}".format( dy )
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
+    spo.write( send )
     #
   def hui_run(self, ull):
     n_ull = len(ull)
