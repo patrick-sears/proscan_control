@@ -486,36 +486,62 @@ class c_muwp:
       elif action == 'send':
         self.user_send(uline)
       elif action == 'set':
-        if n_ull < 2:
-          print("uError.  Bad uline.")
-          continue
-        ac2 = ull[1]
-        if ac2 == 'fidu':
-          if n_ull != 3:
-            print("Strange uline split length.")
-            print("  Need 3 words.")
-            print("  Example:  set fidu x1")
-            continue
-          fiduname = ull[2]
-          self.set_fidu(fiduname)
-        elif ac2 == 'run_mode':
-          if n_ull != 3:
-            print("Strange uline split length.")
-            print("  Need 3 words.")
-            print("  Example:  set run_mode a")
-            continue
-          ac3 = ull[2]
-          ok = False
-          if   ac3 == 'a':  ok = True
-          elif ac3 == 'b':  ok = True
-          if ok:
-            self.run_mode = ac3
-          else:
-            print("uError.  Bad set run_mode.")
-        else:
-          print("uError.  Unrecognized ac2.")
+        rv = self.hui_set(ull)  # rv ignored
+        #
       else:
         print("uError.  Unrecognized action.")
+    #
+  def hui_set(self, ull):
+    n_ull = len(ull)
+    if n_ull < 2:
+      print("uError.  Bad uline.")
+      return -1
+    ac2 = ull[1]
+    if ac2 == 'fidu':
+      if n_ull != 3:
+        print("Strange uline split length.")
+        print("  Need 3 words.")
+        print("  Example:  set fidu x1")
+        return -1
+      fiduname = ull[2]
+      self.set_fidu(fiduname)
+    elif ac2 == 'run_mode':
+      if n_ull != 3:
+        print("Strange uline split length.")
+        print("  Need 3 words.")
+        print("  Example:  set run_mode a")
+        return -1
+      ac3 = ull[2]
+      ok = False
+      if   ac3 == 'a':  ok = True
+      elif ac3 == 'b':  ok = True
+      if ok:
+        self.run_mode = ac3
+      else:
+        print("uError.  Bad set run_mode.")
+        return -1
+    elif ac2 == 'udx':
+      if n_ull != 3:
+        print("uError.")
+        return -1
+      ac3 = ull[2]
+      if not ac3.isdigit():
+        print("uError.")
+        return -1
+      self.udx = int(ac3)
+    elif ac2 == 'udy':
+      if n_ull != 3:
+        print("uError.")
+        return -1
+      ac3 = ull[2]
+      if not ac3.isdigit():
+        print("uError.")
+        return -1
+      self.udy = int(ac3)
+    else:
+      print("uError.  Unrecognized ac2.")
+      return -1
+    return 0
     #
   def hui_move(self, ull):
     n_ull = len(ull)
@@ -550,9 +576,9 @@ class c_muwp:
     #
     dx, dy = 0, 0  # In case aziname=='x'
     if aziname == 'n' or aziname=='u':
-      dx, dy = 0, -self.udy
-    elif aziname == 's' or aziname=='d':
       dx, dy = 0, self.udy
+    elif aziname == 's' or aziname=='d':
+      dx, dy = 0, -self.udy
     elif aziname == 'e' or aziname=='r':
       dx, dy = -self.udx, 0
     elif aziname == 'w' or aziname=='l':
@@ -571,6 +597,7 @@ class c_muwp:
     send = bytes( ouline.encode() )
     spo.write( send )
     #
+    return 0
   def hui_run(self, ull):
     n_ull = len(ull)
     #
