@@ -226,24 +226,25 @@ class c_muwp:
     fz.close()
   #
   def load_config(self):
-    print("Loading config...")
+    print("Loading configs...")
     fname_base =  "muwp.config"
+    #
     fname_default = "config/"+fname_base
     fname_user = "user/"+fname_base
+    #
+    if not os.path.isfile( fname_default ):
+      print("Error.  Missing default config.")
+      print("  file: ", fname_default)
+      sys.exit(1)
+    self.load_one_config( fname_default )
+    #
     if os.path.isfile( fname_user ):
       fname = fname_user
-      print("Found user file.")
-    else:
-      fname = fname_default
-      print("Using default file.")
+      self.load_one_config( fname_user )
     #
+  #
+  def load_one_config(self, fname):
     print("  Loading: ", fname )
-    if not os.path.exists( fname ):
-      print("Warning w32.  Missing config file.")
-      print("  In c_muwp::load_config().")
-      print("  File not loaded.")
-      print("  fname: ", fname)
-      return
     f = open(fname)
     for l in f:
       if not l.startswith('!'):  continue
@@ -255,8 +256,8 @@ class c_muwp:
       if key == '!fname_plate': self.fname_plate = mm[1]
       elif key == '!psx0':      self.psx0 = int(mm[1])
       elif key == '!psy0':      self.psy0 = int(mm[1])
-      elif key == '!udx':      self.udx = int(mm[1])
-      elif key == '!udy':      self.udy = int(mm[1])
+      elif key == '!udx':       self.udx = int(mm[1])
+      elif key == '!udy':       self.udy = int(mm[1])
       elif key == '!run_mode':  self.run_mode = mm[1]
       elif key == '!reset_multi_edges':
         self.read_multi_edges(f, fname, 'config')
@@ -273,7 +274,6 @@ class c_muwp:
       print("  Unrecognized run mode.")
       print("  run_mode: ", run_mode)
       sys.exit(1)
-    print("  Done.")
   #
   def beep(self, n_beep):
     for i in range(n_beep):
