@@ -13,7 +13,6 @@ from modules.m99_sim_serial import spo
 class c_locup:
   #
   def __init__(self):
-    print("Remember, use q to quit any time.")
     # center of insert:  cx cy
     self.cx = None
     self.cy = None
