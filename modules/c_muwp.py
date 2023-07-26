@@ -32,7 +32,8 @@ class c_muwp:
     self.clear_well_center()
     self.clear_ins_center()
     #
-    self.remulti_source = None
+    self.remulti_i = []   # index of ins (0-offset)
+    self.remulti_fe = []  # fe:  first edge
     self.n_remulti = 0
     #
     self.run_mode = 'a'
@@ -132,9 +133,6 @@ class c_muwp:
           self.ins_center_y.append( int(ll[2]) )
         self.n_ins = len(self.ins_center_x)
         #
-      elif key == '!reset_multi_edges':
-        self.read_multi_edges(f, fname, 'plate')
-        #
       else:
         print("Error.  Unrecognized key in config file.")
         print("  key: ", key)
@@ -142,16 +140,7 @@ class c_muwp:
     f.close()
     print("  Done.")
   #
-  def read_multi_edges(self, f, fname, source_file):
-    # The config overrides the plate, if it exists.
-    if self.remulti_source == 'config' and source_file == 'plate':
-      return
-      # I.e. If the config already loaded it, don't reload when
-      # reading the plate.
-      # Putting !reset_multi_edges in the config file with no
-      # entries below it allows the loading of edges from the
-      # plate file.
-    self.remulti_source = source_file
+  def read_multi_edges(self, f, fname):
     #
     self.remulti_i = []   # index of ins
     self.remulti_fe = []  # fe:  first edge
@@ -163,21 +152,10 @@ class c_muwp:
       if l[0] == '#':  continue
       mm = [m.strip() for m in l.split(';')]
       idx = int(mm[0])-1
-      data_ok = True
-      if self.remulti_source == 'plate':
-        # This check can't be made from the config which
-        # will be loaded before the plate.
-        if idx < 0 or idx >= self.n_ins:
-          print("Error reading multi edges.")
-          print("  Might be an error in config file or plate file.")
-          print("  idx out of range: ", idx)
-          print("  fname: ", fname) 
-          print("  !reset_multi_edges is incomplete.")
-          data_ok = False
       a = mm[1]
       if a!='N' and a!='S' and a!='W' and a!='E':
         print("Error reading multi edges.")
-        print("  Might be an error in config file or plate file.")
+        print("  Might be an error in config file.")
         print("  Bad fov: ", a)
         print("  fname: ", fname) 
         print("  !reset_multi_edges is incomplete.")
@@ -188,10 +166,6 @@ class c_muwp:
       #
     #
     self.n_remulti = len(self.remulti_i)
-    if self.n_remulti == 0:
-      self.remulti_source = None
-      # Allows changing the config to no entries in !reset_multi_edges
-      # to be able to load the !reset_multi_edges in the plate file.
   #
   def save_plate(self):
     #
@@ -265,7 +239,7 @@ class c_muwp:
       elif key == '!udy':       self.udy = int(mm[1])
       elif key == '!run_mode':  self.run_mode = mm[1]
       elif key == '!reset_multi_edges':
-        self.read_multi_edges(f, fname, 'config')
+        self.read_multi_edges(f, fname)
       elif key == '!end_of_data':
         break
       elif key == '!move_choice':
@@ -493,8 +467,7 @@ class c_muwp:
         # rv ignored
         #
       elif action == 'rme':
-        rv = self.hui_reset_multi_edges()
-        # rv ignored
+        rv = self.hui_reset_multi_edges()  # rv ignored
       elif action == 'run':
         rv = self.hui_run(ull)
         # rv ignored
@@ -841,13 +814,11 @@ class c_muwp:
   def hui_reset_multi_edges(self):
     if self.n_remulti == 0:
       print("The multi edges have not been configured.")
+      return -1
     #
-    #
+    rv = -1
     for i in range(self.n_remulti):
-      if i > self.n_ins:
-        continue
-        # This might occur when the multi edges are loaded from the
-        # config file.
+      if i > self.n_ins:  break
       rv = self.reset_edges_2(self.remulti_i[i], self.remulti_fe[i])
       if rv != 0:  break
     #
@@ -856,6 +827,7 @@ class c_muwp:
     else:
       print("Some edges not reset.")
     self.beep(2)
+    return 0
   #
   def print_info(self):
     if self.fname_plate == None:
