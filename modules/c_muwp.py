@@ -493,6 +493,15 @@ class c_muwp:
           continue
         print()
         return
+      elif action == 'repeat':
+        if n_ull != 2:
+          print("uError.")
+          continue
+        ac2 = ull[1]
+        if ac2 != 'moves':
+          print("uError.")
+          continue
+        self.hui_repeat_move_mode()
       elif action == 'reset':
         rv = self.hui_reset(ull)
         # rv ignored
@@ -616,6 +625,19 @@ class c_muwp:
       print("uError.  Unrecognized ac2.")
       return -1
     return 0
+    #
+  def hui_repeat_move_mode(self):
+    while(1):
+      ouli = "Repeat moves mode."
+      ouli += "  "+self.umove_aziname+' '+str(self.umove_n_move)
+      print(ouli)
+      v = input("  (q to quit)>> ")
+      if v == 'q':  break
+      ull = ['move']
+      if v != '':
+        vv = ( ' '.join(v.split()) ).split(' ')
+        ull = ull+vv
+      self.hui_move(ull)
     #
   def hui_move(self, ull):
     n_ull = len(ull)
