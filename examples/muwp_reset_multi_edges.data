@@ -1,4 +1,21 @@
-#
+################################################################
+# - Copy as needed into the user/muwp.config file or copy the
+#   entire file into the user directory.
+# - Then modify as needed.
+# - Only the first set before !end_of_data is read.
+# - If copying the entire file, place the following in the
+#   user/muwp.config file:
+#     !load_reset_multi_edges ; user/muwp_reset_multi_edges.data
+################################################################
+
+
+!reset_multi_edges
+1 ; N
+
+
+!end_of_data
+#######################################################
+#######################################################
 
 
 # plate_01_w6h.data

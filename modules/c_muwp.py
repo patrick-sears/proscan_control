@@ -140,6 +140,35 @@ class c_muwp:
     f.close()
     print("  Done.")
   #
+  #
+  def load_reset_multi_edges(self, fname):
+    if not os.path.isfile( fname ):
+      print("Error.  Missing reset_multi_edges file.")
+      print("  fname: ", fname)
+      sys.exit(1)
+    found = False
+    f = open(fname)
+    for l in f:
+      if not l.startswith('!'):  continue
+      l = l.strip()
+      mm = [m.strip() for m in l.split(';')]
+      key = mm[0]
+      if key == '!reset_multi_edges':
+        found = True
+        break
+      elif key == '!end_of_data':  break
+      else:
+        print("Error.  Bad reset_multi_edges file format.")
+        print("  fname: ", fname)
+        sys.exit(1)
+    if not found:
+      print("The reset_multi_edges file had no edges defined.")
+      print("  No edges loaded.")
+      print("  fname: ", fname)
+    else:
+      self.read_multi_edges(f, fname)
+    f.close()
+  #
   def read_multi_edges(self, f, fname):
     #
     self.remulti_i = []   # index of ins
@@ -240,6 +269,8 @@ class c_muwp:
       elif key == '!run_mode':  self.run_mode = mm[1]
       elif key == '!reset_multi_edges':
         self.read_multi_edges(f, fname)
+      elif key == '!load_reset_multi_edges':
+        self.load_reset_multi_edges( mm[1] )
       elif key == '!end_of_data':
         break
       elif key == '!move_choice':
