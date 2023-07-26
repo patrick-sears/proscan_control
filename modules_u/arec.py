@@ -1,7 +1,7 @@
+#!/usr/bin/python3
 
-from modules.c_arec import arec
+from modules.m2 import arec
 
 arec.run()
-
 
 

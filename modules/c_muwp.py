@@ -1,4 +1,4 @@
-
+#!/usr/bin/python3
 
 import sys
 import os
@@ -886,7 +886,6 @@ class c_muwp:
 #######################################################
 
 
-muwp = c_muwp()
 
 
 

@@ -1,5 +1,6 @@
+#!/usr/bin/python3
 
-from modules.c_muwp import muwp
+from modules.m2 import muwp
 
 # muwp>> load all
 muwp.load_config()
@@ -10,6 +11,5 @@ muwp.create_locups()
 
 # run.
 muwp.run()
-
 
 

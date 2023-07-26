@@ -1,7 +1,7 @@
+#!/usr/bin/python3
 
-from modules.c_locup import locup
+from modules.m2 import locup
 
 locup.run()
-
 
 

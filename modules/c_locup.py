@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 
 import sys
 import os
@@ -456,7 +457,6 @@ class c_locup:
 #######################################################
 
 
-locup = c_locup()
 
 
 
