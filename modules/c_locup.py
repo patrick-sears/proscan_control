@@ -65,57 +65,6 @@ class c_locup:
     f.close()
     # print("  culture diam: ", self.culture_diam)
   #
-  def run(self):
-    self.load_config()
-    self.load_pattern_data()
-    ##############
-    while( 1 ):
-      #
-      if self.get_edges() == -1:  return  # quit on 'q'
-      #
-      ######################################
-      # This section is here to make sure the human doesn't
-      # keep moving to edges and hitting enter when they
-      # should be taking videos using the pattern.
-      pline = "Ready to start pattern run (y for yes / q to quit):"
-      while True:
-        print(pline)
-        uline = input("u>> ")
-        if uline == 'q':  return
-        if uline == 'y':  break
-      ######################################
-      #
-      debug_run = 0
-      if debug_run == 1:
-        if self.debug_run() == -1:  return # quit of 'q'
-      else:
-        print("Culture "+str(self.cnum)+" coordinates are set.")
-        print("Running pattern...")
-        if self.run_pattern() == -1:  return  # quit on 'q'
-        print("Culture "+str(self.cnum)+" done.")
-        print()
-      #
-    ##############
-  #
-  def debug_run(self):
-    pline = '\n'
-    pline += "Debug run...\n"
-    #####
-    while True:
-      print(pline)
-      uline = input("u>> ")
-      if uline == 'q':  return -1
-      if uline == 'p':
-        p()
-      elif uline == 'xy':
-        print("n_pattern = ", self.n_pattern)
-        print("xc,yc = ", int(self.xc), int(self.yc))
-        for i in range(self.n_pattern):
-          x = self.cx + self.pax[i]
-          y = self.cy + self.pay[i]
-          print("  i,x,y: ", i+1, int(x), int(y))
-    #####
-    return 0
   #
   def go_fov(self, i1o_fov):
     i = i1o_fov-1
@@ -165,6 +114,10 @@ class c_locup:
   #
   def go_edge(self, capo):  # capo:  "cardinal point"
     #  self.culture_r = int(self.culture_diam / 2)
+    if self.cx == None or self.cy == None:
+      print("Warning.  Culture center not set.")
+      print("  Not moving.")
+      return
     if capo == 'N' or capo == 'n':
       x = self.cx
       y = self.cy + self.culture_r
