@@ -381,13 +381,7 @@ class c_locup:
       lla = l.split(':')
       key = ll[0]
       ###
-      if key == '!culture_diam':
-        # This allows the pattern file to override the culture diameter
-        # from the config file.
-        self.culture_diam = int(ll[1])
-        self.culture_r = int(self.culture_diam / 2)
-        continue
-      elif key == '!m':
+      if key == '!m':
         next_pam = lla[1].strip()
         continue
       if len(lla) > 1:
