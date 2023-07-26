@@ -4,7 +4,7 @@ import os
 import winsound
 import time
 
-from modules.m1_basic_control import *
+from modules.m1 import *
 from modules.m99_sim_serial import spo
 
 

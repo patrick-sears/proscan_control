@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 import shutil
 
-from modules.m1_basic_control import *
+from modules.m1 import *
 from modules.m99_sim_serial import spo
 from modules.c_locup import c_locup
 
