@@ -46,7 +46,6 @@ class c_muwp:
     self.move_choice_note = []
     self.n_move_choice = 0
     #
-    self.cci = -1  # current culture i (0 offset)
   #
   def clear_fidu(self):
     self.fidu_name = []
@@ -436,8 +435,6 @@ class c_muwp:
       if action == '':
         # print("No action.")
         pass
-      elif action.startswith( 'cc' ):  # set the current culture.
-        rv = self.run_hui_cc(ull) # rv ignored
       elif action == 'choose':
         rv = self.hui_choose(ull)  # rv ignored
       elif action == 'create':
@@ -530,81 +527,6 @@ class c_muwp:
         #
       else:
         print("uError.  Unrecognized action.")
-    #
-  def run_hui_cc(self, ull):
-    n_ull = len(ull)
-    if n_ull != 1:
-      print("uRerror.")
-      return -1
-    ac1 = ull[0]
-    len(ac1<3):
-      print("uRerror.")
-      return -1
-    iws = ac1[2:]
-    if not iws.isdigit():
-      print("uError.")
-      return -1
-    if iw = int(iws-1)
-    if iw < 0 or iws>=n_well:
-      print("uError.")
-      return -1
-    self.cci = iw
-    #
-    prompt = "muwp-"+str(self.cci+1)+">> "
-    # Start the hui.
-    while( 1 ):
-      print()
-      uline = input(prompt)
-      uline = uline.strip()
-      uline = ' '.join( uline.split() )  # remove duplicate spaces
-      ull = uline.split(' ')
-      n_ull = len(ull)
-      if n_ull == 0:  continue  # Handle just hitting enter.
-      action = ull[0]
-      if action == '':
-        # print("No action.")
-        pass
-      elif action == 'q':
-        self.cci = -1
-        # On quit, set self.cci = -1
-        break
-      elif action == 'reset':
-        if n_ull != 2:
-          print("uError.")
-          continue
-        ac2 = ull[1]
-        if ac2 != "edges":
-          print("uError.")
-          continue
-        iw = self.cci
-        rv = self.mlocup[iw].get_edges()
-        if rv == 0:
-          print("Resetting muwp ins",iw+1,"center.")
-          self.ins_center_x[iw] = self.mlocup[iw].cx
-          self.ins_center_y[iw] = self.mlocup[iw].cy
-        else:
-          print("locup get_edges() didn't return 0.")
-          print("  So not resetting muwp ins center.")
-      elif action == 'run':
-        if self.run_mode == 'a':
-          rv = self.mlocup(self.cci).run_pattern()
-        elif serl.run_mode == 'b':
-          self.mlocup[iw].go_edge( 'N' )
-          rv = self.mlocup[iw].get_edges()
-          if rv == 0:
-            # all is ok
-            print("Resetting muwp ins",iw+1,"center.")
-            self.ins_center_x[iw] = self.mlocup[iw].cx
-            self.ins_center_y[iw] = self.mlocup[iw].cy
-          else:
-            print("locup get_edges() didn't return 0.")
-            print("  So not resetting muwp ins center.")
-            print("  Running patter...")
-          rv = self.mlocup[iw].run_pattern()
-      else:
-        print("uError.  Unrecognized action.")
-        continue
-    return 0
     #
   def hui_choose(self, ull):
     n_ull = len(ull)
