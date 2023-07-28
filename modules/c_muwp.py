@@ -455,18 +455,7 @@ class c_muwp:
         else:
           print("uError.")
       elif action == 'go':
-        if n_ull < 2:
-          print("uError")
-          continue
-        ac2 = ull[1]
-        if ac2.startswith('c'):
-          rv = self.hui_go_c(ull)     # rv is ignored.
-        elif ac2 == 'fidu':
-          rv = self.hui_go_fidu(ull)  # rv is ignored.
-        elif ac2.startswith('w'):
-          rv = self.hui_go_w(ull)   # rv is ignored.
-        else:
-          print("uError.  Unrecognized ac2.")
+        rv = self.hui_go(ull) # rv ignored
         #
       elif action == 'load':
         if n_ull != 2:
@@ -816,50 +805,79 @@ class c_muwp:
       return -1
     return 0
   #
-  def hui_go_c(self, ull):
+  def hui_go(self, ull):
     n_ull = len(ull)
-    ac2 = ull[1]
-    if n_ull != 3:
-      print("uError")
-      print("  Need 3 words.")
-      print("  Examples:")
-      print("    go c2 center")
-      print("    go c2 N-edge")
-      print("    go c3 fov1")
-      return -1
-    if len(ac2) < 2:
+    if n_ull > 1:  ac2 = ull[1]
+    if n_ull > 2:  ac3 = ull[2]
+    #
+    # Might have:
+    #  n_ull == 2:  must have cci>-1
+    #    go ?-edge
+    #    go fov?
+    #    go center
+    #  n_ull == 3:
+    #    go c1 n-edge
+    #    go c1 fov?
+    #    go c1 center
+    #    go w1 center
+    #    go w center
+    #    go fidu ?
+    #
+    wc = 'c'  # well or culture, assume culture.
+    # First handle "go ?-edge" with cci>-1.
+    if n_ull == 2:
+      if self.cci < 0:
+        print("uError.")
+        return -1
+      iw = self.cci
+      ac_pos = ac2  # ?-edge, fov?, center
+    elif n_ull == 3 and ac2 == 'fidu':
+      rv = self.go_fidu_name(ac3)
+      if rv != 0:  return -1
+      return 0
+    elif n_ull == 3 and ac2 == 'w':
+      if self.cci < 0:
+        print("uError.")
+        return -1
+      wc = 'w'
+      ac_pos = ac3  # center
+      if ac_pos != 'center':
+        print("uError.")
+        return -1
+    elif n_ull == 3:
+      ac_pos = ac3  # ?-edge, fov?, center
+      iws = ac2[1:]
+      if not iws.isdigit():
+        print("uError.")
+        print("  c not followed by a digit.")
+        return -1
+      iw = int( iws ) - 1   # iw is the lp index
+      if iw < 0 or iw >= self.n_well:
+        print("uError.  iw out of range.")
+        return -1
+    else:
       print("uError.")
       return -1
-    iws = ac2[1:]
-    if not iws.isdigit():
-      print("uError.")
-      print("  c not followed by a digit.")
-      return -1
-    iw = int( iws ) - 1   # iw is the lp index
-    if iw < 0 or iw >= self.n_well:
-      print("uError.  iw out of range.")
-      return -1
-    ac3 = ull[2]
-    # DANGER:  The following might cause a crash if
-    # the user input is bad.  I need to investigate
-    # this.
-    if ac3 == 'center':  self.go_ins_center(iw)
-    elif ac3.endswith('-edge'):
-      capo = ac3[0]  # N W S E
+    #
+    # Now iw has been set to the correct well.
+    self.cci = iw
+    #
+    if ac_pos == 'center':
+      if   wc == 'w':   self.go_well_center(self.cci)
+      elif wc == 'c':   self.go_ins_center(iw)
+    ########################## HHHHHHHHHHHHHHHHH
+    elif ac_pos.endswith('-edge'):
+      capo = ac_pos[0]  # N W S E
       self.mlocup[iw].go_edge( capo )
-    elif ac3.startswith('fov'):
-      i1o_fov = int( ac3[3:] )  # the fov number
+    elif ac_pos.startswith('fov'):
+      i1o_fov = int( ac_pos[3:] )  # the fov number
       self.mlocup[iw].go_fov(i1o_fov)
     else:
-      print("Unrecognized ac3: ", ac3)
+      print("Unrecognized ac_pos: ", ac_pos)
       return -1
     return 0  # all ok
   #
-  def hui_go_fidu(self, ull):
-    if n_ull != 3:
-      print("uError.")
-      return -1
-    fiduname = ull[2]
+  def go_fidu_name(self, fiduname):
     ifidu = None
     for i in range(self.n_fidu):
       if fiduname == self.fidu_name[i]:
@@ -870,34 +888,6 @@ class c_muwp:
       return -1
     self.go_fidu(ifidu)
     return 0 # ok
-  #
-  def hui_go_w(self, ull):
-    n_ull = len(ull)
-    if n_ull != 3:
-      print("uError")
-      print("  Need 3 words.")
-      print("  Examples:")
-      print("    go w2 center")
-      print("    go w2 N-edge")
-      return -1
-    ac2 = ull[1]
-    if len(ac2) < 2:
-      print("uError.")
-      return -1
-    iws = ac2[1:]
-    if not iws.isdigit():
-      print("uError.")
-      print("  w not followed by a digit.")
-      return -1
-    iw = int( iws ) - 1   # iw is the lp index
-    if iw < 0 or iw >= self.n_well:
-      print("uError.  iw out of range.")
-      return -1
-    ac3 = ull[2]
-    if ac3 == 'center':  self.go_well_center(iw)
-    else:
-      print("Unrecognized ac3: ", ac3)
-    return 0
   #
   def hui_reset_multi_edges(self):
     if self.n_remulti == 0:
