@@ -822,6 +822,8 @@ class c_muwp:
     #    go fidu ?
     #
     wc = 'c'  # well or culture, assume culture.
+    iw = self.cci  # might be -1
+    #
     # First handle "go ?-edge" with cci>-1.
     if n_ull == 2:
       if self.cci < 0:
@@ -839,6 +841,7 @@ class c_muwp:
         return -1
       wc = 'w'
       ac_pos = ac3  # center
+      iw = self.cci
       if ac_pos != 'center':
         print("uError.")
         return -1
@@ -861,7 +864,7 @@ class c_muwp:
     self.cci = iw
     #
     if ac_pos == 'center':
-      if   wc == 'w':   self.go_well_center(self.cci)
+      if   wc == 'w':   self.go_well_center(iw)
       elif wc == 'c':   self.go_ins_center(iw)
     elif ac_pos.endswith('-edge'):
       capo = ac_pos[0]  # N W S E
