@@ -46,6 +46,8 @@ class c_muwp:
     self.move_choice_note = []
     self.n_move_choice = 0
     #
+    self.cci = -1  # current culture i (0 offset)
+    #
   #
   def clear_fidu(self):
     self.fidu_name = []
@@ -417,6 +419,10 @@ class c_muwp:
       return
     self.send( ll[1] )
   #
+  def hui_prompt(self):
+    if self.cci == -1:  return "muwp>> "
+    return "muwp-"+str(self.cci+1)+">> "
+  #
   def run(self):   # run the hui (human user interface)
     self.beep(2)
     print()
@@ -425,7 +431,8 @@ class c_muwp:
     ############################ Start of hui while(1)...
     while( 1 ):
       print()
-      uline = input("muwp>> ")
+      # uline = input("muwp>> ")
+      uline = input(self.hui_prompt())
       uline = uline.strip()
       uline = ' '.join( uline.split() )  # remove duplicate spaces
       ull = uline.split(' ')
@@ -435,6 +442,8 @@ class c_muwp:
       if action == '':
         # print("No action.")
         pass
+      elif action.startswith('cc'):
+        rv = self.hui_cc(ull) # rv ignored
       elif action == 'choose':
         rv = self.hui_choose(ull)  # rv ignored
       elif action == 'create':
@@ -527,6 +536,32 @@ class c_muwp:
         #
       else:
         print("uError.  Unrecognized action.")
+    #
+  def hui_cc(self, ull):
+    n_ull = len(ull)
+    if n_ull != 1:
+      print("uError.")
+      return -1
+    ac1 = ull[0]
+    if ac1 == 'cc':
+      self.cci = -1
+      return 0
+    if len(ac1)<3:
+      print("uError.")
+      return -1
+    iws = ac1[2:]
+    if not iws.isdigit():
+      print("uError.")
+      print("  cc not followed by a digit.")
+      return -1
+    iw = int(iws)-1
+    if iw < 0 or iw >= self.n_well:
+      print("Entered number is out of range.")
+      print("  n_well:      ", self.n_well)
+      print("  len(mlocup): ", len(self.mlocup))
+      return -1
+    self.cci = iw
+    return 0
     #
   def hui_choose(self, ull):
     n_ull = len(ull)
