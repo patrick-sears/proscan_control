@@ -501,14 +501,12 @@ class c_muwp:
           continue
         self.hui_repeat_move_mode()
       elif action == 'reset':
-        rv = self.hui_reset(ull)
-        # rv ignored
+        rv = self.hui_reset(ull) # rv ignored
         #
       elif action == 'rme':
         rv = self.hui_reset_multi_edges()  # rv ignored
       elif action == 'run':
-        rv = self.hui_run(ull)
-        # rv ignored
+        rv = self.hui_run(ull) # rv ignored
         #
       elif action == 'save':
         if n_ull != 2:
@@ -865,7 +863,6 @@ class c_muwp:
     if ac_pos == 'center':
       if   wc == 'w':   self.go_well_center(self.cci)
       elif wc == 'c':   self.go_ins_center(iw)
-    ########################## HHHHHHHHHHHHHHHHH
     elif ac_pos.endswith('-edge'):
       capo = ac_pos[0]  # N W S E
       self.mlocup[iw].go_edge( capo )
