@@ -719,10 +719,17 @@ class c_muwp:
   def hui_run(self, ull):
     n_ull = len(ull)
     #
+    if n_ull == 1:  # handle running with cci.
+      if self.cci < 0:
+        print("uError.")
+        return -1
+      iw = self.cci
+      self.run_pattern_with_mode(iw)
+      return 0
+    #
+    # If we got here, it was not a simple "run" with cci.
     if n_ull != 2:
-      print("Strange uline split length.")
-      print("  Need 2 words.")
-      print("  Example:  run c2")
+      print("uError.")
       return -1
     ac2 = ull[1]  # Expect:  c1 c2 ... c11 c12 ...
     if len(ac2) < 2:
@@ -738,28 +745,10 @@ class c_muwp:
       return -1
     iw = int(iws)-1
     if iw < 0 or iw >= len(self.mlocup):
-      print("Entered number is out of range.")
-      print("  n_well:      ", self.n_well)
-      print("  len(mlocup): ", len(self.mlocup))
+      print("uError.")
       return -1
-    ###
-    if   self.run_mode == 'a':
-      rv = self.mlocup[iw].run_pattern()
-      # ignore rv
-    elif self.run_mode == 'b':
-      self.mlocup[iw].go_edge( 'N' )
-      rv = self.mlocup[iw].get_edges()
-      if rv == 0:
-        # all is ok
-        print("Resetting muwp ins",iw+1,"center.")
-        self.ins_center_x[iw] = self.mlocup[iw].cx
-        self.ins_center_y[iw] = self.mlocup[iw].cy
-      else:
-        print("locup get_edges() didn't return 0.")
-        print("  So not resetting muwp ins center.")
-        print("  Running patter...")
-      rv = self.mlocup[iw].run_pattern()
-      # ignore rv
+    #
+    self.run_pattern_with_mode(iw)
     #
     return 0
     #
@@ -925,14 +914,33 @@ class c_muwp:
     print("well centers:")
     for i in range(self.n_well):
       print("  ", i+1, self.well_center_x[i], self.well_center_y[i])
-  #
+    #
   def reset_edges_2(self, iw, start_edge):
     rv = self.mlocup[iw].get_edges_2(start_edge)
     if rv == 0:
       self.ins_center_x[iw] = self.mlocup[iw].cx
       self.ins_center_y[iw] = self.mlocup[iw].cy
     return rv
-  #
+    #
+  def run_pattern_with_mode(self, iw):
+    if   self.run_mode == 'a':
+      rv = self.mlocup[iw].run_pattern()
+      # ignore rv
+    elif self.run_mode == 'b':
+      self.mlocup[iw].go_edge( 'N' )
+      rv = self.mlocup[iw].get_edges()
+      if rv == 0:
+        # all is ok
+        print("Resetting muwp ins",iw+1,"center.")
+        self.ins_center_x[iw] = self.mlocup[iw].cx
+        self.ins_center_y[iw] = self.mlocup[iw].cy
+      else:
+        print("locup get_edges() didn't return 0.")
+        print("  So not resetting muwp ins center.")
+        print("  Running pattern...")
+      rv = self.mlocup[iw].run_pattern()
+      # ignore rv
+    #
 #######################################################
 
 
