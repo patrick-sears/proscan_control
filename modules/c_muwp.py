@@ -10,6 +10,7 @@ import shutil
 from modules.m1 import *
 from modules.m9_serial import spo
 from modules.c_locup import c_locup
+from modules.c_arec import c_arec
 
 
 
@@ -47,6 +48,8 @@ class c_muwp:
     self.n_move_choice = 0
     #
     self.cci = -1  # current culture i (0 offset)
+    #
+    self.arec = c_arec()
     #
   #
   def clear_fidu(self):
@@ -442,6 +445,8 @@ class c_muwp:
       if action == '':
         # print("No action.")
         pass
+      elif action == 'arec':
+        rv = self.hui_arec(ull) # rv ignored
       elif action.startswith('cc'):
         rv = self.hui_cc(ull) # rv ignored
       elif action == 'choose':
@@ -523,6 +528,34 @@ class c_muwp:
         #
       else:
         print("uError.  Unrecognized action.")
+    #
+  def hui_arec(self,ull):
+    n_ull = len(ull)
+    if n_ull < 2:
+      print("uError.")
+      return -1
+    #
+    u1 = ull[1]
+    if u1 == '':  # not possible
+      print("uError.")
+      return -1
+    elif u1 == 'go':
+      if n_ull != 3:
+        print("uError.")
+        return -1
+      #
+      self.arec.go(ull[2])
+      #
+    elif u1 == 'ls':
+      self.arec.ls()
+    elif u1 == 'set':
+      if n_ull == 3:  self.arec.set(ull[2])
+      else:           self.arec.set()
+    else:
+      print("uError.")
+      return -1
+    #
+    return 0;
     #
   def hui_cc(self, ull):
     n_ull = len(ull)
