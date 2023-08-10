@@ -127,10 +127,12 @@ class c_arec:
     ###
     x = self.px[j]
     y = self.py[j]
-    # ignore the z pos
+    z = self.pz[j]
+    #
     ouline = "g"
     ouline += " {0:d}".format( x )
     ouline += " {0:d}".format( y )
+    ouline += " {0:d}".format( z )
     ouline += "\r\n"
     send = bytes( ouline.encode() )
     spo.write( send )
