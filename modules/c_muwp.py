@@ -260,8 +260,14 @@ class c_muwp:
     print("  Loading: ", fname )
     f = open(fname)
     for l in f:
-      if not l.startswith('!'):  continue
       l = l.strip()
+      if len(l) == 0:  continue
+      if l[0] == '#':  continue
+      if not l.startswith('!'):
+        print("Error e20.  Bad line reading config.")
+        print("  fname: ", fname)
+        print("  bad line: ", l)
+        sys.exit(1)
       ll = l.split(' ')
       mm = [m.strip() for m in l.split(';')]
       key = mm[0]
