@@ -554,6 +554,11 @@ class c_muwp:
       #
     elif u1 == 'ls':
       self.arec.ls()
+    elif u1 == 'prefix':
+      # >> arec prefix          # to show current
+      # >> arec prefix aa       # to set a new prefix aa
+      if n_ull == 3:  self.arec.prefix( ull[2] )
+      else:           self.arec.prefix()
     elif u1 == 'set':
       if n_ull == 3:  self.arec.set(ull[2])
       else:           self.arec.set()
