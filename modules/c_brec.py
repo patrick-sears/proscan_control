@@ -101,10 +101,10 @@ class c_brec:
     #
   def generate_S01_matrix(self):
     #
-    aS0 = c_vec3( self.fidu_S0[0] )
-    bS0 = c_vec3( self.fidu_S0[1] )
-    aS1 = c_vec3( self.fidu_S1[0] )
-    bS1 = c_vec3( self.fidu_S1[1] )
+    aS0 = c_vec3( self.fid_S0[0] )
+    bS0 = c_vec3( self.fid_S0[1] )
+    aS1 = c_vec3( self.fid_S1[0] )
+    bS1 = c_vec3( self.fid_S1[1] )
     #
     u0 = aS0.minus( bS0 )
     u0.make_uvec()
