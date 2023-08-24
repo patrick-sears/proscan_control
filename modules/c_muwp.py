@@ -608,16 +608,40 @@ class c_muwp:
         self.ins_center_y[self.cci],
         0
         )
+    elif u1 == 'go.fid':
+      if u2 == None:
+        print("uError.")
+        return -1
+      if u2.isdigit():
+        ifid = int(u2)
+        if ifid < 0 or ifid > 1:
+          print("uError.")
+          return -1
+        x,y,z = self.brec[self.cci].get_fid_S1(ifid)
+        psx, psy = x+self.psx0, y+self.psy0
+        ouline = "g"
+        ouline += " {0:d}".format( psx )
+        ouline += " {0:d}".format( psy )
+        print("Going to:   ["+ouline+"]")
+        ouline += "\r\n"
+        send = bytes( ouline.encode() )
+        spo.write( send )
+        #
+      else:
+        print("uError.")
+        return -1
     elif u1 == 'set.fid':
       if u2 == None:
         print("uError.")
         return -1
       if u2.isdigit():
-        x,y,z = get_p3()
-        rv = self.brec[self.cci].set_fid_S1(int(u2), x,y,z)
-        if rv != 0:
-          print("Error brec.")
+        ifid = int(u2)
+        if ifid < 0 or ifid > 1:
+          print("uError.")
           return -1
+        x,y,z = get_p3()
+        rv = self.brec[self.cci].set_fid_S1(ifid, x,y,z)
+        # rv ignored
       else:
         print("uError.")
         return -1

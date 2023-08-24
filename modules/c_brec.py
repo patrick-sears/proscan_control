@@ -31,6 +31,13 @@ class c_brec:
     if ifid < 0 or ifid >= self.n_fid:  return -1
     self.fid_S1[ifid].set(x,y,z)
     return 0
+    #
+  def get_fid_S1(self, ifid):
+    x = self.fid_S1[ifid].x
+    y = self.fid_S1[ifid].y
+    z = self.fid_S1[ifid].z
+    return x,y,z
+    #
   def define_S0(self, S1x0, S1y0, S1z0):
     self.S01_tra.set(S1x0, S1y0, S1z0)
     #
