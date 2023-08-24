@@ -11,6 +11,7 @@ from modules.m1 import *
 from modules.m9_serial import spo
 from modules.c_locup import c_locup
 from modules.c_arec import c_arec
+from modules.c_brec import c_brec
 
 
 
@@ -47,9 +48,12 @@ class c_muwp:
     self.move_choice_note = []
     self.n_move_choice = 0
     #
-    self.cci = -1  # current culture i (0 offset)
+    self.cci = -1  # current culture i (0 offset), -1 if not set.
     #
     self.arec = c_arec()
+    #
+    self.brec = []
+    self.n_brec = 0
     #
   #
   def clear_fidu(self):
@@ -67,6 +71,12 @@ class c_muwp:
       self.mlocup[i].cx = self.ins_center_x[i]
       self.mlocup[i].cy = self.ins_center_y[i]
       self.mlocup[i].set_cnum(i+1)
+  #
+  def create_brecs(self):
+    self.brec = []
+    for i in range(self.n_well):
+      self.brec.append( c_brec() )
+      self.brec[i].set_ic( i+1 )
   #
   def clear_well_center(self):
     self.well_center_x = []
@@ -453,6 +463,8 @@ class c_muwp:
         pass
       elif action == 'arec':
         rv = self.hui_arec(ull) # rv ignored
+      elif action == 'brec':
+        rv = self.hui_brec(ull) # rv ignored
       elif action.startswith('cc'):
         rv = self.hui_cc(ull) # rv ignored
       elif action == 'choose':
@@ -462,7 +474,11 @@ class c_muwp:
           print("uError.  Bad uline.")
           continue
         ac2 = ull[1]
-        if ac2 == 'lps':  self.create_locups()
+        if   ac2 == 'all':
+          self.create_locups()
+          self.create_brecs()
+        elif ac2 == 'lps':    self.create_locups()
+        elif ac2 == 'brecs':  self.create_brecs()
         else:
           print("uError.")
       elif action == 'go':
@@ -562,6 +578,49 @@ class c_muwp:
     elif u1 == 'set':
       if n_ull == 3:  self.arec.set(ull[2])
       else:           self.arec.set()
+    else:
+      print("uError.")
+      return -1
+    #
+    return 0;
+    #
+  def hui_brec(self,ull):
+    n_ull = len(ull)
+    if n_ull < 2:
+      print("uError.")
+      return -1
+    if self.cci < 0:
+      print("uError.")
+      print("  brec system only works when cc is set.")
+      return -1
+    #
+    u1 = ull[1]
+    u2 = None
+    u3 = None
+    if n_ull > 2:  u2 = ull[2]
+    if n_ull > 3:  u3 = ull[3]
+    if u1 == '':  # not possible
+      print("uError.")
+      return -1
+    elif u1 == 'define':
+      self.brec[self.cci].define_S0(
+        self.ins_center_x[self.cci],
+        self.ins_center_y[self.cci],
+        0
+        )
+    elif u1 == 'set.fid':
+      if u2 == None:
+        print("uError.")
+        return -1
+      if u2.isdigit():
+        x,y,z = get_p3()
+        rv = self.brec[self.cci].set_fid_S1(int(u2), x,y,z)
+        if rv != 0:
+          print("Error brec.")
+          return -1
+      else:
+        print("uError.")
+        return -1
     else:
       print("uError.")
       return -1
