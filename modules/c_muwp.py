@@ -634,17 +634,15 @@ class c_muwp:
     #
   def hui_brec(self,ull):
     n_ull = len(ull)
-    if n_ull < 2:
-      print("uError.")
-      return -1
     if self.cci < 0:
       print("uError.")
       print("  brec system only works when cc is set.")
       return -1
     #
-    u1 = ull[1]
+    u1 = None
     u2 = None
     u3 = None
+    if n_ull > 1:  u1 = ull[1]
     if n_ull > 2:  u2 = ull[2]
     if n_ull > 3:  u3 = ull[3]
     if u1 == '':  # not possible
@@ -678,6 +676,8 @@ class c_muwp:
       else:
         print("uError.")
         return -1
+    elif u1 == 'pro':
+      self.brec[self.cci].pro1()
     elif u1 == 'set-fid':
       if u2 == None:
         print("uError.")
