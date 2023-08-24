@@ -19,6 +19,10 @@ class c_brec:
     self.e2_S1 = c_vec3(0,1,0)
     self.S01_tra = c_vec3(0,0,0)
     #
+    self.fov_S0 = []
+    self.fov_S1 = []
+    self.n_fov = 0
+    #
   def init_fid(self, n):
     self.fid_S0 = []
     self.fid_S1 = []
@@ -29,6 +33,16 @@ class c_brec:
     #
   def set_ic(self, ic):
     self.ic = ic
+    #
+  def add_fov_S1(self, x, y, z):
+    self.fov_S1.append( c_vec3(x,y,z) )
+    #
+    # Get S0 values from S1.
+    # Temporary, just use S1 values.
+    xx = x; yy = y; zz = z;
+    self.fov_S0.append( c_vec3(xx,yy,zz) )
+    #
+    self.n_fov += 1
     #
   def set_fid_S1(self, ifid, x,y,z):
     if ifid < 0 or ifid >= self.n_fid:  return -1
@@ -60,11 +74,18 @@ class c_brec:
     ou = ''
     ou += '!brec ; '+str(self.ic)+'\n'
     ou += '!n_fid ; '+str(self.n_fid)+'\n'
+    ou += '!n_fov ; '+str(self.n_fov)+'\n'
     for i in range(self.n_fid):
       ou += '!fid_S0 ; '+str(i)
       ou += ' ; {:6.1f}'.format( self.fid_S0[i].x )
       ou += ' ; {:6.1f}'.format( self.fid_S0[i].y )
       ou += ' ; {:6.1f}'.format( self.fid_S0[i].z )
+      ou += '\n'
+    for i in range(self.n_fov):
+      ou += '!fov_S0 ; '+str(i)
+      ou += ' ; {:6.1f}'.format( self.fov_S0[i].x )
+      ou += ' ; {:6.1f}'.format( self.fov_S0[i].y )
+      ou += ' ; {:6.1f}'.format( self.fov_S0[i].z )
       ou += '\n'
     return ou
     #
@@ -84,6 +105,12 @@ class c_brec:
         y = float(mm[3])
         z = float(mm[4])
         self.fid_S0[fidi].set(x,y,z)
+      elif key == '!fov_S0':
+        i_fov = int(mm[1])
+        x = float(mm[2])
+        y = float(mm[3])
+        z = float(mm[4])
+        self.fov_S0[i_fov].set(x,y,z)
       else:
         print("Error e301.  c_brec.py")
         print("  key: ", key)

@@ -648,6 +648,9 @@ class c_muwp:
     if u1 == '':  # not possible
       print("uError.")
       return -1
+    elif u1 == 'add-fov':
+      x,y,z = get_p3()
+      self.brec[self.cci].add_fov_S1(x,y,z)
     elif u1 == 'define':
       self.brec[self.cci].define_S0(
         self.ins_center_x[self.cci],
