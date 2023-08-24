@@ -23,6 +23,9 @@ class c_brec:
     self.fov_S1 = []
     self.n_fov = 0
     #
+    self.m01 = c_matrix33()
+    self.m10 = c_matrix33()
+    #
   def init_fid(self, n):
     self.fid_S0 = []
     self.fid_S1 = []
@@ -87,6 +90,22 @@ class c_brec:
       ou += ' ; {:6.1f}'.format( self.fov_S0[i].y )
       ou += ' ; {:6.1f}'.format( self.fov_S0[i].z )
       ou += '\n'
+    ou += '!m01\n'
+    ou += '  '
+    ou += ' ; {:8.3f}'.format( self.m01.m11 )
+    ou += ' ; {:8.3f}'.format( self.m01.m12 )
+    ou += ' ; {:8.3f}'.format( self.m01.m13 )
+    ou += '\n'
+    ou += '  '
+    ou += ' ; {:8.3f}'.format( self.m01.m21 )
+    ou += ' ; {:8.3f}'.format( self.m01.m22 )
+    ou += ' ; {:8.3f}'.format( self.m01.m23 )
+    ou += '\n'
+    ou += '  '
+    ou += ' ; {:8.3f}'.format( self.m01.m21 )
+    ou += ' ; {:8.3f}'.format( self.m01.m22 )
+    ou += ' ; {:8.3f}'.format( self.m01.m23 )
+    ou += '\n'
     return ou
     #
   def read_f(self, f):
@@ -111,6 +130,10 @@ class c_brec:
         y = float(mm[3])
         z = float(mm[4])
         self.fov_S0[i_fov].set(x,y,z)
+      elif key == '!m01':
+        for i in range(3):
+          f.readline()
+          # TO IMPLEMENT:  Actually reading the data.
       else:
         print("Error e301.  c_brec.py")
         print("  key: ", key)
@@ -121,10 +144,13 @@ class c_brec:
     # needed to go to positions defined in S0.
     #
     self.generate_S01_matrix()
+    self.m10 = c_matrix33( self.m01 )
+    self.m10.invert()
     #
     # Calculate new basis vectors.
     self.e1_S1 = self.m01.mult_vec3( self.e1_S0 )
     self.e2_S1 = self.m01.mult_vec3( self.e2_S0 )
+    #
     #
   def generate_S01_matrix(self):
     #
