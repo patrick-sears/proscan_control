@@ -211,6 +211,27 @@ class c_muwp:
     #
     self.n_remulti = len(self.remulti_i)
   #
+  def save_brec(self):
+    #
+    stime = datetime.now().strftime("%Y%m%d_%H%M%S")
+    fz_name = 'user/brec_'+stime+'.data'
+    #
+    ou = ''
+    ou += '\n'
+    for i in range(self.n_well):
+      ou += '\n'
+      ou += self.brec[i].get_save1()
+    ou += '\n'
+    #
+    fz = open(fz_name, 'w')
+    fz.write(ou)
+    fz.close()
+    #
+    fz = open('user/brec.data', 'w')
+    fz.write(ou)
+    fz.close()
+    #
+  #
   def save_plate(self):
     #
     stime = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -540,7 +561,8 @@ class c_muwp:
           print("uError.")
           continue
         ac2 = ull[1]
-        if ac2 == 'plate':  self.save_plate()
+        if ac2 == 'brec':  self.save_brec()
+        elif ac2 == 'plate':  self.save_plate()
         else:
           print("uError.")
       elif action == 'send':
@@ -608,7 +630,7 @@ class c_muwp:
         self.ins_center_y[self.cci],
         0
         )
-    elif u1 == 'go.fid':
+    elif u1 == 'go-fid':
       if u2 == None:
         print("uError.")
         return -1
@@ -630,7 +652,7 @@ class c_muwp:
       else:
         print("uError.")
         return -1
-    elif u1 == 'set.fid':
+    elif u1 == 'set-fid':
       if u2 == None:
         print("uError.")
         return -1

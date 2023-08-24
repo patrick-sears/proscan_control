@@ -53,7 +53,23 @@ class c_brec:
         self.fid_S1[i].z - self.S01_tra.z
         )
     #
-
+  def get_save1(self):
+    ou = ''
+    ou += '!brec ; '+str(self.ic)+'\n'
+    ou += '!n_fid ; '+str(self.n_fid)+'\n'
+    for i in range(self.n_fid):
+      ou += '!self.fid_S0 ; '+str(i)
+      ou += ' ; {:6.1f}'.format( self.fid_S0[i].x )
+      ou += ' ; {:6.1f}'.format( self.fid_S0[i].y )
+      ou += ' ; {:6.1f}'.format( self.fid_S0[i].z )
+      ou += '\n'
+    return ou
+    #
+  def find_S01_transformation(self):
+    # Using fids found in S1, determine the transformation
+    # needed to go to positions defined in S0.
+    #
+    pass
 
 
 
