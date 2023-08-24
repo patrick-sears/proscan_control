@@ -66,5 +66,54 @@ class c_matrix33:
     q.y = self.m21*v.x + self.m22*v.y + self.m23*v.z
     q.z = self.m31*v.x + self.m32*v.y + self.m33*v.z
     return q
+    #
+  def determinant(self):
+    d = 0
+    d += self.m11 * self.m22 * self.m33
+    d += self.m12 * self.m23 * self.m31
+    d += self.m13 * self.m21 * self.m32
+    d -= self.m13 * self.m22 * self.m31
+    d -= self.m12 * self.m21 * self.m33
+    d -= self.m11 * self.m23 * self.m32
+    return d
+    #
+  def invert(self):
+    # minors
+    b11 = self.m22*self.m33 - self.m23*self.m32
+    b12 = self.m21*self.m33 - self.m23*self.m31
+    b13 = self.m21*self.m32 - self.m22*self.m31
+    #
+    b21 = self.m12*self.m33 - self.m13*self.m32
+    b22 = self.m11*self.m33 - self.m13*self.m31
+    b23 = self.m11*self.m32 - self.m12*self.m31
+    #
+    b31 = self.m12*self.m23 - self.m13*self.m22
+    b32 = self.m11*self.m23 - self.m13*self.m21
+    b33 = self.m11*self.m22 - self.m12*self.m21
+    #
+    # cofactors:
+    c11 =  b11;  c12 = -b12;  c13 =  b13;
+    c21 = -b21;  c22 =  b22;  c23 = -b23;
+    c31 =  b31;  c32 = -b32;  c33 =  b33;
+    #
+    # adjugate:
+    a11 = c11;  a12 = c21;  a13 = c31;
+    a21 = c12;  a22 = c22;  a23 = c32;
+    a31 = c13;  a32 = c23;  a33 = c33;
+    #
+    d = self.determinant()
+    if d == 0:
+      print("Error 110.  c_matrix33.py.")
+      print("  Tried to invert but determinant was 0.")
+      sys.exit(1)
+    fd = 1 / d
+    self.m11=fd*a11; self.m12=fd*a12; self.m13=fd*a13;
+    self.m21=fd*a21; self.m22=fd*a22; self.m23=fd*a23;
+    self.m31=fd*a31; self.m32=fd*a32; self.m33=fd*a33;
+    #
+
+
+
+
 
 
