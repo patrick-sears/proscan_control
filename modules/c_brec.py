@@ -2,12 +2,14 @@
 
 from modules.c_vec3 import *
 
+import sys
+
 class c_brec:
   def __init__(self):
     #
     # S0:  local coord system
     # S1:  stage coord system
-    self.init_fid()
+    self.init_fid(2)
     #
     # Init S1 to be the same as S0.
     self.e1_S0 = c_vec3(1,0,0)
@@ -16,10 +18,10 @@ class c_brec:
     self.e2_S1 = c_vec3(0,1,0)
     self.S01_tra = c_vec3(0,0,0)
     #
-  def init_fid(self):
+  def init_fid(self, n):
     self.fid_S0 = []
     self.fid_S1 = []
-    self.n_fid = 2
+    self.n_fid = n
     for i in range(self.n_fid):
       self.fid_S0.append( c_vec3() )
       self.fid_S1.append( c_vec3() )
@@ -58,18 +60,40 @@ class c_brec:
     ou += '!brec ; '+str(self.ic)+'\n'
     ou += '!n_fid ; '+str(self.n_fid)+'\n'
     for i in range(self.n_fid):
-      ou += '!self.fid_S0 ; '+str(i)
+      ou += '!fid_S0 ; '+str(i)
       ou += ' ; {:6.1f}'.format( self.fid_S0[i].x )
       ou += ' ; {:6.1f}'.format( self.fid_S0[i].y )
       ou += ' ; {:6.1f}'.format( self.fid_S0[i].z )
       ou += '\n'
     return ou
     #
+  def read_f(self, f):
+    for l in f:
+      l = l.strip()
+      if len(l) == 0:  break
+      if l[0] == '#':  continue
+      mm = [m.strip() for m in l.split(';')]
+      key = mm[0]
+      if key == '!n_fid':
+        n_fid = int(mm[1])
+        self.init_fid( n_fid )
+      elif key == '!fid_S0':
+        fidi = int(mm[1])
+        x = float(mm[2])
+        y = float(mm[3])
+        z = float(mm[4])
+        self.fid_S0[fidi].set(x,y,z)
+      else:
+        print("Error e301.  c_brec.py")
+        print("  key: ", key)
+        sys.exit(1)
+    #
   def find_S01_transformation(self):
     # Using fids found in S1, determine the transformation
     # needed to go to positions defined in S0.
     #
     pass
+    #
 
 
 

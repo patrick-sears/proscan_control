@@ -211,6 +211,31 @@ class c_muwp:
     #
     self.n_remulti = len(self.remulti_i)
   #
+  def load_brec(self):
+    #
+    fname = 'user/brec.data'
+    f = open(fname)
+    for l in f:
+      l = l.strip()
+      if len(l) == 0:  continue
+      if l[0] == '#':  continue
+      if not l.startswith('!brec'):
+        print("Error e200.  Bad format in brec.data.")
+        print("  l: ", l)
+        sys.exit(1)
+      mm = [m.strip() for m in l.split(';')]
+      w_num = int(mm[1])
+      iw = w_num-1
+      if iw < 0 or iw > self.n_well:
+        print("Error e201.  Bad index in brec.data.")
+        print("  iw:     ", iw)
+        print("  w_num:  ", w_num)
+        print("  n_well: ", self.n_well)
+        sys.exit(1)
+      #
+      self.brec[iw].read_f(f)
+      #
+  #
   def save_brec(self):
     #
     stime = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -512,6 +537,7 @@ class c_muwp:
         if ull[1] == 'all':
           self.load_config()
           self.load_plate()
+        elif ull[1] == 'brec':    self.load_brec()
         elif ull[1] == 'config':  self.load_config()
         elif ull[1] == 'plate':   self.load_plate()
         else:
