@@ -49,9 +49,8 @@ class c_brec:
     self.fov_S1.append( c_vec3(x,y,z) )
     #
     # Get S0 values from S1.
-    # Temporary, just use S1 values.
-    xx = x; yy = y; zz = z;
-    self.fov_S0.append( c_vec3(xx,yy,zz) )
+    q = self.m10.mult_vec3( c_vec3(x,y,1) )
+    self.fov_S0.append( c_vec3(q.x, q.y, z) )
     #
     self.n_fov += 1
     #
@@ -174,7 +173,10 @@ class c_brec:
     self.e2_S1 = self.m01.mult_vec3( self.e2_S0 )
     #
     for i in range(self.n_fov):
-      self.fov_S1[i] = self.m01.mult_vec3( self.fov_S0[i] )
+      # self.fov_S1[i] = self.m01.mult_vec3( self.fov_S0[i] )
+      x = self.fov_S0[i].x
+      y = self.fov_S0[i].y
+      self.fov_S1[i] = self.m01.mult_vec3( c_vec3(x,y,1) )
     #
   def generate_S01_matrix(self):
     #
