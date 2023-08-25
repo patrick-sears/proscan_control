@@ -34,6 +34,14 @@ class c_brec:
       self.fid_S0.append( c_vec3() )
       self.fid_S1.append( c_vec3() )
     #
+  def init_fov(self, n):
+    self.fov_S0 = []
+    self.fov_S1 = []
+    self.n_fov = n
+    for i in range(self.n_fov):
+      self.fov_S0.append( c_vec3() )
+      self.fov_S1.append( c_vec3() )
+    #
   def set_ic(self, ic):
     self.ic = ic
     #
@@ -56,6 +64,12 @@ class c_brec:
     x = self.fid_S1[ifid].x
     y = self.fid_S1[ifid].y
     z = self.fid_S1[ifid].z
+    return x,y,z
+    #
+  def get_fov_S1(self, ifov):
+    x = self.fov_S1[ifov].x
+    y = self.fov_S1[ifov].y
+    z = self.fov_S1[ifov].z
     return x,y,z
     #
   def define_S0(self, S1x0, S1y0, S1z0):
@@ -118,6 +132,9 @@ class c_brec:
       if key == '!n_fid':
         n_fid = int(mm[1])
         self.init_fid( n_fid )
+      elif key == '!n_fov':
+        n_fov = int(mm[1])
+        self.init_fov( n_fov )
       elif key == '!fid_S0':
         fidi = int(mm[1])
         x = float(mm[2])
@@ -140,8 +157,9 @@ class c_brec:
         sys.exit(1)
     #
   def pro1(self):
-    # Using fids found in S1, determine the transformation
-    # needed to go to positions defined in S0.
+    # - Using fids found in S1, determine the transformation
+    #   needed to go to positions defined in S0.
+    # - Then calculate the S1 positions for all the FOVs.
     #
     self.generate_S01_matrix()
     print("debug m01:")
@@ -155,6 +173,8 @@ class c_brec:
     self.e1_S1 = self.m01.mult_vec3( self.e1_S0 )
     self.e2_S1 = self.m01.mult_vec3( self.e2_S0 )
     #
+    for i in range(self.n_fov):
+      self.fov_S1[i] = self.m01.mult_vec3( self.fov_S0[i] )
     #
   def generate_S01_matrix(self):
     #

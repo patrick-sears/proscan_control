@@ -663,11 +663,33 @@ class c_muwp:
         return -1
       if u2.isdigit():
         ifid = int(u2)
-        if ifid < 0 or ifid > 1:
+        if ifid < 0 or ifid >= 2:
           print("uError.")
           return -1
         x,y,z = self.brec[self.cci].get_fid_S1(ifid)
-        psx, psy = x+self.psx0, y+self.psy0
+        psx, psy = int(x+self.psx0), int(y+self.psy0)
+        ouline = "g"
+        ouline += " {0:d}".format( psx )
+        ouline += " {0:d}".format( psy )
+        print("Going to:   ["+ouline+"]")
+        ouline += "\r\n"
+        send = bytes( ouline.encode() )
+        spo.write( send )
+        #
+      else:
+        print("uError.")
+        return -1
+    elif u1 == 'go-fov':
+      if u2 == None:
+        print("uError.")
+        return -1
+      if u2.isdigit():
+        ifov = int(u2)
+        if ifov < 0 or ifov >= self.brec[self.cci].n_fov:
+          print("uError.")
+          return -1
+        x,y,z = self.brec[self.cci].get_fov_S1(ifov)
+        psx, psy = int(x+self.psx0), int(y+self.psy0)
         ouline = "g"
         ouline += " {0:d}".format( psx )
         ouline += " {0:d}".format( psy )
