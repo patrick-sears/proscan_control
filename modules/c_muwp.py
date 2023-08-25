@@ -214,6 +214,12 @@ class c_muwp:
   def load_brec(self):
     #
     fname = 'user/brec.data'
+    #
+    if not os.path.exists(fname):
+      print("There is no file to load.")
+      print("  file:  ", fname)
+      return
+    #
     f = open(fname)
     for l in f:
       l = l.strip()
