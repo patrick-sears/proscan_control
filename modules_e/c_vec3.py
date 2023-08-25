@@ -45,7 +45,8 @@ class c_vec3:
     #   | i   j   k |
     #   | ax  ay  0 |
     #   | bx  by  0 |
-    return self.x * v.y - self.y * v.y
-
+    return self.x * v.y - self.y * v.x
+  def __str__(self):
+    return "<"+str(self.x)+","+str(self.y)+","+str(self.z)+">"
 
 

@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
-from modules.c_vec3 import *
+# from prs.linal_001.c_vec3 import c_vec3
+from modules_e.c_vec3 import c_vec3
 
 import sys
 import math
@@ -61,10 +62,15 @@ class c_matrix33:
     self.m23 +=  self.dy2
     #
   def mult_vec3(self, v):
+    # print("debug v.x: ", v.x)
     q = c_vec3()
     q.x = self.m11*v.x + self.m12*v.y + self.m13*v.z
     q.y = self.m21*v.x + self.m22*v.y + self.m23*v.z
     q.z = self.m31*v.x + self.m32*v.y + self.m33*v.z
+    # print("debug q.x: ", q.x)
+    # print("debug m11: ", self.m11)
+    # print("debug m12: ", self.m12)
+    # print("debug sinthe: ", self.sinthe)
     return q
     #
   def determinant(self):
@@ -111,7 +117,24 @@ class c_matrix33:
     self.m21=fd*a21; self.m22=fd*a22; self.m23=fd*a23;
     self.m31=fd*a31; self.m32=fd*a32; self.m33=fd*a33;
     #
-
+  def __str__(self):
+    ou = ''
+    ou += '  |'
+    ou += '  {:7.3f}'.format(self.m11)
+    ou += '  {:7.3f}'.format(self.m12)
+    ou += '  {:7.3f}'.format(self.m13)
+    ou += '  |\n'
+    ou += '  |'
+    ou += '  {:7.3f}'.format(self.m21)
+    ou += '  {:7.3f}'.format(self.m22)
+    ou += '  {:7.3f}'.format(self.m23)
+    ou += '  |\n'
+    ou += '  |'
+    ou += '  {:7.3f}'.format(self.m31)
+    ou += '  {:7.3f}'.format(self.m32)
+    ou += '  {:7.3f}'.format(self.m33)
+    ou += '  |\n'
+    return ou
 
 
 

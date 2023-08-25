@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-from modules.c_vec3 import *
-from modules.c_matrix33 import *
+from modules_e.c_vec3 import *
+from modules_e.c_matrix33 import *
 
 import sys
 
