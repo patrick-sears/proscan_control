@@ -144,8 +144,12 @@ class c_brec:
     # needed to go to positions defined in S0.
     #
     self.generate_S01_matrix()
+    print("debug m01:")
+    print(self.m01)
     self.m10 = c_matrix33( self.m01 )
     self.m10.invert()
+    print("debug m10:")
+    print(self.m10)
     #
     # Calculate new basis vectors.
     self.e1_S1 = self.m01.mult_vec3( self.e1_S0 )
@@ -165,13 +169,14 @@ class c_brec:
     u1.make_uvec()
     #
     costhe = u0.dot( u1 )
-    sinthe = u1.cross_xy_k_mag( u1 )
+    sinthe = u0.cross_xy_k_mag( u1 )
     #
     # Find translations 1 and 2.
     dv1 = c_vec3( aS0 )
     dv2 = c_vec3( aS1 )
     #
     self.m01 = c_matrix33()
+    self.m01.make_identity()
     self.m01.set_costhe( costhe )
     self.m01.set_sinthe( sinthe )
     self.m01.set_trans_1( dv1.x, dv1.y )
