@@ -701,6 +701,10 @@ class c_muwp:
       else:
         print("uError.")
         return -1
+    elif u1 == 'ls-fid':
+      self.brec[self.cci].ls_fid()
+    elif u1 == 'ls-fov':
+      self.brec[self.cci].ls_fov()
     elif u1 == 'pro':
       self.brec[self.cci].pro1()
     elif u1 == 'set-fid':

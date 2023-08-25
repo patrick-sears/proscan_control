@@ -203,5 +203,54 @@ class c_brec:
     self.m01.set_trans_2( dv2.x, dv2.y )
     self.m01.pro1()
     #
+  def ls_fid(self):
+    print("n_fid: ", self.n_fid)
+    print("- S0:")
+    for i in range(self.n_fid):
+      ou = '  '
+      ou += ' ; '+str(i)
+      ou += ' ; {:4.1f}'.format(self.fid_S0[i].x)
+      ou += ' ; {:4.1f}'.format(self.fid_S0[i].y)
+      ou += ' ; {:4.1f}'.format(self.fid_S0[i].z)
+      print(ou)
+    print("- S1:")
+    for i in range(self.n_fid):
+      ou = '  '
+      ou += ' ; '+str(i)
+      ou += ' ; {:4.1f}'.format(self.fid_S1[i].x)
+      ou += ' ; {:4.1f}'.format(self.fid_S1[i].y)
+      ou += ' ; {:4.1f}'.format(self.fid_S1[i].z)
+      print(ou)
+    #
+  def ls_fov(self):
+    print("n_fov: ", self.n_fov)
+    print("- S0:")
+    for i in range(self.n_fov):
+      ou = '  '
+      ou += ' ; '+str(i)
+      ou += ' ; {:4.1f}'.format(self.fov_S0[i].x)
+      ou += ' ; {:4.1f}'.format(self.fov_S0[i].y)
+      ou += ' ; {:4.1f}'.format(self.fov_S0[i].z)
+      print(ou)
+    print("- S1:")
+    for i in range(self.n_fov):
+      ou = '  '
+      ou += ' ; '+str(i)
+      ou += ' ; {:4.1f}'.format(self.fov_S1[i].x)
+      ou += ' ; {:4.1f}'.format(self.fov_S1[i].y)
+      ou += ' ; {:4.1f}'.format(self.fov_S1[i].z)
+      print(ou)
+    #
+
+
+
+
+
+
+
+
+
+
+
 
 
