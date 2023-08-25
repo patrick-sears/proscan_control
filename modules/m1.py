@@ -53,6 +53,7 @@ def cbuf():  # clear the buffer.
 #######################################################
 # Reports the current stage position.
 def p():
+  cbuf()  # Make sure the current buffer is clear.
   ouline = "p\r\n"
   send = bytes(ouline.encode())
   # spo.write(b"p\r\n")  # ask for the Prior stage current position
@@ -79,6 +80,26 @@ def get_p():
   x = int( ll[0] )
   y = int( ll[1] )
   return x, y
+
+def get_p3():
+  cbuf()  # Make sure the current buffer is clear.
+  #
+  ouline = "p\r\n"
+  send = bytes(ouline.encode())
+  # spo.write(b"p\r\n")  # ask for the Prior stage current position
+  spo.write( send )
+  serda = spo.readline()
+  # print("serda :  ", end='', flush=True)
+  # print(serda.decode("Ascii"))
+  #
+  l = serda.decode("Ascii")
+  ll = l.split(',')
+  x = int( ll[0] )
+  y = int( ll[1] )
+  z = int( ll[2] )
+  return x, y, z
+
+
 
 
 #######################################################

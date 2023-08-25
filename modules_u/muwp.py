@@ -6,8 +6,9 @@ from modules.m2 import muwp
 muwp.load_config()
 muwp.load_plate()
 
-# muwp>> create lps
-muwp.create_locups()
+# To do both:           muwp>> create all
+muwp.create_locups()  # muwp>> create lps
+muwp.create_brecs()   # muwp>> create brecs
 
 # run.
 muwp.run()
