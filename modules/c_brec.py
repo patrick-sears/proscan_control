@@ -220,8 +220,21 @@ class c_brec:
     return 0
     #
   def run_seq(self):
+    prompt = "brec>> "
     for i in range(self.n_fov):
-      pass
+      self.go_fov(i)
+      while True:
+        uline = input(prompt)
+        uline = uline.strip()
+        uline = ' '.join( uline.split() )  # remove duplicate spaces
+        if len(uline) == 0:  break
+        elif uline == 'q':
+          print("  Quit brec run seq early.")
+          return 1
+        else:
+          print("uError.")
+    print("Done with brec run seq.")
+    return 0
     #
   def generate_S01_matrix(self):
     #
