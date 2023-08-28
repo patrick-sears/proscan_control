@@ -1082,7 +1082,7 @@ class c_muwp:
     if ac_pos == 'center':
       if   wc == 'w':   self.go_well_center(iw)
       elif wc == 'c':   self.go_ins_center(iw)
-    elif ac_pos.endswith('-edge'):
+    elif ac_pos.endswith('-edge') or ac_pos.endswith('-ed'):
       capo = ac_pos[0]  # N W S E
       self.mlocup[iw].go_edge( capo )
     elif ac_pos.startswith('fov'):
