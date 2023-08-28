@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 
+from modules.m1 import *
+from modules.m9_serial import spo
+
 from modules_e.c_vec3 import *
 from modules_e.c_matrix33 import *
 
@@ -25,6 +28,14 @@ class c_brec:
     #
     self.m01 = c_matrix33()
     self.m10 = c_matrix33()
+    #
+    # Zero for stage coordinates.
+    self.psx0 = 0
+    self.psy0 = 0
+    #
+  def set_psx0_psy0(self, x0, y0):
+    self.psx0 = x0
+    self.psy0 = y0
     #
   def init_fid(self, n):
     self.fid_S0 = []
@@ -177,6 +188,40 @@ class c_brec:
       x = self.fov_S0[i].x
       y = self.fov_S0[i].y
       self.fov_S1[i] = self.m01.mult_vec3( c_vec3(x,y,1) )
+    #
+  def go_fid(self, ifid):
+    if ifid < 0 or ifid > self.n_fid:  return -1
+    #
+    x,y,z = self.get_fid_S1(ifid)
+    psx, psy = int(x+self.psx0), int(y+self.psy0)
+    ouline = "g"
+    ouline += " {0:d}".format( psx )
+    ouline += " {0:d}".format( psy )
+    print("Going to:   ["+ouline+"]")
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
+    spo.write( send )
+    #
+    return 0
+    #
+  def go_fov(self, ifov):
+    if ifov < 0 or ifov > self.n_fov:  return -1
+    #
+    x,y,z = self.get_fov_S1(ifov)
+    psx, psy = int(x+self.psx0), int(y+self.psy0)
+    ouline = "g"
+    ouline += " {0:d}".format( psx )
+    ouline += " {0:d}".format( psy )
+    print("Going to:   ["+ouline+"]")
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
+    spo.write( send )
+    #
+    return 0
+    #
+  def run_seq(self):
+    for i in range(self.n_fov):
+      pass
     #
   def generate_S01_matrix(self):
     #

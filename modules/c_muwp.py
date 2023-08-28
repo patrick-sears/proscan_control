@@ -77,6 +77,7 @@ class c_muwp:
     for i in range(self.n_well):
       self.brec.append( c_brec() )
       self.brec[i].set_ic( i+1 )
+      self.brec[i].set_psx0_psy0(self.psx0, self.psy0)
   #
   def clear_well_center(self):
     self.well_center_x = []
@@ -667,52 +668,42 @@ class c_muwp:
       if u2 == None:
         print("uError.")
         return -1
-      if u2.isdigit():
-        ifid = int(u2)
-        if ifid < 0 or ifid >= 2:
-          print("uError.")
-          return -1
-        x,y,z = self.brec[self.cci].get_fid_S1(ifid)
-        psx, psy = int(x+self.psx0), int(y+self.psy0)
-        ouline = "g"
-        ouline += " {0:d}".format( psx )
-        ouline += " {0:d}".format( psy )
-        print("Going to:   ["+ouline+"]")
-        ouline += "\r\n"
-        send = bytes( ouline.encode() )
-        spo.write( send )
-        #
-      else:
+      if not u2.isdigit():
         print("uError.")
         return -1
+      ifid = int(u2)
+      rv = self.brec[self.cci].go_fid(ifid)
+      if rv != 0:
+        print("Error.  brec failed go_fid().")
+        return -1
+      return 0
+      #
     elif u1 == 'go-fov':
       if u2 == None:
         print("uError.")
         return -1
-      if u2.isdigit():
-        ifov = int(u2)
-        if ifov < 0 or ifov >= self.brec[self.cci].n_fov:
-          print("uError.")
-          return -1
-        x,y,z = self.brec[self.cci].get_fov_S1(ifov)
-        psx, psy = int(x+self.psx0), int(y+self.psy0)
-        ouline = "g"
-        ouline += " {0:d}".format( psx )
-        ouline += " {0:d}".format( psy )
-        print("Going to:   ["+ouline+"]")
-        ouline += "\r\n"
-        send = bytes( ouline.encode() )
-        spo.write( send )
-        #
-      else:
+      if not u2.isdigit():
         print("uError.")
         return -1
+      ifov = int(u2)
+      if ifov < 0 or ifov >= self.brec[self.cci].n_fov:
+        print("uError.")
+        return -1
+      rv = self.brec[self.cci].go_fov(ifov)
+      if rv != 0:
+        print("Error.  brec failed go_fov().")
+        return -1
+      #
+      return 0
+      #
     elif u1 == 'ls-fid':
       self.brec[self.cci].ls_fid()
     elif u1 == 'ls-fov':
       self.brec[self.cci].ls_fov()
     elif u1 == 'pro':
       self.brec[self.cci].pro1()
+    elif u1 == 'run-seq':
+      self.brec[self.cci].run_seq()
     elif u1 == 'set-fid':
       if u2 == None:
         print("uError.")
