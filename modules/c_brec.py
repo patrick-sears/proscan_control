@@ -175,6 +175,8 @@ class c_brec:
         z = float(mm[5])
         self.fov_S0[i_fov].set(x,y,z)
         self.fov_name[i_fov] = name
+        # self.sort_fovs()
+        self.determine_fov_cur_prefix_i()
       elif key == '!m01':
         for i in range(3):
           f.readline()
@@ -319,6 +321,32 @@ class c_brec:
       ou += ' ; {:4.1f}'.format(self.fov_S1[i].y)
       ou += ' ; {:4.1f}'.format(self.fov_S1[i].z)
       print(ou)
+    #
+  def sort_fovs(self):
+    if self.n_fov == 0:  return
+    zipped = list( zip(self.fov_name,
+                       self.fov_S0,
+                       self.fov_S1
+                 ))
+    zipped.sort()
+    self.fov_name, self.fov_S0, self.fov_S1 
+    a,b,c = zip(*zipped)
+    self.fov_name = list(a)
+    self.fov_S0   = list(b)
+    self.fov_S1   = list(c)
+    #
+  def determine_fov_cur_prefix_i(self):
+    if self.n_fov == 0:
+      self.fov_cur_prefix_i = -1
+      return
+    #
+    self.sort_fovs()
+    curi = -1
+    for i in range(self.n_fov):
+      prefix = self.fov_name[i][:-3] # remove the number part.
+      ii = int(self.fov_name[i][-3:])
+      if prefix == self.fov_cur_prefix:
+        curi += ii
     #
 
 
