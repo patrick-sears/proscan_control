@@ -70,7 +70,7 @@ class c_brec:
     self.fov_S0.append( c_vec3(q.x, q.y, z) )
     #
     self.fov_cur_prefix_i += 1
-    name = self.cur_prefix
+    name = self.fov_cur_prefix
     name += '{:03d}'.format( self.fov_cur_prefix_i )
     self.fov_name.append( name )
     #
