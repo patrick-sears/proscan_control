@@ -346,7 +346,9 @@ class c_brec:
       prefix = self.fov_name[i][:-3] # remove the number part.
       ii = int(self.fov_name[i][-3:])
       if prefix == self.fov_cur_prefix:
-        curi += ii
+        curi = ii
+    #
+    self.fov_cur_prefix_i = curi
     #
 
 
