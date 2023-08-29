@@ -33,6 +33,9 @@ class c_brec:
     self.psx0 = 0
     self.psy0 = 0
     #
+    self.fov_cur_prefix = 'a'
+    self.fov_cur_prefix_i = -1
+    #
   def set_psx0_psy0(self, x0, y0):
     self.psx0 = x0
     self.psy0 = y0
@@ -48,10 +51,13 @@ class c_brec:
   def init_fov(self, n):
     self.fov_S0 = []
     self.fov_S1 = []
+    self.fov_name = []
     self.n_fov = n
     for i in range(self.n_fov):
       self.fov_S0.append( c_vec3() )
       self.fov_S1.append( c_vec3() )
+      name = 'x{:03d}'.format(i)
+      self.fov_name.append( name )
     #
   def set_ic(self, ic):
     self.ic = ic
@@ -62,6 +68,11 @@ class c_brec:
     # Get S0 values from S1.
     q = self.m10.mult_vec3( c_vec3(x,y,1) )
     self.fov_S0.append( c_vec3(q.x, q.y, z) )
+    #
+    self.fov_cur_prefix_i += 1
+    name = self.cur_prefix
+    name += '{:03d}'.format( self.fov_cur_prefix_i )
+    self.fov_name.append( name )
     #
     self.n_fov += 1
     #
@@ -99,36 +110,41 @@ class c_brec:
     #
   def get_save1(self):
     ou = ''
+    ou += '#############################\n'
     ou += '!brec ; '+str(self.ic)+'\n'
     ou += '!n_fid ; '+str(self.n_fid)+'\n'
     ou += '!n_fov ; '+str(self.n_fov)+'\n'
+    ou += '#\n'
     for i in range(self.n_fid):
-      ou += '!fid_S0 ; '+str(i)
-      ou += ' ; {:6.1f}'.format( self.fid_S0[i].x )
-      ou += ' ; {:6.1f}'.format( self.fid_S0[i].y )
-      ou += ' ; {:6.1f}'.format( self.fid_S0[i].z )
+      ou += '!fid_S0 ; '+'{:3d}'.format(i)
+      ou += ' ; {:7.1f}'.format( self.fid_S0[i].x )
+      ou += ' ; {:7.1f}'.format( self.fid_S0[i].y )
+      ou += ' ; {:7.1f}'.format( self.fid_S0[i].z )
       ou += '\n'
+    ou += '#\n'
     for i in range(self.n_fov):
-      ou += '!fov_S0 ; '+str(i)
-      ou += ' ; {:6.1f}'.format( self.fov_S0[i].x )
-      ou += ' ; {:6.1f}'.format( self.fov_S0[i].y )
-      ou += ' ; {:6.1f}'.format( self.fov_S0[i].z )
+      ou += '!fov_S0 ; '+'{:3d}'.format(i)
+      ou += ' ; '+self.fov_name[i]
+      ou += ' ; {:7.1f}'.format( self.fov_S0[i].x )
+      ou += ' ; {:7.1f}'.format( self.fov_S0[i].y )
+      ou += ' ; {:7.1f}'.format( self.fov_S0[i].z )
       ou += '\n'
+    ou += '#\n'
     ou += '!m01\n'
     ou += '  '
-    ou += ' ; {:8.3f}'.format( self.m01.m11 )
-    ou += ' ; {:8.3f}'.format( self.m01.m12 )
-    ou += ' ; {:8.3f}'.format( self.m01.m13 )
+    ou += ' ; {:9.4f}'.format( self.m01.m11 )
+    ou += ' ; {:9.4f}'.format( self.m01.m12 )
+    ou += ' ; {:9.4f}'.format( self.m01.m13 )
     ou += '\n'
     ou += '  '
-    ou += ' ; {:8.3f}'.format( self.m01.m21 )
-    ou += ' ; {:8.3f}'.format( self.m01.m22 )
-    ou += ' ; {:8.3f}'.format( self.m01.m23 )
+    ou += ' ; {:9.4f}'.format( self.m01.m21 )
+    ou += ' ; {:9.4f}'.format( self.m01.m22 )
+    ou += ' ; {:9.4f}'.format( self.m01.m23 )
     ou += '\n'
     ou += '  '
-    ou += ' ; {:8.3f}'.format( self.m01.m21 )
-    ou += ' ; {:8.3f}'.format( self.m01.m22 )
-    ou += ' ; {:8.3f}'.format( self.m01.m23 )
+    ou += ' ; {:9.4f}'.format( self.m01.m21 )
+    ou += ' ; {:9.4f}'.format( self.m01.m22 )
+    ou += ' ; {:9.4f}'.format( self.m01.m23 )
     ou += '\n'
     return ou
     #
@@ -153,10 +169,12 @@ class c_brec:
         self.fid_S0[fidi].set(x,y,z)
       elif key == '!fov_S0':
         i_fov = int(mm[1])
-        x = float(mm[2])
-        y = float(mm[3])
-        z = float(mm[4])
+        name = mm[2]
+        x = float(mm[3])
+        y = float(mm[4])
+        z = float(mm[5])
         self.fov_S0[i_fov].set(x,y,z)
+        self.fov_name[i_fov] = name
       elif key == '!m01':
         for i in range(3):
           f.readline()
@@ -288,6 +306,7 @@ class c_brec:
     for i in range(self.n_fov):
       ou = '  '
       ou += ' ; '+str(i)
+      ou += ' ; '+self.fov_name[i]
       ou += ' ; {:4.1f}'.format(self.fov_S0[i].x)
       ou += ' ; {:4.1f}'.format(self.fov_S0[i].y)
       ou += ' ; {:4.1f}'.format(self.fov_S0[i].z)
