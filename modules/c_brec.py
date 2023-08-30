@@ -122,12 +122,27 @@ class c_brec:
       ou += ' ; {:7.1f}'.format( self.fid_S0[i].z )
       ou += '\n'
     ou += '#\n'
+    for i in range(self.n_fid):
+      ou += '!fid_S1 ; '+'{:3d}'.format(i)
+      ou += ' ; {:7.1f}'.format( self.fid_S1[i].x )
+      ou += ' ; {:7.1f}'.format( self.fid_S1[i].y )
+      ou += ' ; {:7.1f}'.format( self.fid_S1[i].z )
+      ou += '\n'
+    ou += '#\n'
     for i in range(self.n_fov):
       ou += '!fov_S0 ; '+'{:3d}'.format(i)
       ou += ' ; '+self.fov_name[i]
       ou += ' ; {:7.1f}'.format( self.fov_S0[i].x )
       ou += ' ; {:7.1f}'.format( self.fov_S0[i].y )
       ou += ' ; {:7.1f}'.format( self.fov_S0[i].z )
+      ou += '\n'
+    ou += '#\n'
+    for i in range(self.n_fov):
+      ou += '!fov_S1 ; '+'{:3d}'.format(i)
+      ou += ' ; '+self.fov_name[i]
+      ou += ' ; {:7.1f}'.format( self.fov_S1[i].x )
+      ou += ' ; {:7.1f}'.format( self.fov_S1[i].y )
+      ou += ' ; {:7.1f}'.format( self.fov_S1[i].z )
       ou += '\n'
     ou += '#\n'
     ou += '!m01\n'
@@ -167,6 +182,12 @@ class c_brec:
         y = float(mm[3])
         z = float(mm[4])
         self.fid_S0[fidi].set(x,y,z)
+      elif key == '!fid_S1':
+        fidi = int(mm[1])
+        x = float(mm[2])
+        y = float(mm[3])
+        z = float(mm[4])
+        self.fid_S1[fidi].set(x,y,z)
       elif key == '!fov_S0':
         i_fov = int(mm[1])
         name = mm[2]
@@ -177,6 +198,13 @@ class c_brec:
         self.fov_name[i_fov] = name
         # self.sort_fovs()
         self.determine_fov_cur_prefix_i()
+      elif key == '!fov_S1':
+        i_fov = int(mm[1])
+        name = mm[2]
+        x = float(mm[3])
+        y = float(mm[4])
+        z = float(mm[5])
+        self.fov_S1[i_fov].set(x,y,z)
       elif key == '!m01':
         for i in range(3):
           f.readline()
