@@ -157,9 +157,9 @@ class c_brec:
     ou += ' ; {:9.4f}'.format( self.m01.m23 )
     ou += '\n'
     ou += '  '
-    ou += ' ; {:9.4f}'.format( self.m01.m21 )
-    ou += ' ; {:9.4f}'.format( self.m01.m22 )
-    ou += ' ; {:9.4f}'.format( self.m01.m23 )
+    ou += ' ; {:9.4f}'.format( self.m01.m31 )
+    ou += ' ; {:9.4f}'.format( self.m01.m32 )
+    ou += ' ; {:9.4f}'.format( self.m01.m33 )
     ou += '\n'
     return ou
     #
