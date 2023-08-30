@@ -719,6 +719,8 @@ class c_muwp:
       else:
         print("uError.")
         return -1
+    elif u1 == 'set-prefix':
+      self.brec[self.cci].set_fov_cur_prefix( u2 )
     else:
       print("uError.")
       return -1
