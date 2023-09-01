@@ -9,6 +9,13 @@ class c_circular_mover:
     self.y0 = y0
   def set_r(self, r):
     self.r = r
+  def set_r_from_p(self, px, py):
+    self.r = math.hypot(px-self.x0, py-self.y0)
+    #
+  def get_ang_from_p(self, px, py):
+    ang = math.atan2( py-self.y0, px-self.x0 )
+    return ang
+    #
   def set_center(self, x0,y0):
     self.x0 = x0
     self.y0 = y0

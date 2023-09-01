@@ -6,6 +6,7 @@ import winsound
 import time
 from datetime import datetime
 import shutil
+import math
 
 from modules.m1 import *
 from modules.m9_serial import spo
@@ -1047,7 +1048,10 @@ class c_muwp:
       if self.cci < 0:
         print("uError.")
         return -1
-      rv = self.go_circular(ac3)
+      if ac3.startswith('multi'):
+        rv = self.go_circular_multi(ac3)
+      else:
+        rv = self.go_circular(ac3)
       #
       # This return 0 is bad.  We usually don't return from
       # this area unless there is an error.  This whole
@@ -1220,6 +1224,80 @@ class c_muwp:
     except ValueError:
       return False
     return False
+    #
+  def go_circular_multi(self, ac3):
+    mm = ac3.split(';')
+    if   len(mm) == 1:  dang_deg = 6 # Default.  6*60 = 360.
+    elif len(mm) >  2:  return -1
+    else:
+      if not self.is_number( mm[1] ):  return -1
+      dang_deg = float(mm[1])
+    dang = dang_deg * math.pi / 180
+    #
+    iw = self.cci
+    gx, gy = self.ins_center_x[iw], self.ins_center_y[iw]
+    psx0, psy0 = gx+self.psx0, gy+self.psy0
+    #
+    cbuf() # Make sure the buffer is clear.
+    send = bytes( "p\r\n".encode() )
+    spo.write( send )
+    serda = spo.readline()
+    ll = serda.decode("Ascii").split(',')
+    psx1 = int(ll[0])
+    psy1 = int(ll[1])
+    #
+    # Handle coordinate conversions from prior to standard.
+    ax0 = -psx0
+    ay0 =  psy0
+    ax1 = -psx1
+    ay1 =  psy1
+    #
+    cm = c_circular_mover(x0=ax0, y0=ay0)
+    cm.set_r_from_p(ax1, ay1)
+    ang0 = cm.get_ang_from_p(ax1, ay1)
+    ang1 = ang0
+    #
+    print("Radius = {:0.1f}".format(cm.r))
+    print("Entering circular run.")
+    print("  [Enter] to jump to next position.")
+    print("  [x] to exit the run.")
+    self.beep(1)
+    #
+    i = 0
+    while True:
+      ########################\\\
+      s = ''
+      while True:
+        ang1_deg = ang1 * 180 / math.pi
+        pline = "Now at i, ang: "+str(i)
+        pline += ", {:6.1f} deg".format(ang1_deg)
+        print(pline)
+        s = input("  circ>> ")
+        if s == 'q' or s == 'x':  break
+        if s == '':  break
+        print("uError.")
+      if s == 'q' or s == 'x':  break
+      ########################///
+      #
+      i += 1
+      ang1 = ang0 + i*dang
+      ax2, ay2 = cm.move_from_ang1(ang0,i*dang)
+      #
+      # Convert back to prior coordinates and get ints.
+      px2 = int( -ax2 )
+      py2 = int(  ay2 )
+      #
+      ouline = "g"
+      ouline += " {0:d}".format( px2 )
+      ouline += " {0:d}".format( py2 )
+      print("Going to:   ["+ouline+"]")
+      ouline += "\r\n"
+      send = bytes( ouline.encode() )
+      spo.write( send )
+      #
+      #
+    #
+    return 0
     #
 #######################################################
 
