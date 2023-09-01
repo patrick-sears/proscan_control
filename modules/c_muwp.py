@@ -13,6 +13,7 @@ from modules.c_locup import c_locup
 from modules.c_arec import c_arec
 from modules.c_brec import c_brec
 
+from modules_e.c_circular_mover import *
 
 
 #######################################################
@@ -1019,6 +1020,7 @@ class c_muwp:
     #
     # Might have:
     #  n_ull == 2:  must have cci>-1
+    #    go circ 180
     #    go ?-edge
     #    go fov?
     #    go center
@@ -1040,6 +1042,17 @@ class c_muwp:
         return -1
       iw = self.cci
       ac_pos = ac2  # ?-edge, fov?, center
+    elif n_ull == 3 and ac2 == 'circ':
+      # Go in a circle by ac3 degrees.
+      if self.cci < 0:
+        print("uError.")
+        return -1
+      rv = self.go_circular(ac3)
+      #
+      # This return 0 is bad.  We usually don't return from
+      # this area unless there is an error.  This whole
+      # function needs to be cleaned up.
+      return 0
     elif n_ull == 3 and ac2 == 'fidu':
       rv = self.go_fidu_name(ac3)
       if rv != 0:  return -1
@@ -1160,6 +1173,53 @@ class c_muwp:
         print("  Running pattern...")
       rv = self.mlocup[iw].run_pattern()
       # ignore rv
+    #
+  def go_circular(self, ac3):
+    #
+    if not self.is_number(ac3):  return -1
+    dang = int(ac3)
+    #
+    iw = self.cci
+    gx, gy = self.ins_center_x[iw], self.ins_center_y[iw]
+    psx0, psy0 = gx+self.psx0, gy+self.psy0
+    #
+    cbuf() # Make sure the buffer is clear.
+    send = bytes( "p\r\n".encode() )
+    spo.write( send )
+    serda = spo.readline()
+    ll = serda.decode("Ascii").split(',')
+    psx1 = int(ll[0])
+    psy1 = int(ll[1])
+    #
+    # Handle coordinate conversions from prior to standard.
+    ax0 = -psx0
+    ay0 =  psy0
+    ax1 = -psx1
+    ay1 =  psy1
+    #
+    cm = c_circular_mover(x0=ax0, y0=ay0)
+    ax2,ay2 = cm.move_p_dang_deg( ax1, ay1, dang )
+    #
+    # Convert back to prior coordinates and get ints.
+    px2 = int( -ax2 )
+    py2 = int(  ay2 )
+    #
+    ouline = "g"
+    ouline += " {0:d}".format( px2 )
+    ouline += " {0:d}".format( py2 )
+    print("Going to:   ["+ouline+"]")
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
+    spo.write( send )
+    return 0
+    #
+  def is_number(self, s):
+    try:
+      float(s)
+      return True
+    except ValueError:
+      return False
+    return False
     #
 #######################################################
 
