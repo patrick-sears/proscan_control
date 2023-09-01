@@ -8,6 +8,9 @@ from modules_e.c_matrix33 import *
 
 import sys
 
+# Sample coordinates: a_x a_y a_z
+# Stage coordinates:  b_x b_y b_z
+
 class c_brec:
   def __init__(self):
     #
