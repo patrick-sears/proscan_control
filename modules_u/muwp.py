@@ -10,7 +10,7 @@ muwp.load_plate()
 muwp.create_locups()  # muwp>> create lps
 muwp.create_brecs()   # muwp>> create brecs
 
-# run.
-muwp.run()
+# Start the hui.
+muwp.hui_main()
 
 

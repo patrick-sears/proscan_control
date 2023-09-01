@@ -495,7 +495,7 @@ class c_muwp:
     if self.cci == -1:  return "muwp>> "
     return "muwp-"+str(self.cci+1)+">> "
   #
-  def run(self):   # run the hui (human user interface)
+  def hui_main(self):   # run the hui (human user interface)
     self.beep(2)
     print()
     print("Entering muwp hui.")
