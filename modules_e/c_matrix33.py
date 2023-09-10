@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
-# from prs.linal_001.c_vec3 import c_vec3
-from modules_e.c_vec3 import c_vec3
+from prs.linal_001.c_vec3 import c_vec3
 
 import sys
 import math
@@ -30,6 +29,11 @@ class c_matrix33:
       print("Error e2 c_matrix33.")
       print("  Unrecognized type.")
       sys.exit(1)
+  def copy(self):
+    P = c_matrix33(  self.m11, self.m12, self.m13,
+                     self.m21, self.m22, self.m23,
+                     self.m31, self.m32, self.m33  )
+    return P
   def make_zero(self):
     self.m11=0; self.m12=0; self.m13=0;
     self.m21=0; self.m22=0; self.m23=0;
@@ -37,6 +41,10 @@ class c_matrix33:
   def make_identity(self):
     self.make_zero()
     self.m11=1; self.m22=1; self.m33=1;
+  def transpose(self):
+    t=self.m12;  self.m12=self.m21;  self.m21=t
+    t=self.m13;  self.m13=self.m31;  self.m31=t
+    t=self.m23;  self.m23=self.m32;  self.m32=t
   def set_costhe(self, c):
     self.costhe = c
   def set_sinthe(self, s):
@@ -72,6 +80,22 @@ class c_matrix33:
     # print("debug m12: ", self.m12)
     # print("debug sinthe: ", self.sinthe)
     return q
+    #
+  def mult_matrix33(self, M):
+    P = c_matrix33()
+    P.m11 = self.m11*M.m11 + self.m12*M.m21 + self.m13*M.m31
+    P.m12 = self.m11*M.m12 + self.m12*M.m22 + self.m13*M.m32
+    P.m13 = self.m11*M.m13 + self.m12*M.m23 + self.m13*M.m33
+    #
+    P.m21 = self.m21*M.m11 + self.m22*M.m21 + self.m23*M.m31
+    P.m22 = self.m21*M.m12 + self.m22*M.m22 + self.m23*M.m32
+    P.m23 = self.m21*M.m13 + self.m22*M.m23 + self.m23*M.m33
+    #
+    P.m31 = self.m31*M.m11 + self.m32*M.m21 + self.m33*M.m31
+    P.m32 = self.m31*M.m12 + self.m32*M.m22 + self.m33*M.m32
+    P.m33 = self.m31*M.m13 + self.m32*M.m23 + self.m33*M.m33
+    #
+    return P
     #
   def determinant(self):
     d = 0
