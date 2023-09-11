@@ -5,6 +5,7 @@ from modules.m9_serial import spo
 
 from modules_e.c_vec3 import *
 from modules_e.c_matrix33 import *
+from modules_e.c_orba_3p_transformer import *
 
 import sys
 
@@ -13,64 +14,57 @@ import sys
 
 class c_brec:
   def __init__(self):
-    #
-    # S0:  local coord system
+    # S0:  local coord system, origin at culture center
     # S1:  stage coord system
-    self.init_fid(2)
     #
-    # Init S1 to be the same as S0.
-    self.e1_S0 = c_vec3(1,0,0)
-    self.e2_S0 = c_vec3(0,1,0)
-    self.e1_S1 = c_vec3(1,0,0)
-    self.e2_S1 = c_vec3(0,1,0)
-    self.S01_tra = c_vec3(0,0,0)
-    #
-    self.fov_S0 = []
-    self.fov_S1 = []
-    self.n_fov = 0
-    #
-    self.m01 = c_matrix33()
-    self.m10 = c_matrix33()
+    self.init_fidu()
+    self.init_fov(prefix='a', n=0)
     #
     # Zero for stage coordinates.
     self.psx0 = 0
     self.psy0 = 0
     #
-    self.fov_cur_prefix = 'a'
-    self.fov_cur_prefix_i = -1
     #
   def set_psx0_psy0(self, x0, y0):
     self.psx0 = x0
     self.psy0 = y0
     #
-  def init_fid(self, n):
-    self.fid_S0 = []
-    self.fid_S1 = []
-    self.n_fid = n
-    for i in range(self.n_fid):
-      self.fid_S0.append( c_vec3() )
-      self.fid_S1.append( c_vec3() )
+  def init_fidu(self):
+    self.S0_fidu_A = c_vec3(0,0,0)
+    self.S0_fidu_B = c_vec3(0,0,0)
+    self.S0_fidu_C = c_vec3(0,0,0)
+    self.S1_fidu_A = c_vec3(0,0,0)
+    self.S1_fidu_B = c_vec3(0,0,0)
+    self.S1_fidu_C = c_vec3(0,0,0)
     #
-  def init_fov(self, n):
+    self.orba01 = c_orba_3p_transformer()
+    self.orba01_ready = False
+    #
+  def init_fov(self, prefix, n):
+    self.fov_cur_prefix = prefix
     self.fov_S0 = []
     self.fov_S1 = []
     self.fov_name = []
     self.n_fov = n
+    self.fov_cur_prefix_i = n-1
     for i in range(self.n_fov):
       self.fov_S0.append( c_vec3() )
       self.fov_S1.append( c_vec3() )
-      name = 'x{:03d}'.format(i)
+      name = prefix+'{:03d}'.format(i)
       self.fov_name.append( name )
     #
   def set_ic(self, ic):
     self.ic = ic
     #
-  def add_fov_S1(self, x, y, z):
-    self.fov_S1.append( c_vec3(x,y,z) )
-    #
-    # Get S0 values from S1.
-    q = self.m10.mult_vec3( c_vec3(x,y,1) )
-    self.fov_S0.append( c_vec3(q.x, q.y, z) )
+  def add_fov(self):
+    if not self.orba01_ready:
+      print("  Error.  orba01 (fidu) not ready.")
+      return
+    x,y,z = get_p3()
+    S1_p = c_vec3(x,y,z)
+    self.fov_S1.append( S1_p )
+    S0_p = self.orba01.get_pnt( S1_p, direction=-1 )
+    self.fov_S0.append( S0_p )
     #
     self.fov_cur_prefix_i += 1
     name = self.fov_cur_prefix
@@ -79,58 +73,151 @@ class c_brec:
     #
     self.n_fov += 1
     #
-  def set_fid_S1(self, ifid, x,y,z):
-    if ifid < 0 or ifid >= self.n_fid:  return -1
-    self.fid_S1[ifid].set(x,y,z)
-    return 0
-    #
-  def get_fid_S1(self, ifid):
-    x = self.fid_S1[ifid].x
-    y = self.fid_S1[ifid].y
-    z = self.fid_S1[ifid].z
-    return x,y,z
-    #
   def get_fov_S1(self, ifov):
     x = self.fov_S1[ifov].x
     y = self.fov_S1[ifov].y
     z = self.fov_S1[ifov].z
     return x,y,z
     #
-  def define_S0(self, S1x0, S1y0, S1z0):
-    self.S01_tra.set(S1x0, S1y0, S1z0)
+  def run_set_S1_fidu(self):
+    rv = self.run_hui_get_S1_fidu()
+    if rv != 0:  return 1
+    self.calculate_coordinate_systems()
+    self.calculate_S1_FOVs()
+    return 0
     #
-    # Reset S1 basis vectors to be same as for S0.
-    # Note that these are S1 vectors in SO.
-    self.e1_S1.set(1,0,0)
-    self.e2_S1.set(0,1,0)
+  def run_define_fidu(self, S1_ori0_x, S1_ori0_y):
+    # S1_ori0_(x/y) is the insert center S1 coordinates.
     #
-    for i in range(self.n_fid):
-      self.fid_S0[i].set(
-        self.fid_S1[i].x - self.S01_tra.x,
-        self.fid_S1[i].y - self.S01_tra.y,
-        self.fid_S1[i].z - self.S01_tra.z
-        )
+    rv = self.run_hui_get_S1_fidu()
+    if rv != 0:  return 1
+    #
+    # while True:
+    #   uline = input("Define fidu (Y/n)? >> ")
+    #   if uline == '' or uline == 'y' or uline == 'Y':  break
+    #   if uline == 'n':
+    #     print("  Quit without defining fidu.")
+    #     return 1
+    #
+    S1_A = self.S1_fidu_A.copy()
+    S1_B = self.S1_fidu_B.copy()
+    S1_C = self.S1_fidu_C.copy()
+    #
+    S0_A = c_vec3(S1_ori0_x-S1_A.x, S1_A.y-S1_ori0_y, 0.0)
+    S0_B = c_vec3(S1_ori0_x-S1_B.x, S1_B.y-S1_ori0_y, 0.0)
+    S0_C = c_vec3(S1_ori0_x-S1_C.x, S1_C.y-S1_ori0_y, 0.0)
+    #
+    self.S0_fidu_A = S0_A
+    self.S0_fidu_B = S0_B
+    self.S0_fidu_C = S0_C
+    #
+    self.calculate_coordinate_systems()
+    #
+    return 0
+    #
+    #
+  def run_hui_get_S1_fidu(self):
+    # rv = 0.  All ok.
+    # rv = 1.  Fidu not set.
+    #
+    prom1 = "Go to fidu A and hit enter."
+    prom2 = "brec-"+str(self.ic)+">> "
+    print("Remember, q quits with no changes made.")
+    ufid = 'A'
+    while True:
+      print(prom1)
+      uline = input(prom2)
+      uline = ' '.join( uline.split() )  # remove duplicate spaces
+      ull = uline.split(' ')
+      n_ull = len(ull)
+      if ull[0] == 'q':
+        print("  Quit defining fidu.")
+        return 1
+      # if len(ull) != 0:
+      if len(uline) != 0:
+        print("uError.")
+        continue
+      #
+      if ufid == 'A':
+        x,y,z = get_p3()
+        S1_A = c_vec3(x,y,z)
+        ufid  = 'B'
+        prom1 = "Go to fidu B and hit enter."
+      elif ufid == 'B':
+        x,y,z = get_p3()
+        S1_B = c_vec3(x,y,z)
+        ufid  = 'C'
+        prom1 = "Go to fidu C and hit enter."
+      elif ufid == 'C':
+        x,y,z = get_p3()
+        S1_C = c_vec3(x,y,z)
+        break
+      #
+    #
+    self.S1_fidu_A = S1_A.copy()
+    self.S1_fidu_B = S1_B.copy()
+    self.S1_fidu_C = S1_C.copy()
+    #
+    return 0
+    #
+  def calculate_coordinate_systems( self ):
+    self.orba01 = c_orba_3p_transformer()
+    self.orba01.set_fidu_S0_A( self.S0_fidu_A )
+    self.orba01.set_fidu_S0_B( self.S0_fidu_B )
+    self.orba01.set_fidu_S0_C( self.S0_fidu_C )
+    self.orba01.set_fidu_S1_A( self.S1_fidu_A )
+    self.orba01.set_fidu_S1_B( self.S1_fidu_B )
+    self.orba01.set_fidu_S1_C( self.S1_fidu_C )
+    self.orba01.pro()
+    self.orba01_ready = True
+    #
+  def calculate_S1_FOVs(self):
+    for i in range(self.n_fov()):
+      S0_p = self.fov_S0[i]
+      S1_p = self.orba01.get_pnt( S0_p )
+      self.fov_S1[i] = S1_p
+      #
     #
   def get_save1(self):
     ou = ''
     ou += '#############################\n'
     ou += '!brec ; '+str(self.ic)+'\n'
-    ou += '!n_fid ; '+str(self.n_fid)+'\n'
     ou += '!n_fov ; '+str(self.n_fov)+'\n'
+    if not self.orba01_ready:
+      return ou
+    #
     ou += '#\n'
-    for i in range(self.n_fid):
-      ou += '!fid_S0 ; '+'{:3d}'.format(i)
-      ou += ' ; {:7.1f}'.format( self.fid_S0[i].x )
-      ou += ' ; {:7.1f}'.format( self.fid_S0[i].y )
-      ou += ' ; {:7.1f}'.format( self.fid_S0[i].z )
-      ou += '\n'
+    ou += '!S0_fidu_A'
+    ou += ' ; {:7.1f}'.format( self.S0_fidu_A.x )
+    ou += ' ; {:7.1f}'.format( self.S0_fidu_A.y )
+    ou += ' ; {:7.1f}'.format( self.S0_fidu_A.z )
+    ou += '\n'
+    ou += '!S0_fidu_B'
+    ou += ' ; {:7.1f}'.format( self.S0_fidu_B.x )
+    ou += ' ; {:7.1f}'.format( self.S0_fidu_B.y )
+    ou += ' ; {:7.1f}'.format( self.S0_fidu_B.z )
+    ou += '\n'
+    ou += '!S0_fidu_C'
+    ou += ' ; {:7.1f}'.format( self.S0_fidu_C.x )
+    ou += ' ; {:7.1f}'.format( self.S0_fidu_C.y )
+    ou += ' ; {:7.1f}'.format( self.S0_fidu_C.z )
+    ou += '\n'
     ou += '#\n'
-    for i in range(self.n_fid):
-      ou += '!fid_S1 ; '+'{:3d}'.format(i)
-      ou += ' ; {:7.1f}'.format( self.fid_S1[i].x )
-      ou += ' ; {:7.1f}'.format( self.fid_S1[i].y )
-      ou += ' ; {:7.1f}'.format( self.fid_S1[i].z )
-      ou += '\n'
+    ou += '!S1_fidu_A'
+    ou += ' ; {:7.1f}'.format( self.S1_fidu_A.x )
+    ou += ' ; {:7.1f}'.format( self.S1_fidu_A.y )
+    ou += ' ; {:7.1f}'.format( self.S1_fidu_A.z )
+    ou += '\n'
+    ou += '!S1_fidu_B'
+    ou += ' ; {:7.1f}'.format( self.S1_fidu_B.x )
+    ou += ' ; {:7.1f}'.format( self.S1_fidu_B.y )
+    ou += ' ; {:7.1f}'.format( self.S1_fidu_B.z )
+    ou += '\n'
+    ou += '!S1_fidu_C'
+    ou += ' ; {:7.1f}'.format( self.S1_fidu_C.x )
+    ou += ' ; {:7.1f}'.format( self.S1_fidu_C.y )
+    ou += ' ; {:7.1f}'.format( self.S1_fidu_C.z )
+    ou += '\n'
     ou += '#\n'
     for i in range(self.n_fov):
       ou += '!fov_S0 ; '+'{:3d}'.format(i)
@@ -148,49 +235,68 @@ class c_brec:
       ou += ' ; {:7.1f}'.format( self.fov_S1[i].z )
       ou += '\n'
     ou += '#\n'
-    ou += '!m01\n'
+    #
+    ou += '!orba01.S1_ori0'
+    ou += ' ; {:9.4f}'.format( self.orba01.S1_ori0.x )
+    ou += ' ; {:9.4f}'.format( self.orba01.S1_ori0.y )
+    ou += ' ; {:9.4f}'.format( self.orba01.S1_ori0.z )
+    ou += '\n'
+    ou += '!orba01.P\n'
     ou += '  '
-    ou += ' ; {:9.4f}'.format( self.m01.m11 )
-    ou += ' ; {:9.4f}'.format( self.m01.m12 )
-    ou += ' ; {:9.4f}'.format( self.m01.m13 )
+    ou += ' ; {:9.4f}'.format( self.orba01.P.m11 )
+    ou += ' ; {:9.4f}'.format( self.orba01.P.m12 )
+    ou += ' ; {:9.4f}'.format( self.orba01.P.m13 )
     ou += '\n'
     ou += '  '
-    ou += ' ; {:9.4f}'.format( self.m01.m21 )
-    ou += ' ; {:9.4f}'.format( self.m01.m22 )
-    ou += ' ; {:9.4f}'.format( self.m01.m23 )
+    ou += ' ; {:9.4f}'.format( self.orba01.P.m21 )
+    ou += ' ; {:9.4f}'.format( self.orba01.P.m22 )
+    ou += ' ; {:9.4f}'.format( self.orba01.P.m23 )
     ou += '\n'
     ou += '  '
-    ou += ' ; {:9.4f}'.format( self.m01.m31 )
-    ou += ' ; {:9.4f}'.format( self.m01.m32 )
-    ou += ' ; {:9.4f}'.format( self.m01.m33 )
+    ou += ' ; {:9.4f}'.format( self.orba01.P.m31 )
+    ou += ' ; {:9.4f}'.format( self.orba01.P.m32 )
+    ou += ' ; {:9.4f}'.format( self.orba01.P.m33 )
     ou += '\n'
+    #
     return ou
     #
   def read_f(self, f):
+    n_S0_fidu = 0
+    n_S1_fidu = 0
+    #
     for l in f:
       l = l.strip()
       if len(l) == 0:  break
       if l[0] == '#':  continue
       mm = [m.strip() for m in l.split(';')]
       key = mm[0]
-      if key == '!n_fid':
-        n_fid = int(mm[1])
-        self.init_fid( n_fid )
-      elif key == '!n_fov':
+      if key == '!n_fov':
         n_fov = int(mm[1])
-        self.init_fov( n_fov )
-      elif key == '!fid_S0':
-        fidi = int(mm[1])
-        x = float(mm[2])
-        y = float(mm[3])
-        z = float(mm[4])
-        self.fid_S0[fidi].set(x,y,z)
-      elif key == '!fid_S1':
-        fidi = int(mm[1])
-        x = float(mm[2])
-        y = float(mm[3])
-        z = float(mm[4])
-        self.fid_S1[fidi].set(x,y,z)
+        self.init_fov( prefix='x', n=n_fov )
+      elif key == '!S0_fidu_A':
+        x = float(mm[1]); y = float(mm[2]); z = float(mm[3])
+        self.S0_fidu_A = c_vec3(x,y,z)
+        n_S0_fidu += 1
+      elif key == '!S0_fidu_B':
+        x = float(mm[1]); y = float(mm[2]); z = float(mm[3])
+        self.S0_fidu_B = c_vec3(x,y,z)
+        n_S0_fidu += 1
+      elif key == '!S0_fidu_C':
+        x = float(mm[1]); y = float(mm[2]); z = float(mm[3])
+        self.S0_fidu_C = c_vec3(x,y,z)
+        n_S0_fidu += 1
+      elif key == '!S1_fidu_A':
+        x = float(mm[1]); y = float(mm[2]); z = float(mm[3])
+        self.S1_fidu_A = c_vec3(x,y,z)
+        n_S1_fidu += 1
+      elif key == '!S1_fidu_B':
+        x = float(mm[1]); y = float(mm[2]); z = float(mm[3])
+        self.S1_fidu_B = c_vec3(x,y,z)
+        n_S1_fidu += 1
+      elif key == '!S1_fidu_C':
+        x = float(mm[1]); y = float(mm[2]); z = float(mm[3])
+        self.S1_fidu_C = c_vec3(x,y,z)
+        n_S1_fidu += 1
       elif key == '!fov_S0':
         i_fov = int(mm[1])
         name = mm[2]
@@ -208,7 +314,10 @@ class c_brec:
         y = float(mm[4])
         z = float(mm[5])
         self.fov_S1[i_fov].set(x,y,z)
-      elif key == '!m01':
+      elif key == '!orba01.S1_ori0':
+        continue
+        # TO IMPLEMENT:  Actually reading the data.
+      elif key == '!orba01.P':
         for i in range(3):
           f.readline()
           # TO IMPLEMENT:  Actually reading the data.
@@ -217,41 +326,25 @@ class c_brec:
         print("  key: ", key)
         sys.exit(1)
     #
-  def pro1(self):
-    # - Using fids found in S1, determine the transformation
-    #   needed to go to positions defined in S0.
-    # - Then calculate the S1 positions for all the FOVs.
+    if n_S0_fidu == 3 and n_S1_fidu == 3:
+      self.calculate_coordinate_systems()
     #
-    self.generate_S01_matrix()
-    print("debug m01:")
-    print(self.m01)
-    self.m10 = c_matrix33( self.m01 )
-    self.m10.invert()
-    print("debug m10:")
-    print(self.m10)
     #
-    # Calculate new basis vectors.
-    self.e1_S1 = self.m01.mult_vec3( self.e1_S0 )
-    self.e2_S1 = self.m01.mult_vec3( self.e2_S0 )
+  def go_fidu(self, fid):
+    if not self.orba01_ready:  return -1
     #
-    for i in range(self.n_fov):
-      # self.fov_S1[i] = self.m01.mult_vec3( self.fov_S0[i] )
-      x = self.fov_S0[i].x
-      y = self.fov_S0[i].y
-      self.fov_S1[i] = self.m01.mult_vec3( c_vec3(x,y,1) )
-    #
-  def go_fid(self, ifid):
     if ifid < 0 or ifid > self.n_fid:  return -1
+    fid = fid.upper()
+    if fid!='A' and fid!='B' and fid!='C':  return -1
+    if   fid == 'A':
+      x=self.S1_fidu_A.x; y=self.S1_fidu_A.y; z=self.S1_fidu_A.z;
+    elif fid == 'B':
+      x=self.S1_fidu_B.x; y=self.S1_fidu_B.y; z=self.S1_fidu_B.z;
+    elif fid == 'C':
+      x=self.S1_fidu_C.x; y=self.S1_fidu_C.y; z=self.S1_fidu_C.z;
     #
-    x,y,z = self.get_fid_S1(ifid)
-    psx, psy = int(x+self.psx0), int(y+self.psy0)
-    ouline = "g"
-    ouline += " {0:d}".format( psx )
-    ouline += " {0:d}".format( psy )
-    print("Going to:   ["+ouline+"]")
-    ouline += "\r\n"
-    send = bytes( ouline.encode() )
-    spo.write( send )
+    psx, psy, psz = int(x+self.psx0), int(y+self.psy0), z
+    go_p3(psx, psy, psz)
     #
     return 0
     #
@@ -260,13 +353,7 @@ class c_brec:
     #
     x,y,z = self.get_fov_S1(ifov)
     psx, psy = int(x+self.psx0), int(y+self.psy0)
-    ouline = "g"
-    ouline += " {0:d}".format( psx )
-    ouline += " {0:d}".format( psy )
-    print("Going to:   ["+ouline+"]")
-    ouline += "\r\n"
-    send = bytes( ouline.encode() )
-    spo.write( send )
+    go_p3(psx, psy, z)
     #
     return 0
     #
@@ -287,51 +374,44 @@ class c_brec:
     print("Done with brec run seq.")
     return 0
     #
-  def generate_S01_matrix(self):
-    #
-    aS0 = c_vec3( self.fid_S0[0] )
-    bS0 = c_vec3( self.fid_S0[1] )
-    aS1 = c_vec3( self.fid_S1[0] )
-    bS1 = c_vec3( self.fid_S1[1] )
-    #
-    u0 = aS0.minus( bS0 )
-    u0.make_uvec()
-    u1 = aS1.minus( bS1 )
-    u1.make_uvec()
-    #
-    costhe = u0.dot( u1 )
-    sinthe = u0.cross_xy_k_mag( u1 )
-    #
-    # Find translations 1 and 2.
-    dv1 = c_vec3( aS0 )
-    dv2 = c_vec3( aS1 )
-    #
-    self.m01 = c_matrix33()
-    self.m01.make_identity()
-    self.m01.set_costhe( costhe )
-    self.m01.set_sinthe( sinthe )
-    self.m01.set_trans_1( dv1.x, dv1.y )
-    self.m01.set_trans_2( dv2.x, dv2.y )
-    self.m01.pro1()
     #
   def ls_fid(self):
-    print("n_fid: ", self.n_fid)
+    if not self.orba01_ready:
+      print("Error.  orba not ready.")
+      return
     print("- S0:")
-    for i in range(self.n_fid):
-      ou = '  '
-      ou += ' ; '+str(i)
-      ou += ' ; {:4.1f}'.format(self.fid_S0[i].x)
-      ou += ' ; {:4.1f}'.format(self.fid_S0[i].y)
-      ou += ' ; {:4.1f}'.format(self.fid_S0[i].z)
-      print(ou)
+    ou = '  A'
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_A[i].x)
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_A[i].y)
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_A[i].z)
+    print(ou)
+    ou = '  B'
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_B[i].x)
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_B[i].y)
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_B[i].z)
+    print(ou)
+    ou = '  C'
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_C[i].x)
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_C[i].y)
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_C[i].z)
+    print(ou)
+    #
     print("- S1:")
-    for i in range(self.n_fid):
-      ou = '  '
-      ou += ' ; '+str(i)
-      ou += ' ; {:4.1f}'.format(self.fid_S1[i].x)
-      ou += ' ; {:4.1f}'.format(self.fid_S1[i].y)
-      ou += ' ; {:4.1f}'.format(self.fid_S1[i].z)
-      print(ou)
+    ou = '  A'
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_A[i].x)
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_A[i].y)
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_A[i].z)
+    print(ou)
+    ou = '  B'
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_B[i].x)
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_B[i].y)
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_B[i].z)
+    print(ou)
+    ou = '  C'
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_C[i].x)
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_C[i].y)
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_C[i].z)
+    print(ou)
     #
   def ls_fov(self):
     print("n_fov: ", self.n_fov)

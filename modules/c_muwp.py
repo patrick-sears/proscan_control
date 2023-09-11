@@ -596,7 +596,7 @@ class c_muwp:
           print("uError.")
           continue
         ac2 = ull[1]
-        if ac2 == 'brec':  self.save_brec()
+        if   ac2 == 'brec':   self.save_brec()
         elif ac2 == 'plate':  self.save_plate()
         else:
           print("uError.")
@@ -658,14 +658,23 @@ class c_muwp:
       print("uError.")
       return -1
     elif u1 == 'add-fov':
-      x,y,z = get_p3()
-      self.brec[self.cci].add_fov_S1(x,y,z)
-    elif u1 == 'define':
-      self.brec[self.cci].define_S0(
-        self.ins_center_x[self.cci],
-        self.ins_center_y[self.cci],
-        0
-        )
+      self.brec[self.cci].add_fov()
+    elif u1 == 'define-fid':
+      cx = self.ins_center_x[self.cci]
+      cy = self.ins_center_y[self.cci]
+      rv = self.brec[self.cci].run_define_fidu( cx, cy )
+      if rv != 0:  return -1
+      #
+      while True:
+        uline = input("Save brec data to file (Y/n)? >> ")
+        if uline == '' or uline == 'y' or uline == 'Y':  break
+        if uline == 'n':
+          print("  brec data not saved to file.")
+          return -1
+      #
+      print("  Saving brec data to file...")
+      self.save_brec()
+      #
     elif u1 == 'go-fid':
       if u2 == None:
         print("uError.")
