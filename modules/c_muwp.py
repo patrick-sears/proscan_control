@@ -679,13 +679,9 @@ class c_muwp:
       if u2 == None:
         print("uError.")
         return -1
-      if not u2.isdigit():
-        print("uError.")
-        return -1
-      ifid = int(u2)
-      rv = self.brec[self.cci].go_fid(ifid)
+      rv = self.brec[self.cci].go_fidu(u2)
       if rv != 0:
-        print("Error.  brec failed go_fid().")
+        print("Error.  brec failed go_fidu().")
         return -1
       return 0
       #

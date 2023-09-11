@@ -333,7 +333,6 @@ class c_brec:
   def go_fidu(self, fid):
     if not self.orba01_ready:  return -1
     #
-    if ifid < 0 or ifid > self.n_fid:  return -1
     fid = fid.upper()
     if fid!='A' and fid!='B' and fid!='C':  return -1
     if   fid == 'A':
@@ -343,7 +342,7 @@ class c_brec:
     elif fid == 'C':
       x=self.S1_fidu_C.x; y=self.S1_fidu_C.y; z=self.S1_fidu_C.z;
     #
-    psx, psy, psz = int(x+self.psx0), int(y+self.psy0), z
+    psx, psy, psz = int(x+self.psx0), int(y+self.psy0), int(z)
     go_p3(psx, psy, psz)
     #
     return 0
@@ -352,8 +351,8 @@ class c_brec:
     if ifov < 0 or ifov > self.n_fov:  return -1
     #
     x,y,z = self.get_fov_S1(ifov)
-    psx, psy = int(x+self.psx0), int(y+self.psy0)
-    go_p3(psx, psy, z)
+    psx, psy, psz = int(x+self.psx0), int(y+self.psy0), int(z)
+    go_p3(psx, psy, psz)
     #
     return 0
     #
@@ -381,36 +380,36 @@ class c_brec:
       return
     print("- S0:")
     ou = '  A'
-    ou += ' ; {:4.1f}'.format(self.S0_fidu_A[i].x)
-    ou += ' ; {:4.1f}'.format(self.S0_fidu_A[i].y)
-    ou += ' ; {:4.1f}'.format(self.S0_fidu_A[i].z)
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_A.x)
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_A.y)
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_A.z)
     print(ou)
     ou = '  B'
-    ou += ' ; {:4.1f}'.format(self.S0_fidu_B[i].x)
-    ou += ' ; {:4.1f}'.format(self.S0_fidu_B[i].y)
-    ou += ' ; {:4.1f}'.format(self.S0_fidu_B[i].z)
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_B.x)
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_B.y)
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_B.z)
     print(ou)
     ou = '  C'
-    ou += ' ; {:4.1f}'.format(self.S0_fidu_C[i].x)
-    ou += ' ; {:4.1f}'.format(self.S0_fidu_C[i].y)
-    ou += ' ; {:4.1f}'.format(self.S0_fidu_C[i].z)
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_C.x)
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_C.y)
+    ou += ' ; {:4.1f}'.format(self.S0_fidu_C.z)
     print(ou)
     #
     print("- S1:")
     ou = '  A'
-    ou += ' ; {:4.1f}'.format(self.S1_fidu_A[i].x)
-    ou += ' ; {:4.1f}'.format(self.S1_fidu_A[i].y)
-    ou += ' ; {:4.1f}'.format(self.S1_fidu_A[i].z)
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_A.x)
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_A.y)
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_A.z)
     print(ou)
     ou = '  B'
-    ou += ' ; {:4.1f}'.format(self.S1_fidu_B[i].x)
-    ou += ' ; {:4.1f}'.format(self.S1_fidu_B[i].y)
-    ou += ' ; {:4.1f}'.format(self.S1_fidu_B[i].z)
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_B.x)
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_B.y)
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_B.z)
     print(ou)
     ou = '  C'
-    ou += ' ; {:4.1f}'.format(self.S1_fidu_C[i].x)
-    ou += ' ; {:4.1f}'.format(self.S1_fidu_C[i].y)
-    ou += ' ; {:4.1f}'.format(self.S1_fidu_C[i].z)
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_C.x)
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_C.y)
+    ou += ' ; {:4.1f}'.format(self.S1_fidu_C.z)
     print(ou)
     #
   def ls_fov(self):
