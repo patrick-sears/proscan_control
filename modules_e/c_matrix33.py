@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
-from prs.linal_001.c_vec3 import c_vec3
+# from prs.linal_001.c_vec3 import c_vec3
+from modules_e.c_vec3 import c_vec3
 
 import sys
 import math
