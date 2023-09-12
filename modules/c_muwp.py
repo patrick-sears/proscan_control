@@ -659,7 +659,7 @@ class c_muwp:
       return -1
     elif u1 == 'add-fov':
       self.brec[self.cci].add_fov()
-    elif u1 == 'define-fid':
+    elif u1 == 'define':
       cx = self.ins_center_x[self.cci]
       cy = self.ins_center_y[self.cci]
       rv = self.brec[self.cci].run_define_fidu( cx, cy )
@@ -700,8 +700,6 @@ class c_muwp:
       self.brec[self.cci].ls_fid()
     elif u1 == 'ls-fov':
       self.brec[self.cci].ls_fov()
-    elif u1 == 'pro':
-      self.brec[self.cci].pro1()
     elif u1 == 'run-seq':
       self.brec[self.cci].run_seq()
     elif u1 == 'set-fid':
