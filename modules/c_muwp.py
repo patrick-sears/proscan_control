@@ -596,7 +596,7 @@ class c_muwp:
           print("uError.")
           continue
         ac2 = ull[1]
-        if ac2 == 'brec':  self.save_brec()
+        if   ac2 == 'brec':   self.save_brec()
         elif ac2 == 'plate':  self.save_plate()
         else:
           print("uError.")
@@ -658,25 +658,30 @@ class c_muwp:
       print("uError.")
       return -1
     elif u1 == 'add-fov':
-      x,y,z = get_p3()
-      self.brec[self.cci].add_fov_S1(x,y,z)
+      self.brec[self.cci].add_fov()
     elif u1 == 'define':
-      self.brec[self.cci].define_S0(
-        self.ins_center_x[self.cci],
-        self.ins_center_y[self.cci],
-        0
-        )
+      cx = self.ins_center_x[self.cci]
+      cy = self.ins_center_y[self.cci]
+      rv = self.brec[self.cci].run_define_fidu( cx, cy )
+      if rv != 0:  return -1
+      #
+      while True:
+        uline = input("Save brec data to file (Y/n)? >> ")
+        if uline == '' or uline == 'y' or uline == 'Y':  break
+        if uline == 'n':
+          print("  brec data not saved to file.")
+          return -1
+      #
+      print("  Saving brec data to file...")
+      self.save_brec()
+      #
     elif u1 == 'go-fid':
       if u2 == None:
         print("uError.")
         return -1
-      if not u2.isdigit():
-        print("uError.")
-        return -1
-      ifid = int(u2)
-      rv = self.brec[self.cci].go_fid(ifid)
+      rv = self.brec[self.cci].go_fidu(u2)
       if rv != 0:
-        print("Error.  brec failed go_fid().")
+        print("Error.  brec failed go_fidu().")
         return -1
       return 0
       #
@@ -684,14 +689,7 @@ class c_muwp:
       if u2 == None:
         print("uError.")
         return -1
-      if not u2.isdigit():
-        print("uError.")
-        return -1
-      ifov = int(u2)
-      if ifov < 0 or ifov >= self.brec[self.cci].n_fov:
-        print("uError.")
-        return -1
-      rv = self.brec[self.cci].go_fov(ifov)
+      rv = self.brec[self.cci].go_fov_name(u2)
       if rv != 0:
         print("Error.  brec failed go_fov().")
         return -1
@@ -702,25 +700,12 @@ class c_muwp:
       self.brec[self.cci].ls_fid()
     elif u1 == 'ls-fov':
       self.brec[self.cci].ls_fov()
-    elif u1 == 'pro':
-      self.brec[self.cci].pro1()
+    elif u1 == 'prefix':
+      self.brec[self.cci].print_fov_next_name()
     elif u1 == 'run-seq':
       self.brec[self.cci].run_seq()
     elif u1 == 'set-fid':
-      if u2 == None:
-        print("uError.")
-        return -1
-      if u2.isdigit():
-        ifid = int(u2)
-        if ifid < 0 or ifid > 1:
-          print("uError.")
-          return -1
-        x,y,z = get_p3()
-        rv = self.brec[self.cci].set_fid_S1(ifid, x,y,z)
-        # rv ignored
-      else:
-        print("uError.")
-        return -1
+      self.brec[self.cci].run_set_S1_fidu()
     elif u1 == 'set-prefix':
       self.brec[self.cci].set_fov_cur_prefix( u2 )
     else:

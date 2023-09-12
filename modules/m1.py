@@ -100,6 +100,16 @@ def get_p3():
   return x, y, z
 
 
+def go_p3(x,y,z):
+  ouline = "g"
+  ouline += " {0:d}".format( x )
+  ouline += " {0:d}".format( y )
+  ouline += " {0:d}".format( z )
+  # print("Going to:   ["+ouline+"]")
+  ouline += "\r\n"
+  send = bytes( ouline.encode() )
+  spo.write( send )
+
 
 
 #######################################################
