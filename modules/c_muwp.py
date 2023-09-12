@@ -705,20 +705,7 @@ class c_muwp:
     elif u1 == 'run-seq':
       self.brec[self.cci].run_seq()
     elif u1 == 'set-fid':
-      if u2 == None:
-        print("uError.")
-        return -1
-      if u2.isdigit():
-        ifid = int(u2)
-        if ifid < 0 or ifid > 1:
-          print("uError.")
-          return -1
-        x,y,z = get_p3()
-        rv = self.brec[self.cci].set_fid_S1(ifid, x,y,z)
-        # rv ignored
-      else:
-        print("uError.")
-        return -1
+      self.brec[self.cci].run_set_S1_fidu()
     elif u1 == 'set-prefix':
       self.brec[self.cci].set_fov_cur_prefix( u2 )
     else:

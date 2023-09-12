@@ -80,6 +80,11 @@ class c_brec:
     return x,y,z
     #
   def run_set_S1_fidu(self):
+    if not self.orba01_ready:
+      return 1
+      # The reason is that S0 must be set for this to work.
+      # This means it was loaded from a file, which means
+      # S1 was also loaded and the orba01 was define.
     rv = self.run_hui_get_S1_fidu()
     if rv != 0:  return 1
     self.calculate_coordinate_systems()
@@ -172,7 +177,7 @@ class c_brec:
     self.orba01_ready = True
     #
   def calculate_S1_FOVs(self):
-    for i in range(self.n_fov()):
+    for i in range(self.n_fov):
       S0_p = self.fov_S0[i]
       S1_p = self.orba01.get_pnt( S0_p )
       self.fov_S1[i] = S1_p
