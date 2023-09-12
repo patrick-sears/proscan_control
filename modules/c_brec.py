@@ -273,6 +273,7 @@ class c_brec:
       if key == '!n_fov':
         n_fov = int(mm[1])
         self.init_fov( prefix='x', n=n_fov )
+        #
       elif key == '!S0_fidu_A':
         x = float(mm[1]); y = float(mm[2]); z = float(mm[3])
         self.S0_fidu_A = c_vec3(x,y,z)
@@ -329,6 +330,10 @@ class c_brec:
     if n_S0_fidu == 3 and n_S1_fidu == 3:
       self.calculate_coordinate_systems()
     #
+    # Reset to default prefix.
+    self.fov_cur_prefix = 'a'
+    self.determine_fov_cur_prefix_i()
+    #
     #
   def go_fidu(self, fid):
     if not self.orba01_ready:  return -1
@@ -354,7 +359,8 @@ class c_brec:
         ii = i
         break
     if ii < 0:  return -1
-    self.go_fov_i(ii)
+    rv = self.go_fov_i(ii)
+    return rv
   def go_fov_i(self, ifov):
     if not type(ifov) == int:          return -1
     if ifov < 0 or ifov > self.n_fov:  return -1
