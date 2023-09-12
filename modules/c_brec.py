@@ -475,6 +475,12 @@ class c_brec:
     #
     self.fov_cur_prefix_i = curi
     #
+  def print_fov_next_name(self):
+    i = self.fov_cur_prefix_i + 1
+    name = self.fov_cur_prefix
+    name += '{:03d}'.format( i )
+    print("Next fov name: ", name)
+    #
   def set_fov_cur_prefix(self, prefix):
     self.fov_cur_prefix = prefix
     self.determine_fov_cur_prefix_i()

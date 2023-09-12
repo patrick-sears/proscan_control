@@ -700,6 +700,8 @@ class c_muwp:
       self.brec[self.cci].ls_fid()
     elif u1 == 'ls-fov':
       self.brec[self.cci].ls_fov()
+    elif u1 == 'prefix':
+      self.brec[self.cci].print_fov_next_name()
     elif u1 == 'run-seq':
       self.brec[self.cci].run_seq()
     elif u1 == 'set-fid':
