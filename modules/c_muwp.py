@@ -689,14 +689,7 @@ class c_muwp:
       if u2 == None:
         print("uError.")
         return -1
-      if not u2.isdigit():
-        print("uError.")
-        return -1
-      ifov = int(u2)
-      if ifov < 0 or ifov >= self.brec[self.cci].n_fov:
-        print("uError.")
-        return -1
-      rv = self.brec[self.cci].go_fov(ifov)
+      rv = self.brec[self.cci].go_fov_name(u2)
       if rv != 0:
         print("Error.  brec failed go_fov().")
         return -1

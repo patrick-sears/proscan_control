@@ -347,7 +347,16 @@ class c_brec:
     #
     return 0
     #
-  def go_fov(self, ifov):
+  def go_fov_name(self, name):
+    ii = -1
+    for i in range(self.n_fov):
+      if name == self.fov_name[i]:
+        ii = i
+        break
+    if ii < 0:  return -1
+    self.go_fov_i(ii)
+  def go_fov_i(self, ifov):
+    if not type(ifov) == int:          return -1
     if ifov < 0 or ifov > self.n_fov:  return -1
     #
     x,y,z = self.get_fov_S1(ifov)
@@ -359,7 +368,7 @@ class c_brec:
   def run_seq(self):
     prompt = "brec>> "
     for i in range(self.n_fov):
-      self.go_fov(i)
+      self.go_fov_i(i)
       while True:
         uline = input(prompt)
         uline = uline.strip()
