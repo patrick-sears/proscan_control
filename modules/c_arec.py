@@ -153,11 +153,6 @@ class c_arec:
       fname = fname_default
       print("Using default file.")
     #
-    if self.n_area != 0:
-      # If there are data in ram, make a backup.
-      ufname = 'arec_'+datetime.now().strftime("%Y%m%d_%H%M%S")+'.data'
-      self.save(ufname)
-    #
     self.clear_areas()
     #
     print("  Loading: ", fname )
