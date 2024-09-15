@@ -383,29 +383,37 @@ class c_locup:
       l = l.strip()
       if len(l) == 0:  continue
       if l[0] == '#':  continue
-      ll = l.split(' ')
-      lla = l.split(':')
-      key = ll[0]
-      ###
-      if key == '!m':
-        next_pam = lla[1].strip()
-        continue
-      if len(lla) > 1:
-        # This overrides next_pam.
-        self.pam.append( lla[1].strip() )
-        next_pam = ""
+      mm = [m.strip() for m in l.split(';')]
+      key = mm[0]
+      if key == '!m':  self.frea_pa(f, pam)
       else:
-        self.pam.append( next_pam )
-        next_pam = ""
-      llb = lla[0].strip().split(' ')
-      self.paname.append( llb[0] )
-      self.pax.append( int(llb[1]) )
-      self.pay.append( int(llb[2]) )
+        print("Error e300.  Bad locup pattern file.")
+        print("  line:  ", l)
+        sys.exit(1)
+      ###
     f.close()
     self.n_pattern = len(self.paname)
     print("  Done.")
     #
   #
+  def fread_pa(self, f, pam):
+    upam = pam
+    for l in f:
+      l = l.strip()
+      if len(l) == 0:  break
+      if l[0] == '#':  continue
+      mm = [m.strip() for m in l.split(';')]
+      if mm[0] = '!m':
+        print("Error e301.  Bad locup pattern file.")
+        print("  line:  ", l)
+        sys.exit(1)
+      #
+      self.pam.append(upam)
+      self.paname.append( mm[0] )
+      self.pax.append( int(mm[1]) )
+      self.pay.append( int(mm[2]) )
+      upam = ""
+      #
   #
 #######################################################
 

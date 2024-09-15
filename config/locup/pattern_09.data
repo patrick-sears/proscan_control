@@ -6,10 +6,11 @@
 # !culture_diam 23000
 
 
-!m : N FOV
-1 0 9708
-!m : S FOV
-2 0 -9708
+!m ; N FOV
+  1 ;      0 ;   9708
+
+!m ; S FOV
+  2 ;      0 ;  -9708
 
 
 
