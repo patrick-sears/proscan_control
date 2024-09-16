@@ -377,7 +377,6 @@ class c_locup:
     self.pay = []  # pattern y
     self.paname = []  # a short name for that item in the pattern list
     # several items can have the same name.
-    next_pam = ""
     f = open(fname)
     for l in f:
       l = l.strip()
@@ -385,7 +384,7 @@ class c_locup:
       if l[0] == '#':  continue
       mm = [m.strip() for m in l.split(';')]
       key = mm[0]
-      if key == '!m':  self.frea_pa(f, pam)
+      if key == '!m':  self.fread_pa(f, mm[1])
       else:
         print("Error e300.  Bad locup pattern file.")
         print("  line:  ", l)
@@ -403,7 +402,7 @@ class c_locup:
       if len(l) == 0:  break
       if l[0] == '#':  continue
       mm = [m.strip() for m in l.split(';')]
-      if mm[0] = '!m':
+      if mm[0] == '!m':
         print("Error e301.  Bad locup pattern file.")
         print("  line:  ", l)
         sys.exit(1)
