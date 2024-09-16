@@ -153,11 +153,6 @@ class c_arec:
       fname = fname_default
       print("Using default file.")
     #
-    if self.n_area != 0:
-      # If there are data in ram, make a backup.
-      ufname = 'arec_'+datetime.now().strftime("%Y%m%d_%H%M%S")+'.data'
-      self.save(ufname)
-    #
     self.clear_areas()
     #
     print("  Loading: ", fname )
@@ -200,68 +195,8 @@ class c_arec:
     self.n_area = len(self.name)
     print("  Done.")
   #
-  def load_data_format_2(self):
-    print("Loading data...")
-    #
-    fname_base =  "arec.data"
-    fname_default = "config/"+fname_base
-    fname_user = "user/"+fname_base
-    if os.path.isfile( fname_user ):
-      fname = fname_user
-      print("Found user file.")
-    else:
-      fname = fname_default
-      print("Using default file.")
-    #
-    self.clear_areas()
-    #
-    print("  Loading: ", fname )
-    f = open(fname)
-    for l in f:
-      l = l.strip()
-      if len(l) == 0:  continue
-      if l[0] == '#':  continue
-      ###
-      ll = l.split(';')
-      self.px.append( int(ll[1].strip()) )
-      self.py.append( int(ll[2].strip()) )
-      self.pz.append( int(ll[3].strip()) )
-      self.name.append( ll[4].strip() )
-      if len(ll) > 5:
-        self.notes.append( ll[5].strip() )
-      else:
-        self.notes.append("")
-      ###
-    f.close()
-    self.n_area = len(self.name)
-    print("  Done.")
-  #
   def save(self, ufname=None):
     self.save_data_format_3(ufname)
-  #
-  def save_data_format_2(self, ufname=None):
-    if self.n_area == 0:
-      print("Nothing to save.")
-      return
-    fname_base =  "arec.data"
-    if ufname != None:
-      fname_base = ufname
-    fname_user = "user/"+fname_base
-    fname = fname_user
-    print("Saving "+fname+" ...")
-    #
-    fz = open(fname, 'w')
-    for i in range(self.n_area):
-      ou = str(i)
-      ou += " ; " + str(self.px[i])
-      ou += " ; " + str(self.py[i])
-      ou += " ; " + str(self.pz[i])
-      ou += " ; " + self.name[i]
-      if len(self.notes[i])>0:
-        ou += " ; " + self.notes[i]
-      ou += '\n'
-      fz.write(ou)
-    fz.close()
   #
   def save_data_format_3(self, ufname=None):
     savetime_dto       = datetime.now()

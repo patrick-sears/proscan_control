@@ -546,6 +546,7 @@ class c_muwp:
         if ull[1] == 'all':
           self.load_config()
           self.load_plate()
+        elif ull[1] == 'arec':    self.arec.load()
         elif ull[1] == 'brec':    self.load_brec()
         elif ull[1] == 'config':  self.load_config()
         elif ull[1] == 'plate':   self.load_plate()
@@ -596,7 +597,8 @@ class c_muwp:
           print("uError.")
           continue
         ac2 = ull[1]
-        if   ac2 == 'brec':   self.save_brec()
+        if   ac2 == 'arec':   self.arec.save()
+        elif ac2 == 'brec':   self.save_brec()
         elif ac2 == 'plate':  self.save_plate()
         else:
           print("uError.")
