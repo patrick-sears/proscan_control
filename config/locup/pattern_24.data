@@ -1,6 +1,6 @@
 
 # 2024-09-13 "Recode special".
-# 2024 ipro 0913v15a.
+# 2024 ipro 0516v09a.
 # For 12mm mc
 
 !m ; 4 edges N S W E
@@ -18,7 +18,6 @@
  central 6 ;  -2765 ;      0
  central 7 ;    922 ;  -2304
  central 8 ;   -922 ;  -2304
-
 
 
 
