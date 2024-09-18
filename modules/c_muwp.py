@@ -591,6 +591,12 @@ class c_muwp:
         rv = self.hui_reset_multi_edges()  # rv ignored
       elif action == 'run':
         rv = self.hui_run(ull) # rv ignored
+      elif action == 'srun':
+        # Simple run (temporary mode a).
+        rv = self.hui_srun(ull) # rv ignored
+      elif action == 'rrun':
+        # Reset run (temporary mode b).
+        rv = self.hui_rrun(ull) # rv ignored
         #
       elif action == 'save':
         if n_ull != 2:
@@ -1145,6 +1151,20 @@ class c_muwp:
       self.ins_center_x[iw] = self.mlocup[iw].cx
       self.ins_center_y[iw] = self.mlocup[iw].cy
     return rv
+    #
+  def hui_srun(self, ull):
+    # Simple run (temporary mode a).
+    tmp_mode = self.run_mode
+    self.run_mode = 'a'
+    self.hui_run(ull)
+    self.run_mode = tmp_mode
+    #
+  def hui_rrun(self, ull):
+    # Reset run (temporary mode b).
+    tmp_mode = self.run_mode
+    self.run_mode = 'b'
+    self.hui_run(ull)
+    self.run_mode = tmp_mode
     #
   def run_pattern_with_mode(self, iw):
     if   self.run_mode == 'a':
