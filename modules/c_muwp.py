@@ -676,8 +676,20 @@ class c_muwp:
       ou += ' ; {:6d}'.format(ppz)
       self.plog.add_send(ou)
     elif ull[1] == 'centers':
+      if not self.plog.is_logging():
+        print("Warning:  Logging is off.")
+        print("  Nothing logged.")
+        return -1
       ou = ''
       ou += '# User request.\n'
+      ou += '!culture_diam ; '
+      diam = self.get_culture_diam(0)
+      if diam != None:
+        ou += '{:d}'.format(diam)
+        ou += ' ; # From mlocup[0].'
+      else:
+        ou += '# No culture diam found.'
+      ou += '\n'
       ou += '!n_well ; {:d}\n'.format(self.n_well)
       ou += '!centers\n'
       ou += '# w_num ; well_x ; well_y ; ins_x  ; ins_y\n'
@@ -1393,6 +1405,14 @@ class c_muwp:
       #
     #
     return 0
+    #
+  def get_culture_diam(self, i):
+    if self.n_well <= i:  return None
+    if not hasattr(self, 'mlocup'):  return None # To check???
+    n_locup = len(self.mlocup)
+    if n_locup <= i:  return None
+    if not hasattr(self.mlocup[i], 'culture_diam'):  return None
+    return self.mlocup[i].culture_diam
     #
 #######################################################
 
