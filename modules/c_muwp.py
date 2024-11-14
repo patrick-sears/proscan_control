@@ -645,10 +645,10 @@ class c_muwp:
         print("  Position not logged.")
         return -1
       #
-      xx = 101.1
-      yy = 202.2
-      ou = '!pos ; {:0.0f}'.format(xx)
-      ou += ' ; {:0.0f}'.format(yy)
+      ppx, ppy, ppz = get_p3()
+      ou = '!pos ; {:6d}'.format(ppx)
+      ou += ' ; {:6d}'.format(ppy)
+      ou += ' ; {:6d}'.format(ppz)
       ou += ' ; # User request.'
       self.plog.add_send(ou)
     # HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH **.**
