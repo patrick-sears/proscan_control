@@ -646,10 +646,15 @@ class c_muwp:
         return -1
       #
       ppx, ppy, ppz = get_p3()
-      ou = '!pos ; {:6d}'.format(ppx)
+      self.plog.add('# User request.')
+      ou = ''
+      if self.cci < 0:  ou += '!cc ; - ; # No cc set.'
+      else:             ou += '!cc ; '+str(self.cci+1)
+      self.plog.add(ou)
+      ou = ''
+      ou += '!pos ; {:6d}'.format(ppx)
       ou += ' ; {:6d}'.format(ppy)
       ou += ' ; {:6d}'.format(ppz)
-      ou += ' ; # User request.'
       self.plog.add_send(ou)
     elif ull[1] == 'um':  # User message.
       if not self.plog.logging():
