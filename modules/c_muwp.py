@@ -644,6 +644,8 @@ class c_muwp:
     #  log on
     #  log off
     #  log pos
+    #  loge centers
+    #  log um ; ...
     for i in range(1,4):
       if len(ull) < i+1:  ull.append(None)
     # n_ull = len(ull)
@@ -672,6 +674,21 @@ class c_muwp:
       ou += '!pos ; {:6d}'.format(ppx)
       ou += ' ; {:6d}'.format(ppy)
       ou += ' ; {:6d}'.format(ppz)
+      self.plog.add_send(ou)
+    elif ull[1] == 'centers':
+      ou = ''
+      ou += '# User request.\n'
+      ou += '!n_well ; {:d}\n'.format(self.n_well)
+      ou += '!centers\n'
+      ou += '# w_num ; well_x ; well_y ; ins_x  ; ins_y\n'
+      for i in range(self.n_well):
+        ou += '{:7d}'.format(i+1)
+        ou += ' ; {:6d}'.format(self.well_center_x[i])
+        ou += ' ; {:6d}'.format(self.well_center_y[i])
+        ou += ' ; {:6d}'.format(self.ins_center_x[i])
+        ou += ' ; {:6d}'.format(self.ins_center_y[i])
+        ou += '\n'
+      ou += '!end_centers'
       self.plog.add_send(ou)
     elif ull[1] == 'um':  # User message.
       if not self.plog.is_logging():
