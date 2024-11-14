@@ -95,8 +95,15 @@ class c_locup:
     spo.write( send )
     #########
   #
+  def plog_is_go(self):
+    if self.plog == None:  return False
+    if not self.plog.is_logging():  return False
+    return True
+  #
   def run_pattern(self):
     ######################
+    if self.plog_is_go():
+      self.plog.add_send("# Starting c_locup run.")
     print()
     for i in range(self.n_pattern):
       #########
@@ -115,11 +122,22 @@ class c_locup:
       ouline += "\r\n"
       send = bytes( ouline.encode() )
       spo.write( send )
+      if self.plog_is_go():
+        ou = ''
+        ou += '!pos ; {:6d}'.format(x)
+        ou += ' ; {:6d}'.format(y)
+        ou += ' ; # c_locup run'
+        self.plog.add_send(ou)
       #########
       # uline = input("  Hit [enter] when done (q=quit):  \n")
       uline = input("  Hit [enter] when done (q=quit):  ")
-      if uline == 'q':  return -1
+      if uline == 'q':
+        if self.plog_is_go():
+          self.plog.add_send("# c_locup run, user quit end.")
+        return -1
     ######################
+    if self.plog_is_go():
+      self.plog.add_send("# c_locup run, normal end.")
     self.beep(1)
     return 0
   #
