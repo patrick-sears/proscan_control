@@ -16,6 +16,8 @@ from modules.c_brec import c_brec
 
 from modules_e.c_circular_mover import *
 
+from modules.c_psc_logger import *
+
 
 #######################################################
 class c_muwp:
@@ -56,6 +58,9 @@ class c_muwp:
     #
     self.brec = []
     self.n_brec = 0
+    #
+    self.plog = c_psc_logger()
+    self.plog.set_fzname( 'user/z_psc.log' )
     #
   #
   def clear_fidu(self):
@@ -516,6 +521,8 @@ class c_muwp:
       if action == '':
         # print("No action.")
         pass
+      elif action == 'log':
+        rv = self.hui_log(ull)
       elif action == 'arec':
         rv = self.hui_arec(ull) # rv ignored
       elif action == 'brec':
@@ -615,6 +622,37 @@ class c_muwp:
         #
       else:
         print("uError.  Unrecognized action.")
+    #
+  def hui_log(self,ull):
+    #  log on
+    #  log off
+    #  log pos
+    for i in range(1,4):
+      if len(ull) < i+1:  ull.append(None)
+    # n_ull = len(ull)
+    #
+    if ull[1] == None:  return -1
+    elif ull[1] == 'on':
+      self.plog.turn_on_logging()
+      self.plog.send_blank_lines(2)
+      self.plog.add_send("!logging ; on")
+    elif ull[1] == 'off':
+      self.plog.add_send("!logging ; off")
+      self.plog.turn_off_logging()
+    elif ull[1] == 'pos':
+      if not self.plog.logging():
+        print("Warning:  Logging is off.")
+        print("  Position not logged.")
+        return -1
+      #
+      xx = 101.1
+      yy = 202.2
+      ou = '!pos ; {:0.0f}'.format(xx)
+      ou += ' ; {:0.0f}'.format(yy)
+      ou += ' ; # User request.'
+      self.plog.add_send(ou)
+    # HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH **.**
+    return 0
     #
   def hui_arec(self,ull):
     n_ull = len(ull)
