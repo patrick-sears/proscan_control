@@ -20,7 +20,7 @@ class c_psc_logger:
   def turn_off_logging(self):
     self.logging_is_on = False
     #
-  def logging(self):
+  def is_logging(self):
     return self.logging_is_on
   def add(self, m, end='\n', flush=False):
     if not self.logging_is_on:  return

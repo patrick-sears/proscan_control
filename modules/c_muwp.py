@@ -449,6 +449,23 @@ class c_muwp:
     ouline += "\r\n"
     send = bytes( ouline.encode() )
     spo.write( send )
+    if self.plog.is_logging():
+      self.plog.add('# Auto log.')
+      self.plog.add('!action ; go_ins_center')
+      ou = ''
+      if self.cci < 0:  ou += '!cc ; - ; # No cc set.'
+      else:             ou += '!cc ; '+str(self.cci+1)
+      self.plog.add(ou)
+      #
+      ou = ''
+      ou += '!w_num ; '+str(iw+1)+' ; # Going here.'
+      self.plog.add(ou)
+      #
+      ou = ''
+      ou += '!pos ; {:6d}'.format(psx)
+      ou += ' ; {:6d}'.format(psy)
+      self.plog.add_send(ou)
+      #
   #
   def go_fidu(self, ifidu):
     if ifidu < 0 or ifidu >= self.n_fidu:
@@ -640,7 +657,7 @@ class c_muwp:
       self.plog.add_send("!logging ; off")
       self.plog.turn_off_logging()
     elif ull[1] == 'pos':
-      if not self.plog.logging():
+      if not self.plog.is_logging():
         print("Warning:  Logging is off.")
         print("  Nothing logged.")
         return -1
@@ -657,7 +674,7 @@ class c_muwp:
       ou += ' ; {:6d}'.format(ppz)
       self.plog.add_send(ou)
     elif ull[1] == 'um':  # User message.
-      if not self.plog.logging():
+      if not self.plog.is_logging():
         print("Warning:  Logging is off.")
         print("  Nothing logged.")
         return -1
