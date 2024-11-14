@@ -522,7 +522,7 @@ class c_muwp:
         # print("No action.")
         pass
       elif action == 'log':
-        rv = self.hui_log(ull)
+        rv = self.hui_log(uline, ull)
       elif action == 'arec':
         rv = self.hui_arec(ull) # rv ignored
       elif action == 'brec':
@@ -623,7 +623,7 @@ class c_muwp:
       else:
         print("uError.  Unrecognized action.")
     #
-  def hui_log(self,ull):
+  def hui_log(self, uline, ull):
     #  log on
     #  log off
     #  log pos
@@ -642,7 +642,7 @@ class c_muwp:
     elif ull[1] == 'pos':
       if not self.plog.logging():
         print("Warning:  Logging is off.")
-        print("  Position not logged.")
+        print("  Nothing logged.")
         return -1
       #
       ppx, ppy, ppz = get_p3()
@@ -651,7 +651,18 @@ class c_muwp:
       ou += ' ; {:6d}'.format(ppz)
       ou += ' ; # User request.'
       self.plog.add_send(ou)
-    # HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH **.**
+    elif ull[1] == 'um':  # User message.
+      if not self.plog.logging():
+        print("Warning:  Logging is off.")
+        print("  Nothing logged.")
+        return -1
+      mm = [m.strip() for m in uline.split(';')]
+      if len(mm) < 2:  mm.append('')
+      ou = '!um ; # '+mm[1]
+      self.plog.add_send(ou)
+      #
+    else:
+      return -1
     return 0
     #
   def hui_arec(self,ull):
