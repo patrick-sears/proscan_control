@@ -19,6 +19,11 @@ class c_locup:
     self.cy = None
     self.cnum = -1    # the culture number
     self.pattern_file = "locup_pattern.data"
+    #
+    self.plog = None
+  #
+  def set_plog(self, plog):
+    self.plog = plog
   #
   def set_cnum(self, cnum):
     self.cnum = cnum
