@@ -16,6 +16,8 @@ from modules.c_brec import c_brec
 
 from modules_e.c_circular_mover import *
 
+from modules.c_psc_logger import *
+
 
 #######################################################
 class c_muwp:
@@ -57,6 +59,9 @@ class c_muwp:
     self.brec = []
     self.n_brec = 0
     #
+    self.plog = c_psc_logger()
+    self.plog.set_fzname( 'user/z_psc.log' )
+    #
   #
   def clear_fidu(self):
     self.fidu_name = []
@@ -73,6 +78,7 @@ class c_muwp:
       self.mlocup[i].cx = self.ins_center_x[i]
       self.mlocup[i].cy = self.ins_center_y[i]
       self.mlocup[i].set_cnum(i+1)
+      self.mlocup[i].set_plog( self.plog )
   #
   def create_brecs(self):
     self.brec = []
@@ -444,6 +450,23 @@ class c_muwp:
     ouline += "\r\n"
     send = bytes( ouline.encode() )
     spo.write( send )
+    if self.plog.is_logging():
+      self.plog.add('# Auto log.')
+      self.plog.add('!action ; go_ins_center')
+      ou = ''
+      if self.cci < 0:  ou += '!cc ; - ; # No cc set.'
+      else:             ou += '!cc ; '+str(self.cci+1)
+      self.plog.add(ou)
+      #
+      ou = ''
+      ou += '!w_num ; '+str(iw+1)+' ; # Going here.'
+      self.plog.add(ou)
+      #
+      ou = ''
+      ou += '!pos ; {:6d}'.format(psx)
+      ou += ' ; {:6d}'.format(psy)
+      self.plog.add_send(ou)
+      #
   #
   def go_fidu(self, ifidu):
     if ifidu < 0 or ifidu >= self.n_fidu:
@@ -516,6 +539,8 @@ class c_muwp:
       if action == '':
         # print("No action.")
         pass
+      elif action == 'log':
+        rv = self.hui_log(uline, ull)
       elif action == 'arec':
         rv = self.hui_arec(ull) # rv ignored
       elif action == 'brec':
@@ -615,6 +640,82 @@ class c_muwp:
         #
       else:
         print("uError.  Unrecognized action.")
+    #
+  def hui_log(self, uline, ull):
+    #  log on
+    #  log off
+    #  log pos
+    #  loge centers
+    #  log um ; ...
+    for i in range(1,4):
+      if len(ull) < i+1:  ull.append(None)
+    # n_ull = len(ull)
+    #
+    if ull[1] == None:  return -1
+    elif ull[1] == 'on':
+      self.plog.turn_on_logging()
+      self.plog.send_blank_lines(2)
+      self.plog.add_send("!logging ; on")
+    elif ull[1] == 'off':
+      self.plog.add_send("!logging ; off")
+      self.plog.turn_off_logging()
+    elif ull[1] == 'pos':
+      if not self.plog.is_logging():
+        print("Warning:  Logging is off.")
+        print("  Nothing logged.")
+        return -1
+      #
+      ppx, ppy, ppz = get_p3()
+      self.plog.add('# User request.')
+      ou = ''
+      if self.cci < 0:  ou += '!cc ; - ; # No cc set.'
+      else:             ou += '!cc ; '+str(self.cci+1)
+      self.plog.add(ou)
+      ou = ''
+      ou += '!pos ; {:6d}'.format(ppx)
+      ou += ' ; {:6d}'.format(ppy)
+      ou += ' ; {:6d}'.format(ppz)
+      self.plog.add_send(ou)
+    elif ull[1] == 'centers':
+      if not self.plog.is_logging():
+        print("Warning:  Logging is off.")
+        print("  Nothing logged.")
+        return -1
+      ou = ''
+      ou += '# User request.\n'
+      ou += '!culture_diam ; '
+      diam = self.get_culture_diam(0)
+      if diam != None:
+        ou += '{:d}'.format(diam)
+        ou += ' ; # From mlocup[0].'
+      else:
+        ou += '# No culture diam found.'
+      ou += '\n'
+      ou += '!n_well ; {:d}\n'.format(self.n_well)
+      ou += '!centers\n'
+      ou += '# w_num ; well_x ; well_y ; ins_x  ; ins_y\n'
+      for i in range(self.n_well):
+        ou += '{:7d}'.format(i+1)
+        ou += ' ; {:6d}'.format(self.well_center_x[i])
+        ou += ' ; {:6d}'.format(self.well_center_y[i])
+        ou += ' ; {:6d}'.format(self.ins_center_x[i])
+        ou += ' ; {:6d}'.format(self.ins_center_y[i])
+        ou += '\n'
+      ou += '!end_centers'
+      self.plog.add_send(ou)
+    elif ull[1] == 'um':  # User message.
+      if not self.plog.is_logging():
+        print("Warning:  Logging is off.")
+        print("  Nothing logged.")
+        return -1
+      mm = [m.strip() for m in uline.split(';')]
+      if len(mm) < 2:  mm.append('')
+      ou = '!um ; # '+mm[1]
+      self.plog.add_send(ou)
+      #
+    else:
+      return -1
+    return 0
     #
   def hui_arec(self,ull):
     n_ull = len(ull)
@@ -1305,6 +1406,14 @@ class c_muwp:
       #
     #
     return 0
+    #
+  def get_culture_diam(self, i):
+    if self.n_well <= i:  return None
+    if not hasattr(self, 'mlocup'):  return None # To check???
+    n_locup = len(self.mlocup)
+    if n_locup <= i:  return None
+    if not hasattr(self.mlocup[i], 'culture_diam'):  return None
+    return self.mlocup[i].culture_diam
     #
 #######################################################
 
