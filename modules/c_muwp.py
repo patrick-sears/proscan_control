@@ -51,6 +51,8 @@ class c_muwp:
     self.move_choice_dy = []
     self.move_choice_note = []
     self.n_move_choice = 0
+    self.udx = 100 # Will probably change to 307um in cofnig.
+    self.udy = 100 # Will probably change to 230um in cofnig.
     #
     self.cci = -1  # current culture i (0 offset), -1 if not set.
     #
@@ -1260,6 +1262,8 @@ class c_muwp:
         print("  File does not exist in user/")
     print("psx0:  ", self.psx0)
     print("psy0:  ", self.psy0)
+    print("move udx: ", self.udx)
+    print("move udy: ", self.udy)
     print("well centers:")
     for i in range(self.n_well):
       print("  ", i+1, self.well_center_x[i], self.well_center_y[i])
