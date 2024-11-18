@@ -1013,6 +1013,24 @@ class c_muwp:
     ouline += "\r\n"
     send = bytes( ouline.encode() )
     spo.write( send )
+    if self.plog.is_logging():
+      self.plog.add('# Auto log.')
+      self.plog.add('!action ; hui_move')
+      ou = ''
+      if self.cci < 0:  ou += '!cc ; - ; # No cc set.'
+      else:             ou += '!cc ; '+str(self.cci+1)
+      self.plog.add(ou)
+      #
+      ou = ''
+      ou += '# ull:'
+      for li in ull:  ou += ' '+li
+      self.plog.add(ou)
+      #
+      ou = ''
+      ou += '!mov ; {:6d}'.format(dx)
+      ou += ' ; {:6d}'.format(dy)
+      self.plog.add_send(ou)
+      #
     #
     return 0
   def hui_run(self, ull):
