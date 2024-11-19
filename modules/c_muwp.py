@@ -1391,7 +1391,22 @@ class c_muwp:
     print("Entering circular run.")
     print("  [Enter] to jump to next position.")
     print("  [x] to exit the run.")
+    #
+    if self.plog.is_logging():
+      self.plog.add( '!action ; start go_circular_multi' )
+      ou = ''
+      if self.cci < 0:  ou += '!cc ; - ; # No cc set.'
+      else:             ou += '!cc ; '+str(self.cci+1)
+      self.plog.add(ou)
+      ou = ''
+      ou += '!polars ; {:0.0f}'.format(cm.r)
+      ou += ' ; {:0.3f}'.format( ang0 * 180/math.pi )
+      ou += ' ; # r(um) phi(deg)'
+      self.plog.add(ou)
+      self.plog.send()
+    #
     self.beep(1)
+    #
     #
     i = 0
     while True:
@@ -1402,6 +1417,16 @@ class c_muwp:
         pline = "Now at i, ang: "+str(i)
         pline += ", {:6.1f} deg".format(ang1_deg)
         print(pline)
+        ###--------------------------- log \\\
+        if self.plog.is_logging():
+          ou = ''
+          ou += '!polar_ang'
+          ou += ' ; {:3d}'.format(i)
+          ou += ' ; {:7.3f}'.format( ang1_deg )
+          ou += ' ; # Current i_ang ang1_deg(um).'
+          self.plog.add(ou)
+          self.plog.send()
+        ###--------------------------- log ///
         s = input("  circ>> ")
         if s == 'q' or s == 'x':  break
         if s == '':  break
@@ -1426,6 +1451,11 @@ class c_muwp:
       spo.write( send )
       #
       #
+    ###--------------------------- log \\\
+    if self.plog.is_logging():
+      self.plog.add('!action ; end go_circular_multi')
+      self.plog.send()
+    ###--------------------------- log ///
     #
     return 0
     #
