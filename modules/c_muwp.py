@@ -51,6 +51,8 @@ class c_muwp:
     self.move_choice_dy = []
     self.move_choice_note = []
     self.n_move_choice = 0
+    self.udx = 100 # Will probably change to 307um in cofnig.
+    self.udy = 100 # Will probably change to 230um in cofnig.
     #
     self.cci = -1  # current culture i (0 offset), -1 if not set.
     #
@@ -1013,6 +1015,24 @@ class c_muwp:
     ouline += "\r\n"
     send = bytes( ouline.encode() )
     spo.write( send )
+    if self.plog.is_logging():
+      self.plog.add('# Auto log.')
+      self.plog.add('!action ; hui_move')
+      ou = ''
+      if self.cci < 0:  ou += '!cc ; - ; # No cc set.'
+      else:             ou += '!cc ; '+str(self.cci+1)
+      self.plog.add(ou)
+      #
+      ou = ''
+      ou += '# ull:'
+      for li in ull:  ou += ' '+li
+      self.plog.add(ou)
+      #
+      ou = ''
+      ou += '!mov ; {:6d}'.format(dx)
+      ou += ' ; {:6d}'.format(dy)
+      self.plog.add_send(ou)
+      #
     #
     return 0
   def hui_run(self, ull):
@@ -1242,6 +1262,8 @@ class c_muwp:
         print("  File does not exist in user/")
     print("psx0:  ", self.psx0)
     print("psy0:  ", self.psy0)
+    print("move udx: ", self.udx)
+    print("move udy: ", self.udy)
     print("well centers:")
     for i in range(self.n_well):
       print("  ", i+1, self.well_center_x[i], self.well_center_y[i])
@@ -1369,7 +1391,33 @@ class c_muwp:
     print("Entering circular run.")
     print("  [Enter] to jump to next position.")
     print("  [x] to exit the run.")
+    #
+    if self.plog.is_logging():
+      self.plog.add( '!action ; start go_circular_multi' )
+      ou = ''
+      if self.cci < 0:  ou += '!cc ; - ; # No cc set.'
+      else:             ou += '!cc ; '+str(self.cci+1)
+      self.plog.add(ou)
+      ou = ''
+      ou += '!center ; '
+      ou += ' ; {:0.0f}'.format(psx0)
+      ou += ' ; {:0.0f}'.format(psy0)
+      ou += ' ; # ps coord system, um.'
+      self.plog.add(ou)
+      ou = ''
+      ou += '!polars ; {:0.0f}'.format(cm.r)
+      ou += ' ; {:0.3f}'.format( ang0 * 180/math.pi )
+      ou += ' ; # r(um) phi(deg)'
+      self.plog.add(ou)
+      ou = ''
+      ou += '!dang ; {:7.3f}'.format( dang_deg )
+      ou += ' ; # deg.'
+      self.plog.add(ou)
+      self.plog.send()
+    #
     self.beep(1)
+    #
+    px2 = psx1;  py2 = psy1;  # Needed for log.
     #
     i = 0
     while True:
@@ -1380,6 +1428,31 @@ class c_muwp:
         pline = "Now at i, ang: "+str(i)
         pline += ", {:6.1f} deg".format(ang1_deg)
         print(pline)
+        ###--------------------------- log \\\
+        if self.plog.is_logging():
+          ou = ''
+          ou += '!polar_ang'
+          ou += ' ; {:3d}'.format(i)
+          ou += ' ; {:7.3f}'.format( ang1_deg )
+          ou += ' ; # Current i_ang ang1_deg(um).'
+          self.plog.add(ou)
+          ou = ''
+          ou += '!pos_xy '
+          ou += ' ; {:0.0f}'.format(px2)
+          ou += ' ; {:0.0f}'.format(py2)
+          ou += ' ; # ps coord system, um.'
+          self.plog.add(ou)
+          # rmax rmay:  rel math (coord sys), xy.
+          rmax = psx0 - px2
+          rmay = py2 - psy0
+          ou = ''
+          ou += '!cc_rel_pos_xy '
+          ou += ' ; {:0.0f}'.format(rmax)
+          ou += ' ; {:0.0f}'.format(rmay)
+          ou += ' ; # math coord system, um.'
+          self.plog.add(ou)
+          self.plog.send()
+        ###--------------------------- log ///
         s = input("  circ>> ")
         if s == 'q' or s == 'x':  break
         if s == '':  break
@@ -1404,6 +1477,11 @@ class c_muwp:
       spo.write( send )
       #
       #
+    ###--------------------------- log \\\
+    if self.plog.is_logging():
+      self.plog.add('!action ; end go_circular_multi')
+      self.plog.send()
+    ###--------------------------- log ///
     #
     return 0
     #
