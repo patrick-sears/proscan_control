@@ -1399,14 +1399,25 @@ class c_muwp:
       else:             ou += '!cc ; '+str(self.cci+1)
       self.plog.add(ou)
       ou = ''
+      ou += '!center ; '
+      ou += ' ; {:0.0f}'.format(psx0)
+      ou += ' ; {:0.0f}'.format(psy0)
+      ou += ' ; # ps coord system, um.'
+      self.plog.add(ou)
+      ou = ''
       ou += '!polars ; {:0.0f}'.format(cm.r)
       ou += ' ; {:0.3f}'.format( ang0 * 180/math.pi )
       ou += ' ; # r(um) phi(deg)'
+      self.plog.add(ou)
+      ou = ''
+      ou += '!dang ; {:7.3f}'.format( dang_deg )
+      ou += ' ; # deg.'
       self.plog.add(ou)
       self.plog.send()
     #
     self.beep(1)
     #
+    px2 = psx1;  py2 = psy1;  # Needed for log.
     #
     i = 0
     while True:
@@ -1424,6 +1435,21 @@ class c_muwp:
           ou += ' ; {:3d}'.format(i)
           ou += ' ; {:7.3f}'.format( ang1_deg )
           ou += ' ; # Current i_ang ang1_deg(um).'
+          self.plog.add(ou)
+          ou = ''
+          ou += '!pos_xy '
+          ou += ' ; {:0.0f}'.format(px2)
+          ou += ' ; {:0.0f}'.format(py2)
+          ou += ' ; # ps coord system, um.'
+          self.plog.add(ou)
+          # rmax rmay:  rel math (coord sys), xy.
+          rmax = psx0 - px2
+          rmay = py2 - psy0
+          ou = ''
+          ou += '!cc_rel_pos_xy '
+          ou += ' ; {:0.0f}'.format(rmax)
+          ou += ' ; {:0.0f}'.format(rmay)
+          ou += ' ; # math coord system, um.'
           self.plog.add(ou)
           self.plog.send()
         ###--------------------------- log ///
