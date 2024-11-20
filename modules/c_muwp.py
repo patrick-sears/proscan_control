@@ -661,6 +661,12 @@ class c_muwp:
     elif ull[1] == 'off':
       self.plog.add_send("!logging ; off")
       self.plog.turn_off_logging()
+    elif ull[1] == 'multi-pos':
+      if not self.plog.is_logging():
+        print("Warning:  Logging is off.")
+        print("  Nothing logged.")
+        return -1
+      self.log_multi_pos()
     elif ull[1] == 'pos':
       if not self.plog.is_logging():
         print("Warning:  Logging is off.")
@@ -1492,6 +1498,24 @@ class c_muwp:
     if n_locup <= i:  return None
     if not hasattr(self.mlocup[i], 'culture_diam'):  return None
     return self.mlocup[i].culture_diam
+    #
+  def log_multi_pos(self):
+    in_mp = True # in multi pos
+    self.plog.add_send('!action ; start log_multi_pos')
+    while in_mp:
+      print("Enter to take pos, x to exit.")
+      hui = input(" log-multi-pos>> ")
+      hui = hui.strip()
+      if hui == 'x' or hui == 'q':  break
+      ppx, ppy, ppz = get_p3()
+      ou = ''
+      ou += '!pos ; {:6d}'.format(ppx)
+      ou += ' ; {:6d}'.format(ppy)
+      ou += ' ; {:6d}'.format(ppz)
+      ou += ' ; !multi_pos'
+      self.plog.add(ou)
+      self.plog.send()
+    self.plog.add_send('!action ; end log_multi_pos')
     #
 #######################################################
 
