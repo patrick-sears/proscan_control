@@ -103,7 +103,10 @@ class c_locup:
   def run_pattern(self):
     ######################
     if self.plog_is_go():
-      self.plog.add_send("# Starting c_locup run.")
+      # self.plog.add_send("# Starting c_locup run.")
+      self.plog.add('!action ; c_locup run start')
+      self.plog.add('!c_locup.cnum ; '+str(self.cnum))
+      self.plog.send()
     print()
     for i in range(self.n_pattern):
       #########
@@ -133,11 +136,14 @@ class c_locup:
       uline = input("  Hit [enter] when done (q=quit):  ")
       if uline == 'q':
         if self.plog_is_go():
-          self.plog.add_send("# c_locup run, user quit end.")
+          # self.plog.add_send("# c_locup run, user quit end.")
+          ou_log = '!action ; c_locup run end by user'
+          self.plog.add_send(ou_log)
         return -1
     ######################
     if self.plog_is_go():
-      self.plog.add_send("# c_locup run, normal end.")
+      # self.plog.add_send("# c_locup run, normal end.")
+      self.plog.add_send('!action ; c_locup run end normal')
     self.beep(1)
     return 0
   #
