@@ -607,6 +607,9 @@ class c_muwp:
           print("uError.")
           continue
         print()
+        if self.plog.is_logging():
+          self.plog.add('!action ; quit ; # The muwp hui exited.')
+          self.plog.send()
         return
       elif action == 'repeat':
         if n_ull != 2:
