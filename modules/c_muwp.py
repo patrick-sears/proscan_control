@@ -351,6 +351,12 @@ class c_muwp:
       elif key == '!udx':       self.udx = int(mm[1])
       elif key == '!udy':       self.udy = int(mm[1])
       elif key == '!run_mode':  self.run_mode = mm[1]
+      elif key == '!log':
+        if mm[1] == 'on':
+          self.plog.turn_on_logging()
+          self.plog.send_blank_lines(2)
+          self.plog.add("!logging ; on ; # Turned on by config.")
+          self.plog.send()
       elif key == '!reset_multi_edges':
         self.read_multi_edges(f, fname)
       elif key == '!load_reset_multi_edges':
