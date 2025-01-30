@@ -126,8 +126,13 @@ class c_locup:
       send = bytes( ouline.encode() )
       spo.write( send )
       if self.plog_is_go():
+        # !runpos:  pos during a run.
+        # i = 0-offset index
+        # num = 1-offset number.
         ou = ''
-        ou += '!pos ; {:6d}'.format(x)
+        ou += '!runpos ; i{:d}'.format(i)
+        ou += ' ; num{:d}'.format(i+1)
+        ou += ' ; {:6d}'.format(x)
         ou += ' ; {:6d}'.format(y)
         ou += ' ; # c_locup run'
         self.plog.add_send(ou)
@@ -143,7 +148,6 @@ class c_locup:
             self.plog.add_send(ou_log)
           return -1
         elif uline == 'l' or uline == 'log':
-          # HHHHHHHHHHHHHHHHHHHHHH --here--
           if self.plog_is_go():
             cbuf() # Make sure the buffer is clear.
             send = bytes( "p\r\n".encode() )
