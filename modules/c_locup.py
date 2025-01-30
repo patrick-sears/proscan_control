@@ -132,14 +132,36 @@ class c_locup:
         ou += ' ; # c_locup run'
         self.plog.add_send(ou)
       #########
-      # uline = input("  Hit [enter] when done (q=quit):  \n")
-      uline = input("  Hit [enter] when done (q=quit):  ")
-      if uline == 'q':
-        if self.plog_is_go():
-          # self.plog.add_send("# c_locup run, user quit end.")
-          ou_log = '!action ; c_locup run end by user'
-          self.plog.add_send(ou_log)
-        return -1
+      while True:
+        uline = input("  Hit [enter] when done (l=log, q=quit):  ")
+        if uline == '':
+          break # Go to next FOV.
+        elif uline == 'q':
+          if self.plog_is_go():
+            # self.plog.add_send("# c_locup run, user quit end.")
+            ou_log = '!action ; c_locup run end by user'
+            self.plog.add_send(ou_log)
+          return -1
+        elif uline == 'l' or uline == 'log':
+          # HHHHHHHHHHHHHHHHHHHHHH --here--
+          if self.plog_is_go():
+            cbuf() # Make sure the buffer is clear.
+            send = bytes( "p\r\n".encode() )
+            spo.write(send)
+            serda = spo.readline()
+            ll = serda.decode("Ascii").split(',')
+            manual_x = int(ll[0])
+            manual_y = int(ll[1])
+            self.plog.add('!action ; manual log during c_locup run')
+            ou = ''
+            ou += '!pos ; {:6d}'.format(manual_x)
+            ou += ' ; {:6d}'.format(manual_y)
+            ou += ' ; # manual pos in c_locup run'
+            self.plog.add_send(ou)
+          else:
+            print("Logging is not on.")
+        else:
+          print("Unrecognized input.")
     ######################
     if self.plog_is_go():
       # self.plog.add_send("# c_locup run, normal end.")
