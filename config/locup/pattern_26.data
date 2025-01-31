@@ -1,0 +1,54 @@
+#
+# locup pattern 26.
+# 2025 ipro 0130v08b ua 0131a.
+# 37 FOV.
+# For use with 10x1x1x, 120 fr/s or lower, 12mm millicell.
+# Designed for recording hurricanes.
+# dpos (um):  1096.25
+
+!m ; 12mm mc, 37 fov.
+# row 1
+row 1, pos 1, fov-1  ;  1096 ;  3289
+row 1, pos 2, fov-2  ;     0 ;  3289
+row 1, pos 3, fov-3  ; -1096 ;  3289
+# row 2
+row 2, pos 1, fov-4  ;  2192 ;  2192
+row 2, pos 2, fov-5  ;  1096 ;  2192
+row 2, pos 3, fov-6  ;     0 ;  2192
+row 2, pos 4, fov-7  ; -1096 ;  2192
+row 2, pos 5, fov-8  ; -2192 ;  2192
+# row 3
+row 3, pos 1, fov  9 ;  3289 ;  1096
+row 3, pos 2, fov 10 ;  2192 ;  1096
+row 3, pos 3, fov 11 ;  1096 ;  1096
+row 3, pos 4, fov 12 ;     0 ;  1096
+row 3, pos 5, fov 13 ; -1096 ;  1096
+row 3, pos 6, fov 14 ; -2192 ;  1096
+row 3, pos 7, fov 15 ; -3289 ;  1096
+# row 4
+row 4, pos 1, fov 16 ;  3289 ;     0
+row 4, pos 2, fov 17 ;  2192 ;     0
+row 4, pos 3, fov 18 ;  1096 ;     0
+row 4, pos 4, fov 19 ;     0 ;     0
+row 4, pos 5, fov 20 ; -1096 ;     0
+row 4, pos 6, fov 21 ; -2192 ;     0
+row 4, pos 7, fov 22 ; -3289 ;     0
+# row 5
+row 5, pos 1, fov 23 ;  3289 ; -1096
+row 5, pos 2, fov 24 ;  2192 ; -1096
+row 5, pos 3, fov 25 ;  1096 ; -1096
+row 5, pos 4, fov 26 ;     0 ; -1096
+row 5, pos 5, fov 27 ; -1096 ; -1096
+row 5, pos 6, fov 28 ; -2192 ; -1096
+row 5, pos 7, fov 29 ; -3289 ; -1096
+# row 6
+row 6, pos 1, fov 30 ;  2192 ; -2192
+row 6, pos 2, fov 31 ;  1096 ; -2192
+row 6, pos 3, fov 32 ;     0 ; -2192
+row 6, pos 4, fov 33 ; -1096 ; -2192
+row 6, pos 5, fov 34 ; -2192 ; -2192
+# row 7
+row 7, pos 1, fov 35 ;  1096 ; -3289
+row 7, pos 2, fov 36 ;     0 ; -3289
+row 7, pos 3, fov 37 ; -1096 ; -3289
+
