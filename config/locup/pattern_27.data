@@ -1,0 +1,48 @@
+#
+# 2025 ipro 0130v08b ua 0131c
+# dx (um):  1536.00
+# dy (um):  1152.00
+# At 2x with 120 fr/s or slower, will completely
+# cover a 12mm mc, with some past the edge and
+# half-FOV overlap in both x and y directions.
+
+!m ; 12mm mc, 31 fov.
+# row 1
+row 1, pos 1, fov-1  ;  1536 ;  3456
+row 1, pos 2, fov-2  ;     0 ;  3456
+row 1, pos 3, fov-3  ; -1536 ;  3456
+# row 2
+row 2, pos 1, fov-4  ;  3072 ;  2304
+row 2, pos 2, fov-5  ;  1536 ;  2304
+row 2, pos 3, fov-6  ;     0 ;  2304
+row 2, pos 4, fov-7  ; -1536 ;  2304
+row 2, pos 5, fov-8  ; -3072 ;  2304
+# row 3
+row 3, pos 1, fov-9  ;  3072 ;  1152
+row 3, pos 2, fov-10 ;  1536 ;  1152
+row 3, pos 3, fov-11 ;     0 ;  1152
+row 3, pos 4, fov-12 ; -1536 ;  1152
+row 3, pos 5, fov-13 ; -3072 ;  1152
+# row 4
+row 4, pos 1, fov-14 ;  3072 ;     0
+row 4, pos 2, fov-15 ;  1536 ;     0
+row 4, pos 3, fov-16 ;     0 ;     0
+row 4, pos 4, fov-17 ; -1536 ;     0
+row 4, pos 5, fov-18 ; -3072 ;     0
+# row 5
+row 5, pos 1, fov-19 ;  3072 ; -1152
+row 5, pos 2, fov-20 ;  1536 ; -1152
+row 5, pos 3, fov-21 ;     0 ; -1152
+row 5, pos 4, fov-22 ; -1536 ; -1152
+row 5, pos 5, fov-23 ; -3072 ; -1152
+# row 6
+row 6, pos 1, fov-24 ;  3072 ; -2304
+row 6, pos 2, fov-25 ;  1536 ; -2304
+row 6, pos 3, fov-26 ;     0 ; -2304
+row 6, pos 4, fov-27 ; -1536 ; -2304
+row 6, pos 5, fov-28 ; -3072 ; -2304
+# row 7
+row 7, pos 1, fov-29 ;  1536 ; -3456
+row 7, pos 2, fov-30 ;     0 ; -3456
+row 7, pos 3, fov-31 ; -1536 ; -3456
+
