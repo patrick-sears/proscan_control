@@ -1,0 +1,27 @@
+#
+# Originally created in 2025 xp0619.
+# For the OkoLab 4-position dish holder.
+# Wells numbered in this order:
+#        1       2
+#        3       4
+
+!psx0 0
+!psy0 0
+
+!fidu
+x1 82000 48000
+x2 31000 28000
+
+!well_center
+1 90705 55804
+2 25645 55806
+3 90708 14778
+4 25664 14795
+
+!ins_center
+1 90705 55804
+2 25645 55806
+3 90708 14778
+4 25664 14795
+
+
