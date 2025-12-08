@@ -748,8 +748,18 @@ class c_muwp:
       if n_ull != 3:
         print("uError.")
         return -1
-      #
       self.arec.go(ull[2])
+    elif u1 == 'gox':
+      if n_ull != 3:
+        print("uError.")
+        return -1
+      self.arec.go_x(ull[2])
+    elif u1 == 'goy':
+      if n_ull != 3:
+        print("uError.")
+        return -1
+      self.arec.go_y(ull[2])
+      #
       #
     elif u1 == 'ls':
       self.arec.ls()

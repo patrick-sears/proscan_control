@@ -137,6 +137,53 @@ class c_arec:
     send = bytes( ouline.encode() )
     spo.write( send )
   #
+  def go_x(self,name):
+    # Go to "name"_x, keeping current y z.
+    j = -1
+    for i in range(self.n_area):
+      if name == self.name[i]:
+        j = i
+    if j == -1:
+      print("Couldn't find area.")
+      return
+    ###
+    cux,cuy,cuz = self.pos()
+    x = self.px[j]
+    y = self.py[j]
+    z = self.pz[j]
+    #
+    ouline = "g"
+    ouline += " {0:d}".format( x )
+    ouline += " {0:d}".format( cuy )
+    ouline += " {0:d}".format( cuz )
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
+    spo.write( send )
+  #
+  #
+  def go_y(self,name):
+    # Go to "name"_y, keeping current x z.
+    j = -1
+    for i in range(self.n_area):
+      if name == self.name[i]:
+        j = i
+    if j == -1:
+      print("Couldn't find area.")
+      return
+    ###
+    cux,cuy,cuz = self.pos()
+    x = self.px[j]
+    y = self.py[j]
+    z = self.pz[j]
+    #
+    ouline = "g"
+    ouline += " {0:d}".format( cux )
+    ouline += " {0:d}".format( y )
+    ouline += " {0:d}".format( cuz )
+    ouline += "\r\n"
+    send = bytes( ouline.encode() )
+    spo.write( send )
+  #
   def load(self):
     self.load_data_format_3()
   #
