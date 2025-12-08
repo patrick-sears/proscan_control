@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
+from modules.c_serial_configer import *
 
-import sys
+import sys, os
 import platform
 import socket
 
@@ -12,6 +13,12 @@ hostname = socket.gethostname()
 print('hostname: ', hostname)
 ############################################
 
+
+ser_config = c_serial_configer()
+ser_config.load('config/serial.config')
+user_ser_config_fname = 'user/serial.config'
+if os.path.exists(user_ser_config_fname):
+  ser_config.load(user_ser_config_fname)
 
 
 ############################################
@@ -26,9 +33,12 @@ if hostname == 'shiva2':
   ###   timeout=2, stopbits=serial.STOPBITS_ONE
   ###   )
   try:
+    print("Using timeout: ", ser_config.timeout)
     spo = serial.Serial(
       port='COM5', baudrate=9600, bytesize=8,
-      timeout=1, stopbits=serial.STOPBITS_ONE
+      # timeout=1, stopbits=serial.STOPBITS_ONE
+      timeout=ser_config.timeout,
+      stopbits=serial.STOPBITS_ONE
       )
   except:
     print("Error.  An exception was raised by the")
