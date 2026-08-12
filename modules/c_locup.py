@@ -223,6 +223,14 @@ class c_locup:
     else:                    useq = None
     return useq
   #
+  def get_center(self):
+    # Get the current pos and set the center
+    # of this locup to that.
+    xx, yy = self.get_pos()
+    self.cx = xx
+    self.cy = yy
+    return 0
+  #
   def get_edges(self, start_edge=None, go_to_first_edge=False):
     #
     # 0 E, 1 N, 2 W, 3 S

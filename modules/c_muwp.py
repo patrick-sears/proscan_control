@@ -1101,7 +1101,27 @@ class c_muwp:
     if n_ull > 1:  ac2 = ull[1]  # Eg "reset edges"
     if n_ull > 2:  ac3 = ull[2]  # Eg "reset c1 edges"
     #
-    # First handle reset with cci.
+    #
+    # ------------------------------------------
+    # Handle reset center with implicit cci.
+    if n_ull == 2 and ac2=="center":
+      if self.cci < 0:
+        print("uError.")
+        return -1
+      iw = self.cci
+      rv = self.mlocup[iw].get_center()
+      if rv == 0:
+        print("Resetting muwp ins",iw+1,"center.")
+        self.ins_center_x[iw] = self.mlocup[iw].cx
+        self.ins_center_y[iw] = self.mlocup[iw].cy
+      else:
+        print("locup get_center() didn't return 0.")
+        print("  So not resetting muwp ins center.")
+      return 0
+    #
+    # ------------------------------------------
+    # Handle reset edges with implicit cci.
+    # Return when done.
     if n_ull == 2 and ac2=="edges":
       if self.cci < 0:
         print("uError.")
@@ -1117,6 +1137,8 @@ class c_muwp:
         print("  So not resetting muwp ins center.")
       return 0
     #
+    # ------------------------------------------
+    # Handle reset edges with explicit c number.
     if n_ull != 3:
       print("uError.")
       return -1
