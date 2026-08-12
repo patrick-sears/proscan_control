@@ -20,4 +20,10 @@ Source.
 https://github.com/patrick-sears/proscan_control
 
 
+__________________________________________________________________
+Main development location.
+
+2026 ipro 0812v10a.
+
+
 
