@@ -1,0 +1,16 @@
+#
+# 2026 ipro 0812v12a au 0812a
+
+!m ; 12mm mc, 8 fov, 3mm diam.
+# row 1
+row 1, pos 1, fov  1 ;   750 ;  1299
+row 1, pos 2, fov  2 ;  -750 ;  1299
+# row 2
+row 2, pos 1, fov  3 ;  1500 ;     0
+row 2, pos 2, fov  4 ;   500 ;     0
+row 2, pos 3, fov  5 ;  -500 ;     0
+row 2, pos 4, fov  6 ; -1500 ;     0
+# row 3
+row 3, pos 1, fov  7 ;   750 ; -1299
+row 3, pos 2, fov  8 ;  -750 ; -1299
+
