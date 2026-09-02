@@ -6,7 +6,12 @@ import winsound
 import time
 from datetime import datetime
 import math
-from matplotlib import pyplot as plt
+
+try:
+  from matplotlib import pyplot as plt
+  imported_plt = True
+except ImportError as e:
+  imported_plt = False
 
 from modules.m1 import *
 from modules.m9_serial import spo
@@ -437,6 +442,11 @@ class c_arec:
     #
   #
   def plot(self, plot_save=0, plot_grc=0):
+    if not imported_plt:
+      print("Warning.")
+      print("  Module matplotlib was not imported.")
+      print("  Skipping plot.")
+      return
     # plot_save:  0 no, 1 yes
     # plot_grc:  0 no, 1 yes plot current stage position
     if self.n_area == 0:
