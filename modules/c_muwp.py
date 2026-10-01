@@ -123,7 +123,7 @@ class c_muwp:
       if not l.startswith('!'):  continue
       l = l.strip()
       # ll = l.split(' ')
-      ll = (' '.joint(l.split())).split()
+      ll = (' '.join(l.split())).split()
       key = ll[0]
       ###
       if key == '!fidu':
@@ -131,7 +131,7 @@ class c_muwp:
         for l in f:
           l = l.strip()
           # ll = l.split(' ')
-          ll = (' '.joint(l.split())).split()
+          ll = (' '.join(l.split())).split()
           if len(l) == 0:  break
           if l[0] == '#':  continue
           self.fidu_name.append( ll[0] )
@@ -145,7 +145,7 @@ class c_muwp:
         for l in f:
           l = l.strip()
           # ll = l.split(' ')
-          ll = (' '.joint(l.split())).split()
+          ll = (' '.join(l.split())).split()
           if len(l) == 0:  break
           if l[0] == '#':  continue
           self.well_center_x.append( int(ll[1]) )
@@ -156,7 +156,7 @@ class c_muwp:
         for l in f:
           l = l.strip()
           # ll = l.split(' ')
-          ll = (' '.joint(l.split())).split()
+          ll = (' '.join(l.split())).split()
           if len(l) == 0:  break
           if l[0] == '#':  continue
           self.ins_center_x.append( int(ll[1]) )
