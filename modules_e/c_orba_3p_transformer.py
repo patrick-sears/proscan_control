@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 # Original development, 2023-09-08 in ipro 0906v04c.
 

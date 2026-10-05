@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 
 import sys
 import os
@@ -343,7 +345,7 @@ class c_arec:
       # line += "range_azim("+str(reran[i])+','+str(reazi[i])+")"
       line += "azim_range({0:0.0f}".format(reazi[i])
       # line += "deg,"
-      # line += "°," # fails
+      # line += "Â°," # fails
       line += u'\u00B0'  # degree symbol
       line += ","
       line += "{0:0.0f}".format(reran[i])
