@@ -15,6 +15,7 @@ class c_serial_configer:
       mm = [m.strip() for m in l.split(';')]
       key = mm[0]
       if key == '!timeout':  self.timeout = float(mm[1])
+      elif key == '!port':  self.port = mm[1]
       elif key == '!xxx':  self.xxx = mm[1]
       elif key == '!xxx':  self.xxx = mm[1]
       else:

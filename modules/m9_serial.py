@@ -35,7 +35,9 @@ if hostname == 'shiva2':
   try:
     print("Using timeout: ", ser_config.timeout)
     spo = serial.Serial(
-      port='COM5', baudrate=9600, bytesize=8,
+      # port='COM5', baudrate=9600, bytesize=8,
+      port=ser_config.port,
+      baudrate=9600, bytesize=8,
       # timeout=1, stopbits=serial.STOPBITS_ONE
       timeout=ser_config.timeout,
       stopbits=serial.STOPBITS_ONE
