@@ -4,13 +4,13 @@ from modules.c_serial_configer import *
 
 import sys, os
 import platform
-import socket
+# import socket
 
 
 ############################################
-print('platform.system(): ', platform.system())
-hostname = socket.gethostname()
-print('hostname: ', hostname)
+# print('platform.system(): ', platform.system())
+# hostname = socket.gethostname()
+# print('hostname: ', hostname)
 ############################################
 
 
@@ -22,7 +22,8 @@ if os.path.exists(user_ser_config_fname):
 
 
 ############################################
-if hostname == 'shiva2':
+#if hostname == 'shiva2':
+if ser_config.serial_mode == 'hardware':
   #
   import serial
   #
