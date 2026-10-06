@@ -2,7 +2,7 @@
 
 import sys
 import os
-import winsound
+# import winsound
 import time
 from datetime import datetime
 import shutil
@@ -63,6 +63,7 @@ class c_muwp:
     #
     self.plog = c_psc_logger()
     self.plog.set_fzname( 'user/z_psc.log' )
+    #
     #
   #
   def clear_fidu(self):
@@ -399,10 +400,8 @@ class c_muwp:
   def beep(self, n_beep):
     for i in range(n_beep):
       if i != 0:  time.sleep(0.1)
-      winsound.Beep(1600,200)  # (freq in Hz, duration in ms)
-      # os.system('\a')
-      # sys.stdout.write('\a')
-      # sys.stdout.flush()
+      # winsound.Beep(1600,200)  # (freq in Hz, duration in ms)
+      sconf.beep1()
   #
   def set_fidu(self, fiduname):
     # Sets the origin of our plate coordinates using the

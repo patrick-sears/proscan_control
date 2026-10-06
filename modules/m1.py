@@ -6,8 +6,10 @@ import math
 
 from modules.m9_serial import spo
 
+from modules.c_system_configer import *
 
 
+sconf = c_system_configer()
 
 
 #######################################################
