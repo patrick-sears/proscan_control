@@ -1,0 +1,32 @@
+#!/bin/bash
+
+cfg0="default/venv.config"
+cfgu="user/venv.config"
+
+line=$(head -n 1 "$cfg0")
+if [[ -f "$cfgu" ]]; then
+  line=$(head -n 1 "$cfgu")
+fi
+
+# Expand '~' to "$HOME".
+line="${line/#\~/$HOME}"
+
+activate="$line/bin/activate"
+
+if ! [[ -f "$activate" ]]; then
+  echo "Error.  Missing venv activate."
+  echo "  activate:  $activate"
+  exit 1
+fi
+
+source "$activate"
+
+echo "env:  $VIRTUAL_ENV"
+
+./aa10_muwp.py
+
+
+deactivate
+
+
+
